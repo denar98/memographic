@@ -1,0 +1,142 @@
+<div class="page-body">
+  <div class="container-fluid">
+    <div class="page-title">
+      <div class="row">
+        <div class="col-6">
+          <h3>
+             Order List</h3>
+        </div>
+        <div class="col-6">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?=site_url()?>">                                       <i data-feather="home"></i></a></li>
+            <li class="breadcrumb-item">Project Module</li>
+            <li class="breadcrumb-item active">Order List</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <form class="" action="<?= site_url('Order/addOrderProjectAction')?>" method="post">
+              <div class="form theme-form">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Service Package</label>
+                      <input type="hidden" class="form-control" name="order_id" value="<?=$order_id?>">
+                      <select class="form-control select2" name="service_package_id" required>
+                        <option value="">-</option>
+                        <?php
+                        foreach($packages as $package){
+                        ?>
+                        <option value="<?=$package->service_package_id?>"><?=$package->service_name?> <?=$package->service_package_name?></option>
+                        <?php } ?>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label>Project Notes</label>
+                      <input type="text" class="form-control" name="project_notes" value="">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <div class="form-group">
+                      <label>Project Brief</label>
+                      <textarea class="form-control trumbowyg" rows="8" name="project_brief" value=""></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <label>Upload project file</label>
+                        <div id="dZUpload" class="dropzone">
+                          <div class="dz-message needsclick">
+                            <i class="icon-cloud-up"></i>
+                            <h6>Drop files here or click to upload.</h6>
+                          </div>
+                      </div>
+                      <!-- <form class="dropzone" action="<?=site_url()?>/Order/projectAttachment?>" enctype="multipart/form-data">
+                        <div class="dz-message needsclick">
+                          <i class="icon-cloud-up"></i>
+                          <h6>Drop files here or click to upload.</h6>
+                        </div>
+                      </form> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group mb-0"><input type="submit" class="btn btn-success" value="Add"><a class="btn btn-danger" href="#">Cancel</a></div>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+
+  // $(document).ready(function () {
+  //   Dropzone.autoDiscover = false;
+  //   $("#dZUpload").dropzone({
+  //       url: "hn_SimpeFileUploader.ashx",
+  //       addRemoveLinks: true,
+  //       success: function (file, response) {
+  //           var imgName = response;
+  //           file.previewElement.classList.add("dz-success");
+  //           console.log("Successfully uploaded :" + imgName);
+  //       },
+  //       error: function (file, response) {
+  //           file.previewElement.classList.add("dz-error");
+  //       }
+  //     });
+  //   });
+    Dropzone.autoDiscover = false;
+
+    var foto_upload= new Dropzone("#dZUpload",{
+    url: "<?php echo base_url('Order/projectAttachment') ?>",
+    maxFilesize: 2,
+    method:"post",
+    // acceptedFiles:"image/*,application/pdf",
+    paramName:"userfile",
+    dictInvalidFileType:"Type file ini tidak dizinkan",
+    addRemoveLinks:true,
+    });
+
+    //Event ketika Memulai mengupload
+    foto_upload.on("sending",function(a,b,c){
+    	a.token=Math.random();
+    	c.append("token_foto",a.token); //Menmpersiapkan token untuk masing masing foto
+    });
+
+    //Event ketika foto dihapus
+foto_upload.on("removedfile",function(a){
+	var token=a.token;
+	$.ajax({
+		type:"post",
+		data:{token:token},
+		url:"<?php echo base_url('Order/removeProjectAttachment') ?>",
+		cache:false,
+		dataType: 'json',
+		success: function(){
+			console.log("Foto terhapus");
+		},
+		error: function(){
+			console.log("Error");
+
+		}
+	 });
+  });
+</script>

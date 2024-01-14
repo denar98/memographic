@@ -1,0 +1,260 @@
+
+        <div class="page-body">
+          <div class="container-fluid">
+            <div class="page-title">
+              <div class="row">
+                <!-- <div class="col-6">
+                  <h3>
+                     Ecommerce</h3>
+                </div>
+                <div class="col-6">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Dashboard</li>
+                    <li class="breadcrumb-item active">Ecommerce</li>
+                  </ol>
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <!-- Container-fluid starts-->
+          <div class="container-fluid">
+            <div class="row">
+              <!-- Ajax data source array start-->
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="float-left">Account Data</h5>
+                    <button type="button" class="btn btn-primary float-right" name="button" data-toggle="modal" data-target="#addModal">Add Account</button>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="datatables" id="account-table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Role</th>
+                            <th>Last Login</th>
+                            <th style="width:100px;">Action</th>
+                          </tr>
+                        </thead>
+
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Ajax data source array end-->
+            </div>
+          </div>
+          <!-- Container-fluid Ends-->
+        </div>
+
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>Account/addAction" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add Account</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Name</label>
+                        <select class="form-control" name="employee_id" required>
+                          <option value="">-</option>
+                          <?php
+                          foreach($employees as $employee){
+                          ?>
+                          <option value="<?=$employee->employee_id?>"><?=$employee->employee_name?></option>
+                          <?php } ?>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Username</label>
+                        <input class="form-control" name="username" type="text" required>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Password</label>
+                        <input class="form-control" name="password" id="password" type="password" required>
+
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Confirm Password</label>
+                        <input class="form-control" name="confirm_password" id="confirm-password" type="password" required>
+                      </div>
+                      <div class="form-group">
+                        <label class="password-alert text-danger" id="password-alert">Oops, Your password are not matched..</label>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="col-form-label">Role</label>
+                        <select class="form-control" name="role" required>
+                          <option value="">-</option>
+                          <option value="1">Admin</option>
+                          <option value="2">Project Manager</option>
+                          <option value="3">Project Master</option>
+                          <option value="4">Graphic Designer</option>
+                        </select>
+                      </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" id="btn-add" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>Employee/updateAction" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Update Account</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                    <div class="form-group">
+                      <label class="col-form-label">Employee Name</label>
+                      <select class="form-control" name="employee_id" id="employee_id" required>
+                        <option value="">-</option>
+                        <?php
+                        foreach($employees as $employee){
+                        ?>
+                        <option value="<?=$employee->employee_id?>"><?=$employee->employee_name?></option>
+                        <?php } ?>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">Username</label>
+                      <input class="form-control" name="user_id" id="user_id" type="hidden" required>
+                      <input class="form-control" name="username" id="username" type="text" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">Password</label>
+                      <input class="form-control" name="password" id="password-update" type="password" required>
+
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">Confirm Password</label>
+                      <input class="form-control" name="confirm_password" id="confirm-password-update" type="password" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="password-alert text-danger" id="password-alert-update">Oops, Your password are not matched..</label>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-form-label">Role</label>
+                      <select class="form-control" name="role" id="role" required>
+                        <option value="">-</option>
+                        <option value="1">Admin</option>
+                        <option value="2">Project Manager</option>
+                        <option value="3">Project Master</option>
+                        <option value="4">Graphic Designer</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary" id="btn-update">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <script>
+
+          $(document).ready(function(e){
+            $('#password-alert').fadeOut();
+            $('#password-alert-update').fadeOut();
+
+            var base_url = "<?php echo base_url();?>"; // You can use full url here but I prefer like this
+            $('#account-table').DataTable({
+               "pageLength" : 10,
+               "serverSide": true,
+               "order": [[0, "asc" ]],
+               "ajax":{
+                        url :  base_url+'Account/getAllAccount',
+                        type : 'POST'
+                      },
+            }); // End of DataTable
+
+            $( "#password" ).keyup(function() {
+              var password = $('#password').val();
+              var confirm_password = $('#confirm-password').val();
+              if(password!=confirm_password){
+                $('#password-alert').fadeIn();
+                $('#btn-add').addClass('disabled');
+              }
+              else{
+                $('#password-alert').fadeOut();
+                $('#btn-add').removeClass('disabled');
+              }
+            });
+            $( "#confirm-password" ).keyup(function() {
+              var password = $('#password').val();
+              var confirm_password = $('#confirm-password').val();
+              if(password!=confirm_password){
+                $('#password-alert').fadeIn();
+                $('#btn-add').addClass('disabled');
+              }
+              else{
+                $('#password-alert').fadeOut();
+                $('#btn-add').removeClass('disabled');
+              }
+            });
+            $( "#password-update" ).keyup(function() {
+              var password = $('#password-update').val();
+              var confirm_password = $('#confirm-password-update').val();
+              if(password!=confirm_password){
+                $('#password-alert-update').fadeIn();
+                $('#btn-update').addClass('disabled');
+              }
+              else{
+                $('#password-alert-update').fadeOut();
+                $('#btn-update').removeClass('disabled');
+              }
+            });
+            $( "#confirm-password-update" ).keyup(function() {
+              var password = $('#password-update').val();
+              var confirm_password = $('#confirm-password-update').val();
+              if(password!=confirm_password){
+                $('#password-alert-update').fadeIn();
+                $('#btn-update').addClass('disabled');
+              }
+              else{
+                $('#password-alert-update').fadeOut();
+                $('#btn-update').removeClass('disabled');
+              }
+            });
+
+          }); // End Document Ready Function
+
+          function getAccount(user_id){
+            var user_id = user_id;
+            $.ajax({
+              type: "POST",
+              url: "<?php echo site_url('Account/getAccount');?>",
+              data: "user_id="+user_id,
+              success: function (response) {
+                var row = JSON.parse(response);
+                $('#user_id').val(row.user_id);
+                $('#username').val(row.username);
+                $('#employee_id').val(row.employee_id);
+                $('#role').val(row.role);
+              }
+            });
+          }
+
+        </script>

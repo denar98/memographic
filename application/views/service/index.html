@@ -1,0 +1,146 @@
+
+        <div class="page-body">
+          <div class="container-fluid">
+            <div class="page-title">
+              <div class="row">
+                <!-- <div class="col-6">
+                  <h3>
+                     Ecommerce</h3>
+                </div>
+                <div class="col-6">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Dashboard</li>
+                    <li class="breadcrumb-item active">Ecommerce</li>
+                  </ol>
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <!-- Container-fluid starts-->
+          <div class="container-fluid">
+            <div class="row">
+              <!-- Ajax data source array start-->
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="float-left">Service Data</h5>
+                    <button type="button" class="btn btn-primary float-right" name="button" data-toggle="modal" data-target="#addModal">Add Service</button>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="datatables" id="service-table">
+                        <thead>
+                          <tr>
+                            <th style="width:100px;">Service ID</th>
+                            <th>Service Name</th>
+                            <th style="width:100px;">Action</th>
+                          </tr>
+                        </thead>
+                        <!-- <tfoot>
+                          <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Job</th>
+                            <th>Sallary</th>
+                            <th>Level</th>
+                          </tr>
+                        </tfoot> -->
+
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Ajax data source array end-->
+            </div>
+          </div>
+          <!-- Container-fluid Ends-->
+        </div>
+
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>Service/addAction" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add Service</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                    <div class="form-group">
+                      <label class="col-form-label">Service Name</label>
+                      <input class="form-control" name="service_name" type="text">
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>Service/updateAction" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Update Service</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                      <div class="form-group">
+                        <label class="col-form-label">Service Name</label>
+                        <input class="form-control" name="service_id" id="service_id" type="hidden">
+                        <input class="form-control" name="service_name" id="service_name" type="text">
+                      </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <script>
+
+          $(document).ready(function(e){
+            var base_url = "<?php echo base_url();?>"; // You can use full url here but I prefer like this
+            $('#service-table').DataTable({
+               "pageLength" : 10,
+               "serverSide": true,
+               "order": [[0, "asc" ]],
+               "ajax":{
+                        url :  base_url+'Service/getAllService',
+                        type : 'POST'
+                      },
+            }); // End of DataTable
+          }); // End Document Ready Function
+          function getService(service_id){
+            var service_id = service_id;
+            $.ajax({
+              type: "POST",
+              url: "<?php echo site_url('Service/getService');?>",
+              data: "service_id="+service_id,
+              success: function (response) {
+                var row = JSON.parse(response);
+                $('#service_id').val(row.service_id);
+                $('#service_name').val(row.service_name);
+
+
+              }
+            });
+          }
+        </script>

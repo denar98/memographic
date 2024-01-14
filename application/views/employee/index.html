@@ -1,0 +1,206 @@
+
+        <div class="page-body">
+          <div class="container-fluid">
+            <div class="page-title">
+              <div class="row">
+                <!-- <div class="col-6">
+                  <h3>
+                     Ecommerce</h3>
+                </div>
+                <div class="col-6">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Dashboard</li>
+                    <li class="breadcrumb-item active">Ecommerce</li>
+                  </ol>
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <!-- Container-fluid starts-->
+          <div class="container-fluid">
+            <div class="row">
+              <!-- Ajax data source array start-->
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="float-left">Employee Data</h5>
+                    <button type="button" class="btn btn-primary float-right" name="button" data-toggle="modal" data-target="#addModal">Add Employee</button>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="datatables" id="employee-table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Job</th>
+                            <th>Sallary</th>
+                            <th>Level</th>
+                            <th style="width:100px;">Action</th>
+                          </tr>
+                        </thead>
+                        <!-- <tfoot>
+                          <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Job</th>
+                            <th>Sallary</th>
+                            <th>Level</th>
+                          </tr>
+                        </tfoot> -->
+
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Ajax data source array end-->
+            </div>
+          </div>
+          <!-- Container-fluid Ends-->
+        </div>
+
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>Employee/addAction" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add Employee</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Name</label>
+                        <input class="form-control" name="employee_name" type="text" required>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Phone</label>
+                        <input class="form-control" name="employee_phone" type="text" value="-">
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Address</label>
+                        <input class="form-control" name="employee_address" type="text" value="-">
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Job</label>
+                        <input class="form-control" name="employee_job" type="text"  value="-">
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Sallary</label>
+                        <input class="form-control" name="employee_sallary" type="text"  value="-">
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Level</label>
+                        <select class="form-control" name="employee_level">
+                          <option value="">-</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                        </select>
+                      </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>Employee/updateAction" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Update Employee</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Name</label>
+                        <input class="form-control" name="employee_id" id="employee_id" type="hidden">
+                        <input class="form-control" name="employee_name" id="employee_name" type="text">
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Phone</label>
+                        <input class="form-control" name="employee_phone" id="employee_phone" type="text" >
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Address</label>
+                        <input class="form-control" name="employee_address" id="employee_address" type="text">
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Job</label>
+                        <input class="form-control" name="employee_job" id="employee_job" type="text" >
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Sallary</label>
+                        <input class="form-control" name="employee_sallary" id="employee_sallary" type="text" >
+                      </div>
+                      <div class="form-group">
+                        <label class="col-form-label">Employee Level</label>
+                        <select class="form-control" name="employee_level" id="employee_level">
+                          <option value="">-</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                        </select>
+                      </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <script>
+
+          $(document).ready(function(e){
+            var base_url = "<?php echo base_url();?>"; // You can use full url here but I prefer like this
+            $('#employee-table').DataTable({
+               "pageLength" : 10,
+               "serverSide": true,
+               "order": [[0, "asc" ]],
+               "ajax":{
+                        url :  base_url+'Employee/getAllEmployee',
+                        type : 'POST'
+                      },
+            }); // End of DataTable
+          }); // End Document Ready Function
+          function getEmployee(employee_id){
+            var employee_id = employee_id;
+            $.ajax({
+              type: "POST",
+              url: "<?php echo site_url('Employee/getEmployee');?>",
+              data: "employee_id="+employee_id,
+              success: function (response) {
+                var row = JSON.parse(response);
+                $('#employee_id').val(row.employee_id);
+                $('#employee_name').val(row.employee_name);
+                $('#employee_phone').val(row.employee_phone);
+                $('#employee_phone').val(row.employee_phone);
+                $('#employee_address').val(row.employee_address);
+                $('#employee_job').val(row.employee_job);
+                $('#employee_sallary').val(row.employee_sallary);
+                $("#employee_level").val(row.employee_level);
+
+
+              }
+            });
+          }
+        </script>
