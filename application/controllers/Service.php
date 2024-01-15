@@ -22,6 +22,7 @@ class Service extends CI_Controller {
  	public function __construct()
 	{
 		parent::__construct();
+    unset($_SESSION['success']);
 		if($this->session->userdata('login_status')!='logged'){
 			$this->session->set_flashdata("error", 'Please Login Before You Access This Page');
 			redirect('Login');

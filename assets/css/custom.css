@@ -33,13 +33,22 @@ div.dataTables_wrapper div.dataTables_paginate{
     opacity: 1 !important;
 }
 .bg-infographic{
-    background:#ebf3c3;
+    background:#ffd29e;
 }
 .bg-illustration{
-    background:#b5b5b8;
+    background:#d8abff;
 }
 /* 
 :root {
     --theme-deafult: #bad531;
     --theme-secondary: #58585a; } */
     /* #99b318 */
+    .select2-container--default .select2-selection--single {
+        background-color: #fff;
+        border: 1px solid #ced4da !important;
+        border-radius: 4px;
+    }
+    .note-editor.note-frame{
+        border: 1px solid #ced4da !important;
+
+    }

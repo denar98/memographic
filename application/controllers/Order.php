@@ -22,10 +22,12 @@ class Order extends CI_Controller {
  	public function __construct()
 	{
 		parent::__construct();
+    unset($_SESSION['success']);
 		if($this->session->userdata('login_status')!='logged'){
 			$this->session->set_flashdata("error", 'Please Login Before You Access This Page');
 			redirect('Login');
 		}
+    error_reporting(0);
     $this->load->helper(array('url','html','form'));
     $this->load->model('datatable_model');
     $this->load->model('crud_model');
@@ -65,94 +67,96 @@ class Order extends CI_Controller {
 		$this->load->view('order/create_order_project.html',$data);
 		$this->load->view('template/foot.html');
 	}
+  public function fetchOrders()
+  {
+    $output = '';
 
-  public function getAllOrder()
+    
+    $keyword = $this->input->post('keyword');
+    $order_status = $this->input->post('order_status');
+    $service_id = $this->input->post('service_id');
+    $client_id = $this->input->post('client_id');
+
+    // if($keyword != 'null'){
+      $data = $this->order_model->getDataOrders($this->input->post('limit'), $this->input->post('start'),$keyword,$order_status,$service_id,$client_id);
+    // }
+    // else if($keyword == 'null'){
+    //   $data = $this->custom_model->getDataProjects($this->input->post('limit'), $this->input->post('start'),'null');
+
+    // }
+
+    if($data->num_rows() > 0)
     {
-        $draw = intval($this->input->post("draw"));
-        $start = intval($this->input->post("start"));
-        $length = intval($this->input->post("length"));
-        $order = $this->input->post("order");
-        $search= $this->input->post("search");
-        $search = $search['value'];
-        $col = 0;
-        $dir = "";
-        if(!empty($order))
-        {
-            foreach($order as $o)
-            {
-                $col = $o['column'];
-                $dir= $o['dir'];
-            }
-        }
+     foreach($data->result() as $row)
+     {
 
-        if($dir != "asc" && $dir != "desc")
-        {
-            $dir = "desc";
-        }
-        $valid_columns = array(
-            0=>'orders_id',
-            1=>'orders_name',
-        );
-        if(!isset($valid_columns[$col]))
-        {
-            $order = null;
-        }
-        else
-        {
-            $order = $valid_columns[$col];
-        }
-        if($order !=null)
-        {
-            $this->db->order_by($order, $dir);
-        }
+     
+      // $base_url = base_url()."Project/detail/";
+      // $url="'$base_url$row->project_id'";
+      if($row->service_name=="Infographic"){
+        $progress_color = 'bg-infographic';
+      }
+      else if($row->service_name=="Illustration"){
+        $progress_color = 'bg-illustration';
+      }
 
-        if(!empty($search))
-        {
-            $x=0;
-            foreach($valid_columns as $sterm)
-            {
-                if($x==0)
-                {
-                    $this->db->like($sterm,$search);
-                }
-                else
-                {
-                    $this->db->or_like($sterm,$search);
-                }
-                $x++;
-            }
-        }
-        $this->db->limit($length,$start);
-        $orderss = $this->db->get("orderss");
-        $data = array();
-        foreach($orderss->result() as $rows)
-        {
 
-            $data[]= array(
-                $rows->orders_id,
-                $rows->orders_name,
-                '<a href="#" class="btn btn-warning mr-1" onclick="getOrder('.$rows->orders_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
-                 <a href="'.base_url().'Order/deleteAction/'.$rows->orders_id.'" class="btn btn-danger mr-1"><i class="fa fa-trash"></i></a>'
-            );
-        }
-        $total_orderss = $this->totalOrders();
-        $output = array(
-            "draw" => $draw,
-            "recordsTotal" => $total_orderss,
-            "recordsFiltered" => $total_orderss,
-            "data" => $data
-        );
-        echo json_encode($output);
-        exit();
+      if($row->order_status=="On Progress"){
+        $badge_color = 'info';
+      }
+      else if($row->order_status=="In Revision"){
+        $badge_color = 'danger';
+      }
+      else if($row->order_status=="Delivered"){
+        $badge_color = 'primary';
+      }
+      else{
+        $badge_color = 'secondary';
+      }
+      $output .= '
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 mt-4">
+          <div class="project-box"><span class="badge badge-'.$badge_color.'">'.$row->order_status.'</span>
+            <div class="row">
+              <div class="media col-md-3 mb-1">
+                <div class="media-body">
+                  <h7 class="mb-0 mt-2">Order Number</h7>
+                  <h6>'.$row->order_number.'</h6>
+                </div>
+              </div>
+              <div class="media col-md-3 mb-1">
+                <!-- <img class="img-50 mr-3 rounded-circle" src="<?=base_url()?>assets/images/user/3.jpg" alt="" data-original-title="" title=""> -->
+                <div class="media-body">
+                  <h7 class="mb-0 mt-2">Client Name</h7>
+                  <h6>'.$row->client_name.'</h6>
+                </div>
+              </div>
+              <div class="media col-md-3 mb-1">
+                <div class="media-body">
+                  <h7 class="mb-0 mt-2">Service</h7>
+                  <h6>'.$row->service_name.'</h6>
+                </div>
+              </div>
+              <div class="media col-md-3 mb-1">
+                <div class="media-body">
+                  <h7 class="mb-0 mt-2">Package</h7>
+                  <h6>'.$row->service_package_name.'</h6>
+                </div>
+              </div>
+            </div>
+            <div class="project-status mt-0">
+              <div class="progress" style="height: 5px">
+                <div class="progress-bar-animated '.$progress_color.' progress-bar-striped" role="progressbar" style="width: 100%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>';
+     }
     }
-    public function totalOrders()
-    {
-        $query = $this->db->select("COUNT(*) as num")->get("orderss");
-        $result = $query->row();
-        if(isset($result)) return $result->num;
-        return 0;
-    }
-
+    echo $output;
+  }
+  
     public function addAction()
     {
       $client_id = $this->input->post('client_id');
@@ -161,24 +165,108 @@ class Order extends CI_Controller {
       $order_number = $this->input->post('order_number');
       $service_id = $this->input->post('service_id');
       $service_package_id = $this->input->post('service_package_id');
-      $order_status = "New";
+      $order_status = "On Progress";
+      $brief= $this->input->post('brief');
       $user_id = $this->session->userdata('user_id');
-
+      $order_id="1";
+      $order_row = $this->db->limit(1)->order_by('order_id','desc')->get('orders')->row();
+  
+      if($order_row->order_id !=0 || $order_row->order_id != ''){
+        $order_id = $order_row->order_id + 1;
+      }
+  
+  
       $data = array(
         'client_id' => $client_id,
         'user_id' => $user_id,
-        'order_total' => $order_total,
+        'order_nominal' => $order_nominal,
+        'order_number' => $order_number,
+        'service_id' => $service_id,
+        'service_package_id' => $service_package_id,
         'order_date' => $order_date,
-        'order_due_date' => $order_due_date,
+        'brief' => $brief,
         'order_status' => $order_status
       );
+
+      $attachments = [];
+   
+      $count = count($_FILES['files']['name']);
+    
+      for($i=0;$i<$count;$i++){
+    
+        if(!empty($_FILES['files']['name'][$i])){
+    
+          $_FILES['file']['name'] = $_FILES['files']['name'][$i];
+          $_FILES['file']['type'] = $_FILES['files']['type'][$i];
+          $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
+          $_FILES['file']['error'] = $_FILES['files']['error'][$i];
+          $_FILES['file']['size'] = $_FILES['files']['size'][$i];
+  
+          $config['upload_path'] = 'assets/attachments'; 
+          $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
+          $config['file_name'] = $_FILES['files']['name'][$i];
+          
+          $this->upload->initialize($config);
+  
+          if($this->upload->do_upload('file')){
+            $uploadData = $this->upload->data();
+            $filename = $uploadData['file_name'];
+   
+            $attachments['totalFiles'][] = $filename;
+  
+            $data_attachments = array(
+              'order_id' => $order_id,
+              'order_attachment_name' => $filename,
+            );
+            $add_attachments = $this->crud_model->createData('order_attachments',$data_attachments);
+        
+          }
+        }
+  
+      }
       $add = $this->crud_model->createData('orders',$data);
       if($add){
         $this->session->set_flashdata("success", "Your Data Has Been Added !");
-        redirect('Order/createOrderProject/'.$add);
+        redirect('Order/');
       }
 
     }
+    
+  function uploadImageSummernote(){
+    if(isset($_FILES["image"]["name"])){
+      $config['upload_path'] = 'assets/requirement_attachments/';
+      $config['allowed_types'] = 'jpg|jpeg|png|gif';
+      $this->upload->initialize($config);
+      if(!$this->upload->do_upload('image')){
+        $this->upload->display_errors();
+        return FALSE;
+      }else{
+        $data = $this->upload->data();
+
+        $config['image_library']='gd2';
+        $config['source_image']='assets/requirement_attachments/'.$data['file_name'];
+        $config['create_thumb']= FALSE;
+        $config['maintain_ratio']= TRUE;
+        $config['quality']= '60%';
+        $config['width']= 800;
+        $config['height']= 800;
+        $config['new_image']= 'assets/requirement_attachments/'.$data['file_name'];
+        $this->load->library('image_lib', $config);
+        $this->image_lib->resize();
+        echo base_url().'assets/requirement_attachments/'.$data['file_name'];
+        }
+    }
+  }
+    
+  //Delete image summernote
+  function deleteImageSummernote(){
+    $src = $this->input->post('src');
+    $file_name = str_replace(base_url(), '', $src);
+    if(unlink($file_name))
+    {
+      echo 'File Delete Successfully';
+    }
+  }
     public function addOrderProjectAction()
     {
       $order_id = $this->input->post('order_id');
@@ -200,32 +288,7 @@ class Order extends CI_Controller {
 
     }
 
-    public function updateAction()
-    {
-      $orders_id = $this->input->post('orders_id');
-      $orders_name = $this->input->post('orders_name');
-
-      $data = array(
-        'orders_name' => $orders_name,
-      );
-      $where="orders_id=".$orders_id;
-      $update = $this->crud_model->updateData('orderss',$data,$where);
-      if($update){
-        $this->session->set_flashdata("success", "Your Data Has Been Updated !");
-        redirect('Order');
-      }
-    }
-
-    public function deleteAction($orders_id)
-    {
-      $where="orders_id=".$orders_id;
-      $delete = $this->crud_model->deleteData('orderss',$where);
-      if($delete){
-        $this->session->set_flashdata("success", "Your Data Has Been Deleted !");
-        redirect('Order');
-
-      }
-    }
+   
 
     public function getOrder()
     {
