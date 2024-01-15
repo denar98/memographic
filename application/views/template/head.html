@@ -169,7 +169,7 @@
                     </div>
                   </li>
                   <li class="sidebar-list ">
-                    <a class="sidebar-link sidebar-title link-nav" href="<?=site_url()?>Dashboard" class="<?=$module == 'dashboard'?'active':''?>"><i data-feather="home"></i><span>Overview</span></a>
+                    <a class="sidebar-link sidebar-title link-nav <?=$page == 'overview'?'active':''?> " href="<?=site_url()?>Dashboard" ><i data-feather="home"></i><span>Overview</span></a>
                   </li>
                   <li class="sidebar-main-title">
                     <div>
@@ -201,13 +201,13 @@
                   <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title link-nav" href="<?=site_url('Order')?>"><i data-feather="shopping-cart"></i><span>Order</span></a>
                   </li>
-                  <li class="sidebar-list">
+                  <!-- <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title link-nav" href="#"><i data-feather="file-text"></i><span>Project</span></a>
-                  </li>
+                  </li> -->
                   <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title" href="#"><i data-feather="list"></i><span>Task</span></a>
                     <ul class="sidebar-submenu">
-                      <li><a  href="#">Task</a></li>
+                      <li><a  href="<?=site_url('Task')?>"">Task</a></li>
                       <li><a  href="#">Task History</a></li>
                       <li><a  href="#">Completed Task</a></li>
                       <li><a  href="#">Rating Task History</a></li>
