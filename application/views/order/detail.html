@@ -98,9 +98,15 @@
                                       <?php 
                                         $task_delivery_attachments = $this->task_model->getTaskDeliveryAttachment($task_delivery->task_delivery_id)->result();
                                         foreach($task_delivery_attachments as $task_delivery_attachment){
-                                      ?>
+                                          if($task_delivery_attachment->task_delivery_attachment_type == "Preview"){
+                                            $task_delivery_attachment_type = 'preview';
+                                          }
+                                          else{
+                                            $task_delivery_attachment_type = 'source';
+                                          }
+                                        ?>
                                       <div class="ml-4 text-center float-right">
-                                        <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
+                                        <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
                                           <img src="<?=base_url()?>assets/images/file-download-placeholder-01.png" style="width: 50px;" alt="">
                                         </a>
                                         <p><?=substr($task_delivery_attachment->task_delivery_attachment_name,0,8)	?>...</p>  
