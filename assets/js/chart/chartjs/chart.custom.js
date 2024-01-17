@@ -83,8 +83,8 @@
     },
     {
       value: 50,
-      color: "#f8d62b",
-      highlight: "#f8d62b",
+      color: "#fcc062",
+      highlight: "#fcc062",
       label: "Sky",
     },
     {

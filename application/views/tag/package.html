@@ -1,0 +1,189 @@
+
+        <div class="page-body">
+          <div class="container-fluid">
+            <div class="page-title">
+              <div class="row">
+                <!-- <div class="col-6">
+                  <h3>
+                     Ecommerce</h3>
+                </div>
+                <div class="col-6">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html"><i data-feather="home"></i></a></li>
+                    <li class="breadcrumb-item">Dashboard</li>
+                    <li class="breadcrumb-item active">Ecommerce</li>
+                  </ol>
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <!-- Container-fluid starts-->
+          <div class="container-fluid">
+            <div class="row">
+              <!-- Ajax data source array start-->
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="float-left">Service Package Data</h5>
+                    <button type="button" class="btn btn-primary float-right" name="button" data-toggle="modal" data-target="#addModal">Add Service</button>
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="datatables" id="service-table">
+                        <thead>
+                          <tr>
+                            <th>Service</th>
+                            <th>Service Package</th>
+                            <th>Package Price</th>
+                            <th>Package Detail</th>
+                            <th style="width:100px;">Action</th>
+                          </tr>
+                        </thead>
+                        <!-- <tfoot>
+                          <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Job</th>
+                            <th>Sallary</th>
+                            <th>Level</th>
+                          </tr>
+                        </tfoot> -->
+
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Ajax data source array end-->
+            </div>
+          </div>
+          <!-- Container-fluid Ends-->
+        </div>
+
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>ServicePackage/addAction" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add Service</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                    <div class="form-group">
+                      <label class="col-form-label">Service</label>
+                      <select class="form-control" name="service_id" required>
+                        <option value="">-</option>
+                        <?php
+                        foreach($services as $service){
+                        ?>
+                        <option value="<?=$service->service_id?>"><?=$service->service_name?></option>
+                        <?php } ?>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">Service Package Name</label>
+                      <input class="form-control" name="service_package_name" type="text" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">Service Package Price</label>
+                      <input class="form-control" name="service_package_price" type="text" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">Service Package Detail</label>
+                      <textarea name="service_package_detail" class="form-control"></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>ServicePackage/updateAction" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Update Service</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                    <div class="form-group">
+                      <label class="col-form-label">Service</label>
+                      <select class="form-control" name="service_id" id="service_id" required>
+                        <option value="">-</option>
+                        <?php
+                        foreach($services as $service){
+                        ?>
+                        <option value="<?=$service->service_id?>"><?=$service->service_name?></option>
+                        <?php } ?>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">Service Package Name</label>
+                      <input class="form-control" name="service_package_id" id="service_package_id" type="hidden" required>
+                      <input class="form-control" name="service_package_name" id="service_package_name" type="text" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">Service Package Price</label>
+                      <input class="form-control" name="service_package_price" id="service_package_price" type="text" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">Service Package Detail</label>
+                      <textarea name="service_package_detail" class="form-control" id="service_package_detail"></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <script>
+
+          $(document).ready(function(e){
+            var base_url = "<?php echo base_url();?>"; // You can use full url here but I prefer like this
+            $('#service-table').DataTable({
+               "pageLength" : 10,
+               "serverSide": true,
+               "order": [[0, "asc" ]],
+               "ajax":{
+                        url :  base_url+'ServicePackage/getAllServicePackage',
+                        type : 'POST'
+                      },
+            }); // End of DataTable
+          }); // End Document Ready Function
+          function getServicePackage(service_package_id){
+            var service_package_id = service_package_id;
+            $.ajax({
+              type: "POST",
+              url: "<?php echo site_url('ServicePackage/getServicePackage');?>",
+              data: "service_package_id="+service_package_id,
+              success: function (response) {
+                var row = JSON.parse(response);
+                $('#service_package_id').val(row.service_package_id);
+                $('#service_id').val(row.service_id);
+                $('#service_package_name').val(row.service_package_name);
+                $('#service_package_price').val(row.service_package_price);
+                $('#service_package_detail').val(row.service_package_detail);
+
+
+              }
+            });
+          }
+        </script>

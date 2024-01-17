@@ -22,12 +22,10 @@ class ServicePackage extends CI_Controller {
  	public function __construct()
 	{
 		parent::__construct();
-    unset($_SESSION['success']);
 		if($this->session->userdata('login_status')!='logged'){
 			$this->session->set_flashdata("error", 'Please Login Before You Access This Page');
 			redirect('Login');
 		}
-    unset($_SESSION['success']);
     error_reporting(0);
     $this->load->model('datatable_model');
     $this->load->model('crud_model');
@@ -200,6 +198,14 @@ class ServicePackage extends CI_Controller {
       $service_package_id = $this->input->post('service_package_id');
       $where = "service_package_id=".$service_package_id;
       $service = $this->crud_model->readData('*','service_packages',$where)->row();
+      echo json_encode($service);
+
+    }
+    public function getServicePackageByServiceID()
+    {
+      $service_id = $this->input->post('service_id');
+      $where = "service_id=".$service_id;
+      $service = $this->crud_model->readData('*','service_packages',$where)->result();
       echo json_encode($service);
 
     }

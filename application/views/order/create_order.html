@@ -36,15 +36,22 @@
                             <div class="row">
                               <div class="col-sm-12">
                                 <div class="form-group">
-                                  <label>Client Name</label>
-                                  <select class="form-control select2" name="client_id" required>
-                                    <option value="">-</option>
-                                    <?php
-                                    foreach($clients as $client){
-                                    ?>
-                                    <option value="<?=$client->client_id?>"><?=$client->client_name?></option>
-                                    <?php } ?>
-                                  </select>
+                                  <label>Client Name 
+                                    <span class="ml-2">|</span> 
+                                    <a class="ml-2" id="addNewClient" href="#">Add New Client</a>
+                                    <a class="ml-2" id="searchClient" href="#" style="display: none;">Search Client</a>
+                                  </label>
+                                  <div  id="client_id_form" >
+                                    <select class="form-control select2" name="client_id">
+                                      <option value="">-</option>
+                                      <?php
+                                      foreach($clients as $client){
+                                      ?>
+                                      <option value="<?=$client->client_id?>"><?=$client->client_name?></option>
+                                      <?php } ?>
+                                    </select>  
+                                  </div>
+                                  <input type="text" class="form-control" name="client_name" id="client_name_form" style="display: none;">
                                   <!-- <input type="text" class="form-control" name="client_name" required> -->
                                 </div>
                               </div>
@@ -58,9 +65,18 @@
                             <div class="row">
                               <div class="col-sm-12">
                                 <div class="form-group">
-                                  <label>Tanggal</label>
+                                  <label>Tanggal Order</label>
                                   <div class="input-group flatpicker-calender">
-                                    <input class="form-control" id="datetime-local" name="order_date" type="date" value="2023-05-03" required>
+                                    <input class="form-control" id="datetime-local" name="order_date" type="date"  required>
+                                  </div>
+                                    <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Deadline</label>
+                                  <div class="input-group flatpicker-calender">
+                                    <input class="form-control" id="datetime-local" name="order_deadline" type="date"  required>
                                   </div>
                                     <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
                                 </div>
@@ -91,11 +107,11 @@
                                   <label>Service Package</label>
                                   <select class="form-control select2" name="service_package_id" id="service_package_id" required>
                                     <option value="">-</option>
-                                    <?php
+                                    <!-- <?php
                                     foreach($service_packages as $service_package){
                                     ?>
                                     <option value="<?=$service_package->service_package_id?>"><?=$service_package->service_package_name?></option>
-                                    <?php } ?>
+                                    <?php } ?> -->
                                   </select>
                                 </div>
                               </div>
@@ -138,7 +154,7 @@
                                 </textarea>
                                 <!-- <textarea class="form-control" id="exampleFormControlTextarea4" rows="3"></textarea> -->
                               </div>
-                              <div class="">
+                              <div class="form-group">
                                 <label class="form-label" for="formFileMultiple">Attachments</label>
                                 <input class="form-control" id="formFileMultiple" type="file"  name="files[]" multiple="">
                               </div>
@@ -160,3 +176,37 @@
     </div>
   </div>
 </div>
+<script>
+
+  $(document).ready(function(e){
+    $('#addNewClient').click(function() {
+      $('#client_name_form').show();
+      $('#client_id_form').hide();
+      $('#searchClient').show();
+      $('#addNewClient').hide();
+    });    
+    $('#searchClient').click(function() {
+      $('#client_name_form').hide();
+      $('#client_id_form').show();
+      $('#searchClient').hide();
+      $('#addNewClient').show();
+    });    
+    $('#service_id').change(function() {
+      var service_id = $(this).val();
+      $.ajax({
+        type: "POST",
+        url: "<?php echo site_url('ServicePackage/getServicePackageByServiceID');?>",
+        data: "service_id="+service_id,
+        success: function (response) {
+          var row = JSON.parse(response);
+          $('#service_package_id').html('');
+          for (var i = 0, len = row.length; i < len; ++i) {
+              var service_package = row[i];
+            $('#service_package_id').append('<option value="'+service_package.service_package_id+'">'+service_package.service_package_name+'</option>');
+          }
+
+        }
+      });
+    });    
+  })
+</script>

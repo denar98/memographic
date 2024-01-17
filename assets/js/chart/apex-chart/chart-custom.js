@@ -1737,7 +1737,7 @@ var options = {
     CubaAdminConfig.primary,
     CubaAdminConfig.secondary,
     "#51bb25",
-    "#f8d62b",
+    "#fcc062",
   ],
 };
 
@@ -2322,7 +2322,7 @@ var options8 = {
     CubaAdminConfig.secondary,
     "#51bb25",
     "#a927f9",
-    "#f8d62b",
+    "#fcc062",
   ],
 };
 
@@ -2350,7 +2350,7 @@ var options9 = {
       },
     },
   ],
-  colors: ["#dc3545", "#f8d62b", CubaAdminConfig.primary, "#51bb25", "#a927f9"],
+  colors: ["#dc3545", "#fcc062", CubaAdminConfig.primary, "#51bb25", "#a927f9"],
 };
 
 var chart9 = new ApexCharts(document.querySelector("#donutchart"), options9);
@@ -2483,7 +2483,7 @@ var options11 = {
   colors: [
     CubaAdminConfig.secondary,
     "#51bb25",
-    "#f8d62b",
+    "#fcc062",
     CubaAdminConfig.primary,
   ],
 };

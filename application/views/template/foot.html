@@ -41,6 +41,7 @@
 <script src="<?=base_url()?>assets/js/editor/summernote/summernote.js"></script>
 <script src="<?=base_url()?>assets/js/editor/summernote/summernote.custom.js"></script>
 <script src="<?=base_url()?>assets/js/autoNumeric.js"></script>
+<script src="<?=base_url()?>assets/js/fullscreen.js"></script>
 
 <!-- scrollbar js-->
 <script src="<?=base_url()?>assets/js/sidebar-menu.js"></script>
@@ -141,6 +142,10 @@
     // }
   }); // End Document Ready Function
 
+  // $('.toggle-sidebar').click(function e() {
+  //   $('.sidebar-wrapper').addClass('close_icon');
+  //   $('.page-header').addClass('close_icon');
+  // })
 </script>
 <?php if ($this->session->flashdata('error')): ?>
 <script>

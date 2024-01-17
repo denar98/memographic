@@ -131,7 +131,7 @@
           height: "100%",
           sliceColors: [
             "#51bb25",
-            "#f8d62b",
+            "#fcc062",
             CubaAdminConfig.secondary,
             CubaAdminConfig.primary,
           ],

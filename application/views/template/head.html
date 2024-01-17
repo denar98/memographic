@@ -84,10 +84,10 @@
                 </div>
               </div>
             </form>
-            <div class="header-logo-wrapper">
+            <!-- <div class="header-logo-wrapper">
               <div class="logo-wrapper"><a href="index.html"><img class="img-fluid" src="<?=base_url()?>assets/images/logo/logo.png" alt=""></a></div>
               <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="sliders"></i></div>
-            </div>
+            </div> -->
             <div class="left-header col horizontal-wrapper pl-0">
 
             </div>
@@ -118,7 +118,7 @@
                 </li> -->
                 <li class="maximize"><a class="text-dark" href="#!" onclick="javascript:toggleFullScreen()"><i data-feather="maximize"></i></a></li>
                 <li class="profile-nav onhover-dropdown p-0 mr-0">
-                  <div class="media profile-media"><img class="b-r-10" src="<?=base_url()?>assets/images/dashboard/profile.jpg" alt="">
+                  <div class="media profile-media"><img class="b-r-10" src="<?=base_url()?>assets/images/avatar-04.png" style="width:35px;" alt="">
                     <div class="media-body"><span><?=$this->session->userdata('employee_name')?></span>
                       <p class="mb-0 font-roboto"><?=$this->session->userdata('role')?> <i class="middle fa fa-angle-down"></i></p>
                     </div>
@@ -148,18 +148,18 @@
         <div class="page-body-wrapper sidebar-icon">
           <!-- Page Sidebar Start-->
           <div class="sidebar-wrapper">
-            <div class="logo-wrapper">
+            <div class="logo-wrapper" style="text-align: left !important;">
               <!-- <h4 class="text-center text-primary">MEMOGRAPHIC</h4> -->
-              <a href="<?=base_url()?>/Dashboard"><img class="img-fluid" style="width: 175px !important; text-align:center" src="<?=base_url()?>assets/images/MEMOLOGO_FINAL_250815.png" alt="">
+              <a href="<?=base_url()?>/Dashboard"><img class="img-fluid" style="width: 170px !important; margin-left:35px;" src="<?=base_url()?>assets/images/MEMOLOGO_FINAL_250815.png" alt=""></a>
               <!-- <div class="back-btn"><i class="fa fa-angle-left"></i></div> -->
-              <!-- <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div> -->
+              <div class="toggle-sidebar"><i class="status_toggle middle sidebar-toggle" data-feather="grid"> </i></div>
             </div>
-            <div class="logo-icon-wrapper"><a href="index.html"><img class="img-fluid" src="<?=base_url()?>assets/images/logo/logo-icon.png" alt=""></a></div>
+            <div class="logo-icon-wrapper" style="padding: 15px;"><a href="index.html"><img class="img-fluid" src="<?=base_url()?>assets/images/MEMO_FAV.png"  style="width:50px;" alt=""></a></div>
             <nav class="sidebar-main">
               <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
               <div id="sidebar-menu">
                 <ul class="sidebar-links custom-scrollbar">
-                  <li class="back-btn"><a href="index.html"><img class="img-fluid" src="<?=base_url()?>assets/images/logo/logo-icon.png" alt=""></a>
+                  <li class="back-btn"><a href="index.html"><img class="img-fluid" src="<?=base_url()?>assets/images/MEMO_FAV.png" style="width:50px;" alt=""></a>
                     <div class="mobile-back text-right"><span>Back</span><i class="fa fa-angle-right pl-2" aria-hidden="true"></i></div>
                   </li>
                   <li class="sidebar-main-title">
@@ -192,6 +192,9 @@
                   </li>
                   <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title link-nav" href="<?=site_url('Client')?>"><i data-feather="users"></i><span>Client</span></a>
+                  </li>
+                  <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav" href="<?=site_url('Tag')?>"><i data-feather="tag"></i><span>Tags</span></a>
                   </li>
                   <li class="sidebar-main-title">
                     <div>

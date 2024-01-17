@@ -1,0 +1,203 @@
+<div class="page-body">
+  <div class="container-fluid">
+    <div class="page-title">
+      <div class="row">
+        <div class="col-6">
+          <h3>Edit New Order</h3>
+        </div>
+        <div class="col-6">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?=site_url()?>"><i data-feather="home"></i></a></li>
+            <li class="breadcrumb-item">Project Module</li>
+            <li class="breadcrumb-item active">Edit New Order</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-12">
+        <form class="" action="<?=site_url()?>/Order/updateAction" method="post"   enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <div class="horizontal-wizard-wrapper vertical-variations">
+                    <div class="row g-3">
+                      <div class="col-12 main-horizontal-header"> 
+                        <!--  -->
+                        <h5>Order Details</h5>
+                        <hr>
+                      </div>
+                      <div class="col-12 mt-3"  style="min-height: 900px;">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Client Name 
+                                    <span class="ml-2">|</span> 
+                                    <a class="ml-2" id="addNewClient" href="#">Add New Client</a>
+                                    <a class="ml-2" id="searchClient" href="#" style="display: none;">Search Client</a>
+                                  </label>
+                                  <div  id="client_id_form" >
+                                    <select class="form-control select2" name="client_id">
+                                      <option value="">-</option>
+                                      <?php
+                                      foreach($clients as $client){
+                                      ?>
+                                      <option value="<?=$client->client_id?>" <?php if($order->client_id==$client->client_id){echo "selected";}?>><?=$client->client_name?></option>
+                                      <?php } ?>
+                                    </select>  
+                                  </div>
+                                  <input type="text" class="form-control" name="client_name" id="client_name_form" style="display: none;">
+                                  <input type="hidden" class="form-control" name="order_id" id="order_id" value="<?=$order->order_id?>">
+                                  <!-- <input type="text" class="form-control" name="client_name" required> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Order Number</label>
+                                  <input type="text" class="form-control" name="order_number" required value="<?=$order->order_number?>">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Tanggal Order</label>
+                                  <div class="input-group flatpicker-calender">
+                                    <input class="form-control" id="datetime-local" name="order_date" type="date" value="<?=$order->order_date?>" required>
+                                  </div>
+                                    <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Deadline</label>
+                                  <div class="input-group flatpicker-calender">
+                                    <input class="form-control" id="datetime-local" name="order_deadline" type="date" value="<?=$order->order_deadline?>"  required>
+                                  </div>
+                                    <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
+                                </div>
+                              </div>
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Order Nominal</label>
+                                  <input type="text" class="form-control autonumeric" name="order_nominal" value="<?=$order->order_nominal?>" required>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Service</label>
+                                  <select class="form-control select2" name="service_id" id="service_id" required>
+                                    <option value="">-</option>
+                                    <?php
+                                    foreach($services as $service){
+                                    ?>
+                                    <option value="<?=$service->service_id?>" <?php if($order->service_id==$service->service_id){echo "selected";}?>><?=$service->service_name?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                              </div>
+                              <div class="col-sm-12">
+                                <div class="form-group">
+                                  <label>Service Package</label>
+                                  <select class="form-control select2" name="service_package_id" id="service_package_id" required>
+                                    <option value="">-</option>
+                                    <?php
+                                    foreach($service_packages as $service_package){
+                                    ?>
+                                    <option value="<?=$service_package->service_package_id?>" <?php if($order->service_package_id==$service_package->service_package_id){echo "selected";}?>><?=$service_package->service_package_name?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-body">
+                  <div class="horizontal-wizard-wrapper vertical-variations">
+                    <div class="row g-3">
+                      <div class="col-12 main-horizontal-header"> 
+                        <!--  -->
+                        <h5>Order Brief</h5>
+                        <hr>
+                      </div>
+                      <div class="col-12 mt-3" style="min-height: 900px;">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                <!-- <label>Brief & Requirement Project</label> -->
+                                <textarea class="summernote2" name="brief">
+                                  <?=$order->brief?>
+                                </textarea>
+                                <!-- <textarea class="form-control" id="exampleFormControlTextarea4" rows="3"></textarea> -->
+                              </div>
+                              <div class="">
+                                <label class="form-label" for="formFileMultiple">Attachments</label>
+                                <input class="form-control" id="formFileMultiple" type="file"  name="files[]" multiple="">
+                              </div>
+
+     
+                              <div class="form-group mt-3 mb-0 pull-right"><a class="btn btn-danger" href="<?=base_url()?>Order">Cancel</a><input type="submit" class="btn btn-primary ml-3" value="Create Order"></div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+  $(document).ready(function(e){
+    $('#addNewClient').click(function() {
+      $('#client_name_form').show();
+      $('#client_id_form').hide();
+      $('#searchClient').show();
+      $('#addNewClient').hide();
+    });    
+    $('#searchClient').click(function() {
+      $('#client_name_form').hide();
+      $('#client_id_form').show();
+      $('#searchClient').hide();
+      $('#addNewClient').show();
+    });    
+    $('#service_id').change(function() {
+      var service_id = $(this).val();
+      $.ajax({
+        type: "POST",
+        url: "<?php echo site_url('ServicePackage/getServicePackageByServiceID');?>",
+        data: "service_id="+service_id,
+        success: function (response) {
+          var row = JSON.parse(response);
+          $('#service_package_id').html('');
+          for (var i = 0, len = row.length; i < len; ++i) {
+              var service_package = row[i];
+            $('#service_package_id').append('<option value="'+service_package.service_package_id+'">'+service_package.service_package_name+'</option>');
+          }
+
+        }
+      });
+    });    
+  })
+</script>

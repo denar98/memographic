@@ -507,12 +507,12 @@ $(function () {
         },
         colors: [
           CubaAdminConfig.primary,
-          "#f8d62b",
+          "#fcc062",
           "#a927f9",
           "#51bb25",
           CubaAdminConfig.secondary,
           "#dc3545",
-          "#f8d62b",
+          "#fcc062",
         ],
       });
     }
@@ -655,7 +655,7 @@ $(function () {
     { color: "#f73164", points: data1_points, data: data1, label: "data1" },
     { color: "#a927f9", points: data2_points, data: data2, label: "data2" },
     {
-      color: "#f8d62b",
+      color: "#fcc062",
       lines: { show: true },
       points: data3_points,
       data: data3,
@@ -718,7 +718,7 @@ $(function () {
     colors: [
       CubaAdminConfig.primary,
       "#51bb25",
-      "#f8d62b",
+      "#fcc062",
       "#a927f9",
       "#dc3545",
       "#6c757d",
@@ -737,7 +737,7 @@ $(function () {
     colors: [
       CubaAdminConfig.primary,
       "#51bb25",
-      "#f8d62b",
+      "#fcc062",
       "#a927f9",
       "#dc3545",
       "#6c757d",
@@ -762,7 +762,7 @@ $(function () {
     colors: [
       CubaAdminConfig.primary,
       "#51bb25",
-      "#f8d62b",
+      "#fcc062",
       "#a927f9",
       "#dc3545",
       "#6c757d",
@@ -782,7 +782,7 @@ $(function () {
     colors: [
       CubaAdminConfig.primary,
       "#51bb25",
-      "#f8d62b",
+      "#fcc062",
       "#a927f9",
       "#dc3545",
       "#6c757d",
@@ -809,7 +809,7 @@ $(function () {
     colors: [
       CubaAdminConfig.primary,
       "#51bb25",
-      "#f8d62b",
+      "#fcc062",
       "#a927f9",
       "#dc3545",
       "#6c757d",
@@ -836,7 +836,7 @@ $(function () {
     colors: [
       CubaAdminConfig.primary,
       "#51bb25",
-      "#f8d62b",
+      "#fcc062",
       "#a927f9",
       "#dc3545",
       "#6c757d",
@@ -868,7 +868,7 @@ $(function () {
     colors: [
       CubaAdminConfig.primary,
       "#51bb25",
-      "#f8d62b",
+      "#fcc062",
       "#a927f9",
       "#dc3545",
       "#6c757d",
@@ -885,7 +885,7 @@ $(function () {
     colors: [
       CubaAdminConfig.primary,
       "#51bb25",
-      "#f8d62b",
+      "#fcc062",
       "#a927f9",
       "#dc3545",
       "#6c757d",

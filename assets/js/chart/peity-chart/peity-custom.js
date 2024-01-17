@@ -48,7 +48,7 @@
       CubaAdminConfig.primary,
       CubaAdminConfig.secondary,
       "#51bb25",
-      "#f8d62b",
+      "#fcc062",
     ],
     width: "100",
     height: "82",

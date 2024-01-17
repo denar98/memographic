@@ -1,0 +1,381 @@
+
+        <div class="page-body">
+          <div class="container-fluid">
+            <div class="page-title">
+              <div class="row">
+              </div>
+            </div>
+          </div>
+          <!-- Container-fluid starts-->
+          <div class="container-fluid">
+            <div class="row">
+              <!-- Ajax data source array start-->
+              <div class="col-sm-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="float-left">Detail Project</h5>
+                    <a href="<?=base_url()?>Order/edit/<?=$order->order_id?>"> <button type="button" class="btn btn-warning float-right mr-3" name="button" >Edit Project</button></a>
+                    <?php
+                      if($order->assign_to==null){
+                    ?>
+                      <a href="#"> <button type="button" class="btn btn-info float-right mr-3" onclick="assignOrder('<?=$order->order_id?>')" name="button" >Assign Order</button></a>
+                    <?php }else{ ?>
+                      <a href="#"> <button type="button" class="btn btn-info float-right mr-3"  name="button" >Assigned to <?=$order->assign_to?></button></a>
+                    <?php } ?>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="col-sm-1">
+                <ul> 
+                  <li class="d-flex">
+                    <div class="activity-dot-primary"></div>
+                    testt<br><br></br>
+                  </li>
+                  <li class="d-flex">
+                    <div class="activity-dot-warning"></div>
+                  </li>
+                  <li class="d-flex">
+                    <div class="activity-dot-secondary"></div>
+                  </li>
+                </ul>
+              </div> -->
+              <div class="col-sm-9">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="tab-content" id="top-tabContent">
+                      <div class="default-according style-1 faq-accordion" id="accordionBrief">
+                        <div class="row">
+                          <div class="col-xl-12 col-lg-12">
+                            <div class="card ">
+                              <div class="card-header" id="headingOneone">
+                                <h2 class="mb-0">
+                                  <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOneone" aria-expanded="true" aria-controls="collapseOneone"><h6>Project Requirement</h6></button>
+                                </h2>
+                              </div>
+                              <div class="collapse show" id="collapseOneone" aria-labelledby="headingOneone" data-parent="#accordionBrief">
+                                <div class="card-body socialprofile filter-cards-view">
+                                  <?=$order->brief?>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+                <?php 
+                  foreach($task_deliveries as $task_delivery){
+                    if($task_delivery->task_delivery_type == "New"){
+                      $task_delivery_type = "First Preview";
+                    }
+                    else{
+                      $task_delivery_type = "Revision";
+                    }
+                ?>
+                <div class="card">
+                  <div class="card-body">
+                    <div class="tab-content" id="top-tabContent">
+                      <div class="default-according style-1 faq-accordion" id="accordionProgress">
+                        <div class="row">
+                          <div class="col-xl-12 col-lg-12">
+                            <div class="card ">
+                              <div class="card-header" id="headingTwo">
+                                <h2 class="mb-0">
+                                  <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo"><h6><?=$task_delivery_type?></h6></button>
+                                </h2>
+                              </div>
+                              <div class="collapse show" id="collapseTwo" aria-labelledby="headingTwo" data-parent="#accordionProgress">
+                                <div class="card-body socialprofile filter-cards-view pt-2 pb-2" id="divProgress">
+                                  <div class="activity-timeline row" id="activity-timeline">
+                                    <div class="col-md-6  align-middle">
+                                      <h6 class="float-left mt-3"><i data-feather="user" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->employee_name?></h6>
+                                      <h6 class="ml-3 float-left mt-3"><i data-feather="clock" class="mr-1 pt-2 text-primary" ></i><?=date_format(date_create($task_delivery->task_delivery_date),"d M Y H:i")?></h6>
+                                      <h6 class="ml-3 float-left mt-3"><i data-feather="flag" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->task_status?></h6>
+                                    </div>
+                                    <div class="col-md-5 text-right align-bottom">
+                                      <?php 
+                                        $task_delivery_attachments = $this->task_model->getTaskDeliveryAttachment($task_delivery->task_delivery_id)->result();
+                                        foreach($task_delivery_attachments as $task_delivery_attachment){
+                                      ?>
+                                      <div class="ml-4 text-center float-right">
+                                        <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
+                                          <img src="<?=base_url()?>assets/images/file-download-placeholder-01.png" style="width: 50px;" alt="">
+                                        </a>
+                                        <p><?=substr($task_delivery_attachment->task_delivery_attachment_name,0,8)	?>...</p>  
+                                      </div>
+                                      <?php } ?>
+                                    </div>
+                                    <div class="col-md-1 align-middle text-right">
+                                      <!-- <div style="border-left:2px solid #b3bac0; height: 100%; float:left; margin-left:15px;"></div> -->
+                                      <a href="#" class=""><i data-feather="star" class="text-primary mt-3" ></i></a>
+                                    </div>
+                                  </div>
+                                </div>
+             
+                              </div>
+                            </div>
+                            
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+                <?php } ?>
+              </div>
+              <div class="col-sm-3">
+                  <div class="col-xl-12 col-lg-12">
+
+                  
+                    <div class="card" >
+                      <div class="card-header p-4"><h6>Project Detail</h6></div>
+                      <div class="card-body p-4" style="border-radius:10px;">
+                        <h6 class=""><?= $order->service_name ?></h6>
+                        <span class="btn btn-primary btn-xs mb-3 text-white"> Project <?= $order->service_name?></span>
+                        <p>Order Date  <span class="pull-right font-weight-bold"> <?= $order->order_date?></span></p>
+                        <p>Client Name  <span class="pull-right font-weight-bold"> <?= $order->client_name?></span></p>
+                        <p>Order Number  <span class="pull-right font-weight-bold"> <?= $order->order_number?></span></p>
+                        <p>Order Nominal  <span class="pull-right font-weight-bold"> $<?= number_format($order->order_nominal)?></span></p>
+                      </div>
+                    </div>
+                    <div class="card mt-4" >
+                      <div class="card-header p-4"><h6>Project Attachments</h6></div>
+                      <div class="card-body p-4" style="border-radius:10px;">
+                        <ul class="list-group list-group-flush">
+                          <?php foreach($attachments as $attachment){ ?>
+                            <li class="list-group-item"><a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" download ><?=$attachment->order_attachment_name?></a></li>
+                          <?php } ?>
+                        </ul>                                
+                      </div>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+              <!-- Ajax data source array end-->
+            </div>
+          </div>
+          <!-- Container-fluid Ends-->
+        </div>
+        
+        <div class="modal fade" id="assignModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:hidden;">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>Order/assignAction" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Assign Order</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <input class="form-control" name="order_id" id="order_id" type="hidden" required>
+                        <input class="form-control" name="source_assign" id="source_assign" type="hidden" value="fromDetailPage" required>
+                        <div class="form-group">
+                          <label>Assign to</label>
+                          <select class="form-control" name="employee_id" id="employee_id" required>
+                            <?php
+                            foreach($employees as $employee){
+                            ?>
+                            <option value="<?=$employee->employee_id?>"><?=$employee->employee_name?></option>
+                            <?php } ?>
+                          </select>
+                        </div>  
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Start Date</label>
+                          <div class="input-group flatpicker-calender">
+                            <input class="form-control" id="datetime-local" name="task_start" type="date"  required>
+                          </div>
+                            <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Tag Priority</label>
+                          <select class="form-control" name="tag_id" id="tag_id" required>
+                            <?php
+                            foreach($tags as $tag){
+                            ?>
+                            <option value="<?=$tag->tag_id?>" ><?=$tag->tag_name?></option>
+                            <?php } ?>
+                          </select>
+                        </div>  
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Estimation </label>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <input class="form-control" name="task_estimation_hour" type="number" placeholder="Hours" required>
+                            </div>
+                            <div class="col-md-6">
+                              <input class="form-control" name="task_estimation_minute" type="number" placeholder="Minutes" required>
+                            </div>
+                          </div>
+                        </div>  
+                      </div>
+                      
+                    </div>
+                      
+                    
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+        
+        <script>
+          $(document).ready(function(){
+
+
+            var limit = 20;
+            var start = 0;
+            var action = 'inactive';
+
+            function lazzy_loader(limit)
+            {
+              var output = '';
+              for(var count=0; count<limit; count++)
+              {
+                output += '<div class="post_data">';
+                output += '<p><span class="content-placeholder" style="width:100%; height: 30px;">&nbsp;</span></p>';
+                output += '<p><span class="content-placeholder" style="width:100%; height: 100px;">&nbsp;</span></p>';
+                output += '</div>';
+              }
+              // $('#top-home').html(output);
+            }
+
+            lazzy_loader(limit);
+
+            function load_data(limit, start)
+            {
+              var project_detail_id = "<?=$project->project_detail_id;?>";
+              $.ajax({
+                url:"<?php echo base_url(); ?>Project/fetchProgress/"+project_detail_id,
+                method:"POST",
+                data:{limit:limit, start:start},
+                cache: false,
+                success:function(data)
+                {
+                  if(data == '')
+                  {
+                    $('#load_data_message').html('<h7><i>No More Result Found</i></h7>');
+                    action = 'active';
+                  }
+                  else
+                  {
+                    $('#activity-timeline').append(data);
+                    $('#load_data_message').html("");
+                    action = 'inactive';
+                  }
+                }
+              })
+            }
+
+            if(action == 'inactive')
+            {
+              action = 'active';
+              load_data(limit, start);
+            }
+
+            $(window).scroll(function(){
+              if($(window).scrollTop() + $(window).height() > $("#activity-timeline").height() && action == 'inactive')
+              {
+                lazzy_loader(limit);
+                action = 'active';
+                start = start + limit;
+                $('#load_data_message').html('<h7><i>Please Wait...</i></h7>');
+                setTimeout(function(){
+                  load_data(limit, start);
+                }, 1000);
+              }
+            });
+
+
+
+
+          });
+          function handleTickInit(tick) {
+
+
+            var nextYear = (new Date()).getFullYear() + 1;
+            var deadline = "<?=$project->deadline?>"
+            console.log(nextYear);
+            Tick.count.down(deadline).onupdate = function(value) {
+            tick.value = value;
+            };
+
+            }
+          function updateProgress(progress_history_id) {
+            $.ajax({
+              type: "POST",
+              url: "<?php echo site_url('Project/getHistoryProgressById');?>",
+              data: "progress_history_id="+progress_history_id,
+              success: function (response) {
+                var row = JSON.parse(response);
+                console.log(row);
+                $('#progress_history_id_edit').val(row.progress_history_id);
+                $('#project_id_edit').val(row.project_id);
+                $('#project_detail_id_edit').val(row.project_detail_id);
+                $('#project_detail_percentage_edit').val(row.progress_percentage);
+                $('#progress_note_edit').html(row.progress_note);
+                $('.note-editable').html(row.progress_note);
+                $("select#progress_type_edit option[value='"+row.progress_type+"']").prop("selected","selected");
+
+              }
+            });
+          }
+          function updateHistoryFinancial(project_financials_id) {
+            $.ajax({
+              type: "POST",
+              url: "<?php echo site_url('Project/getHistoryFinancialById');?>",
+              data: "project_financials_id="+project_financials_id,
+              success: function (response) {
+                var row = JSON.parse(response);
+                console.log(row);
+                $('#mecasa_financial_id_edit').val(row.mecasa_financial_id);
+                $('#project_financials_id_edit').val(row.project_financials_id);
+                $('#financial_date_edit').val(row.financial_date);
+                $('#financial_note_edit').val(row.financial_note);
+                $('#financial_nominal_edit').val(row.financial_nominal);
+                $('#financial_pic_edit').val(row.financial_pic);
+                $('#removeHistoryFinancialButton').prop("href", "<?=base_url()?>Project/deleteHistoryFinancialAction/<?=$project->project_id?>/"+row.project_financials_id);
+                $("select#financial_type_edit option[value='"+row.financial_type+"']").prop("selected","selected");
+                $("select#financial_ops_type_edit option[value='"+row.financial_ops_type+"']").prop("selected","selected");
+
+              }
+            });
+          }
+          function photoHistoryFinancial(project_financials_id) {
+            $.ajax({
+              type: "POST",
+              url: "<?php echo site_url('Project/getHistoryFinancialById');?>",
+              data: "project_financials_id="+project_financials_id,
+              success: function (response) {
+                var row = JSON.parse(response);
+                console.log(row);
+                $('#photoHistoryAttachment').attr('src','<?= base_url();?>assets/attachments/'+row.attachment_name);
+                $('#project_financials_id_edit').val(row.project_financials_id);
+            
+              }
+            });
+          }
+          function assignOrder(order_id) {
+            $('#assignModal').modal('show'); 
+            $('#order_id').val(order_id);
+          }
+        </script>

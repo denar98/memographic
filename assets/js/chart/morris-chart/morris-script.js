@@ -312,11 +312,11 @@
             colors: [
               CubaAdminConfig.primary,
               CubaAdminConfig.secondary,
-              "#f8d62b",
+              "#fcc062",
               "#51bb25",
               "rgba(248, 214, 43, 1)",
               "#51bb25",
-              "#f8d62b",
+              "#fcc062",
             ],
             formatter: function (a) {
               return a + "%";
@@ -413,7 +413,7 @@
               CubaAdminConfig.primary,
               CubaAdminConfig.secondary,
               "#51bb25",
-              "#f8d62b",
+              "#fcc062",
               "#a927f9",
               CubaAdminConfig.secondary,
               CubaAdminConfig.primary,

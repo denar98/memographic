@@ -640,16 +640,16 @@
         {
           y: 8200,
           y2: 8400,
-          borderColor: "#f8d62b",
-          fillColor: "#f8d62b",
+          borderColor: "#fcc062",
+          fillColor: "#fcc062",
           opacity: 0.1,
           label: {
-            borderColor: "#f8d62b",
+            borderColor: "#fcc062",
             offsetX: -30,
             style: {
               fontSize: "10px",
               color: "#fff",
-              background: "#f8d62b",
+              background: "#fcc062",
             },
             text: "Y-axis range",
           },
@@ -1909,13 +1909,13 @@
         horizontal: true,
         barHeight: "15%",
         colors: {
-          backgroundBarColors: ["#F8D62B"],
+          backgroundBarColors: ["#fcc062"],
           backgroundBarOpacity: 0.2,
           backgroundBarRadius: 10,
         },
       },
     },
-    colors: ["#F8D62B"],
+    colors: ["#fcc062"],
     stroke: {
       width: 0,
     },
@@ -1926,10 +1926,10 @@
       },
     ],
     fill: {
-      colors: ["#F8D62B"],
+      colors: ["#fcc062"],
       type: "gradient",
       gradient: {
-        gradientToColors: ["#F8D62B"],
+        gradientToColors: ["#fcc062"],
       },
     },
     title: {

@@ -26,7 +26,6 @@ class Employee extends CI_Controller {
 		// 	$this->session->set_flashdata("error", 'Please Login Before You Access This Page');
 		// 	redirect('Login');
 		// }
-    unset($_SESSION['success']);
     error_reporting(0);
     $this->load->model('datatable_model');
     $this->load->model('crud_model');
