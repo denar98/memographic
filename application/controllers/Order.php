@@ -52,6 +52,7 @@ class Order extends CI_Controller {
 	{
     $data['order'] = $this->order_model->getDetailDataOrder($order_id)->row();
     $data['task_deliveries'] = $this->task_model->getTaskDeliveryByOrderId($order_id)->result();
+    $data['task'] = $this->task_model->getTaskByOrderId($order_id)->result();
     $data['attachments'] = $this->order_model->getAttachmentOrder($order_id)->result();
     $data['employees'] = $this->db->get("employees")->result();
     $data['tags'] = $this->db->get("tags")->result();
@@ -422,7 +423,12 @@ class Order extends CI_Controller {
       
       $order_id = $this->input->post('order_id');
       $order_row = $this->db->where('order_id',$order_id)->get('orders')->row();
-      $task_type = "New";
+      if($order_row->order_status=='On Progress'){
+        $task_type = "New";
+      }
+      else{
+        $task_type = "Revision";
+      }
       $employee_id = $this->input->post('employee_id');
       $task_date = Date('Y-m-d');
       $task_estimation_hour = $this->input->post('task_estimation_hour');
@@ -449,6 +455,102 @@ class Order extends CI_Controller {
       );
 
       
+      $add = $this->crud_model->createData('tasks',$data);
+      if($add){
+        $where = 'order_id='.$order_id;
+        $update = $this->crud_model->updateData('orders',$data_order,$where);
+        $this->session->set_flashdata("success", "Your Data Has Been Added !");
+        if($this->input->post('source_assign') == "fromDetailPage"){
+          redirect('Order/detail/'.$order_id);
+        }else{
+          redirect('Order/');
+        }
+      }
+
+    }
+    public function assignRevisionAction()
+    {
+      
+      $order_id = $this->input->post('order_id');
+      $order_row = $this->db->where('order_id',$order_id)->get('orders')->row();
+      if($order_row->order_status=='On Progress'){
+        $task_type = "New";
+      }
+      else{
+        $task_type = "Revision";
+      }
+      $employee_id = $this->input->post('employee_id');
+      $task_date = Date('Y-m-d');
+      $task_estimation_hour = $this->input->post('task_estimation_hour');
+      $task_estimation_minute = $this->input->post('task_estimation_minute');
+      $task_start = $this->input->post('task_start');
+      $task_brief = $this->input->post('brief');
+      $tag_id = $this->input->post('tag_id');
+
+      $task_row = $this->db->limit(1)->order_by('task_id','desc')->get('tasks')->row();
+      $service_row = $this->db->where('service_id',$order_row->service_id)->get('services')->row();
+      $client_exist_row = $this->db->where('client_id',$order_row->client_id)->get('clients')->row();
+
+      $employee_row = $this->db->where('employee_id',$employee_id)->get('employees')->row();
+      $data = array(
+        'order_id' => $order_id,
+        'task_type' => $task_type,
+        'employee_id' => $employee_id,
+        'task_date' => $task_date,
+        'task_estimation_hour' => $task_estimation_hour,
+        'task_estimation_minute' => $task_estimation_minute,
+        'task_start' => $task_start,
+        'task_brief' => $task_brief,
+        'tag_id' => $tag_id,
+        'task_status' => 'Open'
+      );
+      $data_order = array(
+        'assign_to' => $employee_row->employee_name,
+        'order_status' => 'In Revision'
+      );
+
+      $attachments = [];
+   
+      $count = count($_FILES['files']['name']);
+    
+      for($i=0;$i<$count;$i++){
+    
+        if(!empty($_FILES['files']['name'][$i])){
+    
+
+          // $date = str_replace( ':', '', $date);
+          if (!is_dir('assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments')) {
+            mkdir('./assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments', 0777, TRUE);
+          }
+          $path = './assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments';
+          $_FILES['file']['name'] = $_FILES['files']['name'][$i];
+          $_FILES['file']['type'] = $_FILES['files']['type'][$i];
+          $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
+          $_FILES['file']['error'] = $_FILES['files']['error'][$i];
+          $_FILES['file']['size'] = $_FILES['files']['size'][$i];
+  
+          $config['upload_path'] = $path; 
+          $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
+          $config['overwrite'] = TRUE;
+          $config['file_name'] = $_FILES['files']['name'][$i];
+          
+          $this->upload->initialize($config);
+  
+          if($this->upload->do_upload('file')){
+            $uploadData = $this->upload->data();
+            $filename = $uploadData['file_name'];
+   
+            $attachments['totalFiles'][] = $filename;
+  
+            $data_attachments = array(
+              'task_id' => $task_row->task_id+1,
+              'task_attachment_name' => $filename,
+            );
+            $add_attachments = $this->crud_model->createData('task_attachments',$data_attachments);
+        
+          }
+        }
+      }
       $add = $this->crud_model->createData('tasks',$data);
       if($add){
         $where = 'order_id='.$order_id;
@@ -515,6 +617,29 @@ class Order extends CI_Controller {
       $add = $this->crud_model->createData('projects',$data);
       $this->session->set_flashdata("success", "Your Data Has Been Added !");
       redirect('Order/createOrderProject/'.$order_id);
+
+    }
+    public function sentTaskAction($task_id,$order_id)
+    {
+
+      $data_task = array(
+        'task_status' => 'Delivered'
+      );
+      $data_order = array(
+        'order_status' => 'Delivered',
+        'assign_to' => NULL
+      );
+      $where_task = 'task_id='.$task_id;
+      $where_order = 'order_id='.$order_id;
+      $update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
+      if($update_task){
+        $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
+        if($update_order){
+          $this->session->set_flashdata("success", "Your Data Has Been Delivered !");
+          redirect('Order/detail/'.$order_id);  
+        }
+  
+      }
 
     }
 

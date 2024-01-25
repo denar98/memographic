@@ -16,11 +16,18 @@
                     <h5 class="float-left">Detail Project</h5>
                     <a href="<?=base_url()?>Order/edit/<?=$order->order_id?>"> <button type="button" class="btn btn-warning float-right mr-3" name="button" >Edit Project</button></a>
                     <?php
-                      if($order->assign_to==null){
+                      if($order->assign_to==null && $order->order_status=='On Progress'){
                     ?>
                       <a href="#"> <button type="button" class="btn btn-info float-right mr-3" onclick="assignOrder('<?=$order->order_id?>')" name="button" >Assign Order</button></a>
-                    <?php }else{ ?>
+                    <?php }else if($order->assign_to!=null){ ?>
                       <a href="#"> <button type="button" class="btn btn-info float-right mr-3"  name="button" >Assigned to <?=$order->assign_to?></button></a>
+                    <?php } ?>
+
+                    <?php
+                      if($order->assign_to==null && $order->order_status=='Delivered' || $order->order_status=='Completed'){
+                    ?>
+                      <a href="#"> <button type="button" class="btn btn-info float-right mr-3" onclick="assignRevision('<?=$order->order_id?>')" name="button" >Assign Revision</button></a>
+
                     <?php } ?>
                   </div>
                 </div>
@@ -65,67 +72,120 @@
                     </div>
                   </div>
                 </div>
+                
+
                 <?php 
-                  foreach($task_deliveries as $task_delivery){
+                  foreach($task as $task_delivery){
                     if($task_delivery->task_delivery_type == "New"){
                       $task_delivery_type = "First Preview";
+                      $task_delivery_type_color = 'primary';
                     }
                     else{
-                      $task_delivery_type = "Revision";
+                      if($task_delivery->task_delivery_count == ""){
+                        $last_task_delivery_count = $this->db->limit(1)->order_by('task_delivery_id','desc')->get('task_deliveries')->row();
+
+                        $task_delivery_type = "Revision Notes ".$last_task_delivery_count->task_delivery_count +1;
+                        $task_delivery_type_color = 'danger';
+                      }else{
+                        $task_delivery_type = "Revision ".$task_delivery->task_delivery_count;
+                        $task_delivery_type_color = 'primary';
+                      }
+                    }
+                    if($task_delivery->task_status == 'Open' || $task_delivery->task_status == 'Done'){
+                      $card_color = '#ffffff';
+                      $card_header_color = 'primary';
+                      $task_delivery_type_color = 'white';
+                      $collaps_status = 'show';
+                    }
+                    else{
+                      $card_color = '#f8f8f8';
+                      $card_header_color = 'white';
+                      $task_delivery_type_color = 'gray';
+                      $collaps_status = '';
                     }
                 ?>
-                <div class="card">
-                  <div class="card-body">
-                    <div class="tab-content" id="top-tabContent">
-                      <div class="default-according style-1 faq-accordion" id="accordionProgress">
-                        <div class="row">
-                          <div class="col-xl-12 col-lg-12">
-                            <div class="card ">
-                              <div class="card-header" id="headingTwo">
-                                <h2 class="mb-0">
-                                  <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo"><h6><?=$task_delivery_type?></h6></button>
-                                </h2>
+                <div class="tab-content" id="top-tabContent">
+                  <div class="default-according style-1 faq-accordion" id="accordion<?=$task_delivery->task_id?>">
+                    <div class="card bg-">
+                      <div class="card-header bg-<?=$card_header_color?> pt-4 pb-3">
+                          
+                          <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse<?=$task_delivery->task_id?>" aria-expanded="true" aria-controls="collapse<?=$task_delivery->task_id?>"><h6 class="text-<?=$task_delivery_type_color?> float-left mt-2"><?=$task_delivery_type?></h6></button>
+
+                      </div>
+                      <div class="collapse <?=$collaps_status?>" id="collapse<?=$task_delivery->task_id?>" aria-labelledby="heading<?=$task_delivery->task_id?>" data-parent="#accordion<?=$task_delivery->task_id?>">
+                        <div class="card-body pt-4 pb-4">
+                        
+                          <div class="activity-timeline" id="activity-timeline">
+                            <div class="row">
+                              <div class="col-md-6  align-middle">
+                                <h6 class="float-left mt-3"><i data-feather="user" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->employee_name?></h6>
+                                <h6 class="ml-3 float-left mt-3"><i data-feather="clock" class="mr-1 pt-2 text-primary" ></i><?=date_format(date_create($task_delivery->task_delivery_date),"d M Y H:i")?></h6>
+                                <h6 class="ml-3 float-left mt-3"><i data-feather="flag" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->task_status?></h6>
                               </div>
-                              <div class="collapse show" id="collapseTwo" aria-labelledby="headingTwo" data-parent="#accordionProgress">
-                                <div class="card-body socialprofile filter-cards-view pt-2 pb-2" id="divProgress">
-                                  <div class="activity-timeline row" id="activity-timeline">
-                                    <div class="col-md-6  align-middle">
-                                      <h6 class="float-left mt-3"><i data-feather="user" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->employee_name?></h6>
-                                      <h6 class="ml-3 float-left mt-3"><i data-feather="clock" class="mr-1 pt-2 text-primary" ></i><?=date_format(date_create($task_delivery->task_delivery_date),"d M Y H:i")?></h6>
-                                      <h6 class="ml-3 float-left mt-3"><i data-feather="flag" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->task_status?></h6>
-                                    </div>
-                                    <div class="col-md-5 text-right align-bottom">
-                                      <?php 
-                                        $task_delivery_attachments = $this->task_model->getTaskDeliveryAttachment($task_delivery->task_delivery_id)->result();
-                                        foreach($task_delivery_attachments as $task_delivery_attachment){
-                                          if($task_delivery_attachment->task_delivery_attachment_type == "Preview"){
-                                            $task_delivery_attachment_type = 'preview';
-                                          }
-                                          else{
-                                            $task_delivery_attachment_type = 'source';
-                                          }
-                                        ?>
-                                      <div class="ml-4 text-center float-right">
-                                        <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
-                                          <img src="<?=base_url()?>assets/images/file-download-placeholder-01.png" style="width: 50px;" alt="">
-                                        </a>
-                                        <p><?=substr($task_delivery_attachment->task_delivery_attachment_name,0,8)	?>...</p>  
-                                      </div>
-                                      <?php } ?>
-                                    </div>
-                                    <div class="col-md-1 align-middle text-right">
-                                      <!-- <div style="border-left:2px solid #b3bac0; height: 100%; float:left; margin-left:15px;"></div> -->
-                                      <a href="#" class=""><i data-feather="star" class="text-primary mt-3" ></i></a>
-                                    </div>
-                                  </div>
+                              <div class="col-md-5 text-right align-bottom">
+                                <?php 
+                                  $task_delivery_attachments = $this->task_model->getTaskDeliveryAttachment($task_delivery->task_delivery_id)->result();
+                                  foreach($task_delivery_attachments as $task_delivery_attachment){
+                                    if($task_delivery_attachment->task_delivery_attachment_type == "Preview"){
+                                      $task_delivery_attachment_type = 'preview';
+                                    }
+                                    else{
+                                      $task_delivery_attachment_type = 'source';
+                                    }
+                                  ?>
+                                <div class="ml-3 text-center float-right">
+                                  <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
+                                    <?php if($task_delivery_attachment->task_delivery_attachment_type =='Preview'){?>
+                                    <img src="<?=base_url()?>assets/images/Download-01.png" style="width: 50px;" alt="" title="<?=$task_delivery_attachment->task_delivery_attachment_name?>">
+                                    <?php } else { ?>
+                                    <img src="<?=base_url()?>assets/images/Download-03.png" style="width: 50px;" alt="" title="<?=$task_delivery_attachment->task_delivery_attachment_name?>">
+                                    <?php } ?>
+                                  </a>
+                                  <p title="<?=$task_delivery_attachment->task_delivery_attachment_name?>"><?=substr($task_delivery_attachment->task_delivery_attachment_name,0,5)	?>..</p>  
                                 </div>
-             
+                                <?php } ?>
+                              </div>                 
+                              <div class="col-md-1 align-middle text-right">
+                                <!-- <div style="border-left:2px solid #b3bac0; height: 100%; float:left; margin-left:15px;"></div> -->
+                                <?php if($task_delivery->task_status =='Delivered'){?>
+                                <a href="#" title="Rating" class="btn btn-primary mt-1" style="padding: 8px 15px;"><i data-feather="star" class="text-white mt-2" ></i></a>
+                                <?php } ?>
+                                <?php 
+                                if($task_delivery->task_status=='Done'){
+                                ?>
+                                <a href="<?=base_url()?>Order/sentTaskAction/<?=$task_delivery->task_id?>/<?=$task_delivery->order_id?>" title="Sent" class="btn btn-primary mt-1" style="    padding: 8px 15px;"><i data-feather="navigation" class="text-white mt-2" ></i></a>
+                                <?php } ?>
+      
                               </div>
                             </div>
-                            
+                            <?php if($task_delivery->task_type =='Revision'){?>
+                            <div class="row">
+                              <div class="col-md-12">
+                                <hr>
+                                <?= $task_delivery->task_brief ?>
+                              </div>
+                            </div>
+                            <?php } ?>
+                            <div class="row">
+                              <div class="col-md-12">
+                                <hr>
+                                <?php 
+                                    $task_attachments = $this->task_model->getTaskAttachment($task_delivery->task_id)->result();
+                                    foreach($task_attachments as $task_attachment){
+                                    ?>
+                                  <div class="ml-3 text-center float-left">
+                                    <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_attachments->task_attachment_name?>" download >
+                                      <img src="<?=base_url()?>assets/images/Download-02.png" style="width: 50px;" alt="">
+                                    </a>
+                                    <p><?=substr($task_attachment->task_attachment_name,0,5)	?>..</p>  
+                                  </div>
+                                  <?php } ?>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
+
                       
                     </div>
                   </div>
@@ -133,10 +193,10 @@
                 <?php } ?>
               </div>
               <div class="col-sm-3">
-                  <div class="col-xl-12 col-lg-12">
+                  <div class="col-xl-12 col-lg-12" >
 
                   
-                    <div class="card" >
+                    <div class="card  project-detail-div" >
                       <div class="card-header p-4"><h6>Project Detail</h6></div>
                       <div class="card-body p-4" style="border-radius:10px;">
                         <h6 class=""><?= $order->service_name ?></h6>
@@ -147,7 +207,7 @@
                         <p>Order Nominal  <span class="pull-right font-weight-bold"> $<?= number_format($order->order_nominal)?></span></p>
                       </div>
                     </div>
-                    <div class="card mt-4" >
+                    <div class="card mt-4 project-attachement-div" >
                       <div class="card-header p-4"><h6>Project Attachments</h6></div>
                       <div class="card-body p-4" style="border-radius:10px;">
                         <ul class="list-group list-group-flush">
@@ -243,78 +303,128 @@
           </div>
 
         </div>
+        <div class="modal fade " id="assignRevisionModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:hidden;">
+          <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>Order/assignRevisionAction" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Assign Revision</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <input class="form-control" name="order_id" id="order_id_revision" type="hidden" required>
+                        <input class="form-control" name="source_assign" id="source_assign" type="hidden" value="fromDetailPage" required>
+                        <div class="form-group">
+                          <label>Assign to</label>
+                          <select class="form-control" name="employee_id" id="employee_id" required>
+                            <?php
+                            foreach($employees as $employee){
+                            ?>
+                            <option value="<?=$employee->employee_id?>"><?=$employee->employee_name?></option>
+                            <?php } ?>
+                          </select>
+                        </div>  
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Start Date</label>
+                          <div class="input-group flatpicker-calender">
+                            <input class="form-control" id="datetime-local" name="task_start" type="date"  required>
+                          </div>
+                            <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Tag Priority</label>
+                          <select class="form-control" name="tag_id" id="tag_id" required>
+                            <?php
+                            foreach($tags as $tag){
+                            ?>
+                            <option value="<?=$tag->tag_id?>" ><?=$tag->tag_name?></option>
+                            <?php } ?>
+                          </select>
+                        </div>  
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Estimation </label>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <input class="form-control" name="task_estimation_hour" type="number" placeholder="Hours" required>
+                            </div>
+                            <div class="col-md-6">
+                              <input class="form-control" name="task_estimation_minute" type="number" placeholder="Minutes" required>
+                            </div>
+                          </div>
+                        </div>  
+                      </div>
+                      <div class="col-md-12">
+                        <hr>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group mt-2" id="brief_revision_div">
+                          <!-- <label>Revision Notes</label> -->
+                          <textarea class="summernote2" name="brief" style="max-height: 500px; overflow: scroll;">
+                            <br>
+                            <!-- <h5>Revision Notes</h5> -->
+                            <p class="text-muted">
+                            </p>
+                          </textarea>
+                          <!-- <textarea class="form-control" id="exampleFormControlTextarea4" rows="3"></textarea> -->
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label class="form-label" for="formFileMultiple">Attachments</label>
+                          <input class="form-control" id="formFileMultiple" type="file"  name="files[]" multiple="">
+                        </div>
+                      </div>
+                      
+                    </div>
+                      
+                    
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
         
         <script>
           $(document).ready(function(){
 
+            var div_top = $('.project-detail-div').offset().top;
 
-            var limit = 20;
-            var start = 0;
-            var action = 'inactive';
+            // $(window).scroll(function() {
+            //     var window_top = $(window).scrollTop() - 0;
+            //     if (window_top > div_top) {
+            //         if (!$('.project-detail-div').is('.sticky')) {
+            //             $('.project-detail-div').addClass('sticky');
+            //             $('.project-attachement-div').addClass('sticky');
 
-            function lazzy_loader(limit)
-            {
-              var output = '';
-              for(var count=0; count<limit; count++)
-              {
-                output += '<div class="post_data">';
-                output += '<p><span class="content-placeholder" style="width:100%; height: 30px;">&nbsp;</span></p>';
-                output += '<p><span class="content-placeholder" style="width:100%; height: 100px;">&nbsp;</span></p>';
-                output += '</div>';
-              }
-              // $('#top-home').html(output);
-            }
+            //         }
+            //     } else {
+            //         $('.project-detail-div').removeClass('sticky');
+            //         $('.project-attachement-div').removeClass('sticky');
 
-            lazzy_loader(limit);
-
-            function load_data(limit, start)
-            {
-              var project_detail_id = "<?=$project->project_detail_id;?>";
-              $.ajax({
-                url:"<?php echo base_url(); ?>Project/fetchProgress/"+project_detail_id,
-                method:"POST",
-                data:{limit:limit, start:start},
-                cache: false,
-                success:function(data)
-                {
-                  if(data == '')
-                  {
-                    $('#load_data_message').html('<h7><i>No More Result Found</i></h7>');
-                    action = 'active';
-                  }
-                  else
-                  {
-                    $('#activity-timeline').append(data);
-                    $('#load_data_message').html("");
-                    action = 'inactive';
-                  }
-                }
-              })
-            }
-
-            if(action == 'inactive')
-            {
-              action = 'active';
-              load_data(limit, start);
-            }
-
-            $(window).scroll(function(){
-              if($(window).scrollTop() + $(window).height() > $("#activity-timeline").height() && action == 'inactive')
-              {
-                lazzy_loader(limit);
-                action = 'active';
-                start = start + limit;
-                $('#load_data_message').html('<h7><i>Please Wait...</i></h7>');
-                setTimeout(function(){
-                  load_data(limit, start);
-                }, 1000);
-              }
-            });
-
+            //     }
+            // });
 
 
 
           });
+
           function handleTickInit(tick) {
 
 
@@ -383,5 +493,10 @@
           function assignOrder(order_id) {
             $('#assignModal').modal('show'); 
             $('#order_id').val(order_id);
+          }
+          function assignRevision(order_id) {
+            $('#assignRevisionModal').modal('show'); 
+            $('#order_id_revision').val(order_id);
+            $('.note-status-output').hide();
           }
         </script>

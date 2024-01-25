@@ -49,10 +49,10 @@ class Task extends CI_Controller {
   	  
 	  $detail_task = $this->task_model->getDetailTask($task_id)->row();
       $order_id = $detail_task->order_id;
-	  $task_delivery = $this->db->limit(1)->order_by('task_delivery_id','desc')->get('task_deliveries')->result();
-	  $task_delivery_last_count = $this->db->where('order_id',$order_id)->limit(1)->order_by('task_delivery_count','desc')->get('task_deliveries')->result();
+	  $task_delivery = $this->db->limit(1)->order_by('task_delivery_id','desc')->get('task_deliveries')->row();
+	  $task_delivery_last_count = $this->db->where('order_id',$order_id)->limit(1)->order_by('task_delivery_count','desc')->get('task_deliveries')->row();
 	  if($detail_task->task_type == 'Revision'){
-		$task_delivery_final_count = $task_delivery_last_count + 1;
+		$task_delivery_final_count = $task_delivery_last_count->task_delivery_count + 1;
 		$data_task_delivery = array(
 			'task_id'=>$task_id,
 			'order_id'=>$order_id,
@@ -115,7 +115,7 @@ class Task extends CI_Controller {
   
             $preview_files_attachments_data = array(
               'task_id' => $task_id,
-              'task_delivery_id' => $task_delivery->task_delivery_id,
+              'task_delivery_id' => $task_delivery->task_delivery_id+1,
               'task_delivery_attachment_type' => 'Preview',
               'task_delivery_attachment_name' => $filename,
             );
@@ -160,7 +160,7 @@ class Task extends CI_Controller {
   
             $source_files_attachments_data = array(
               'task_id' => $task_id,
-              'task_delivery_id' => $task_delivery->task_delivery_id,
+              'task_delivery_id' => $task_delivery->task_delivery_id+1,
               'task_delivery_attachment_type' => 'Source Files',
               'task_delivery_attachment_name' => $filename,
             );

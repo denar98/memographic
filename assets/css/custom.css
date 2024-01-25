@@ -84,3 +84,36 @@ div.dataTables_wrapper div.dataTables_paginate{
 .table-task td:first-child,.table-task th:first-child{
     padding-left: 30px !important;
 }
+.brief_revision_div > .note-status-output{
+    display: none !important;
+
+}
+.note-insert,.note-view,.note-fontname{
+    display: none !important;
+}
+.note-btn-group .note-btn{
+    background-color: #ededed !important;
+}
+.project-detail-div {
+    width: 100%;
+    z-index: 99;
+    position: static;
+}
+
+.project-detail-div.sticky {
+    position: fixed;
+    top: 100px;
+}
+.project-attachement-div {
+    width: 100%;
+    z-index: 99;
+    position: static;
+}
+
+.project-attachement-div.sticky {
+    position: fixed;
+    top: 425px;
+}
+.text-gray{
+    color: #959393;
+}
