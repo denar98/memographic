@@ -133,7 +133,7 @@
                                       $task_delivery_attachment_type = 'source';
                                     }
                                   ?>
-                                <div class="ml-3 text-center float-right">
+                                <div class="mr-3 text-center float-right">
                                   <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
                                     <?php if($task_delivery_attachment->task_delivery_attachment_type =='Preview'){?>
                                     <img src="<?=base_url()?>assets/images/Download-01.png" style="width: 50px;" alt="" title="<?=$task_delivery_attachment->task_delivery_attachment_name?>">
@@ -145,7 +145,7 @@
                                 </div>
                                 <?php } ?>
                               </div>                 
-                              <div class="col-md-1 align-middle text-right">
+                              <div class="col-md-1 align-middle text-center" style="border-left:1px solid #dfdfdf">
                                 <!-- <div style="border-left:2px solid #b3bac0; height: 100%; float:left; margin-left:15px;"></div> -->
                                 <?php if($task_delivery->task_status =='Delivered'){?>
                                 <a href="#" title="Rating" class="btn btn-primary mt-1" style="padding: 8px 15px;"><i data-feather="star" class="text-white mt-2" ></i></a>
