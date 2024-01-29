@@ -38,6 +38,10 @@ class Order extends CI_Controller {
 
 	public function index()
 	{
+    if($this->session->userdata('role')!='Admin' && $this->session->userdata('role')!='Project Manager'){
+			$this->session->set_flashdata("error", "You Don't Have Access To This Page");
+			redirect('Dashboard/designer');
+		}
     $data['page'] = 'order';
 		$data['module'] = 'project';
 
@@ -298,7 +302,7 @@ class Order extends CI_Controller {
   
           $config['upload_path'] = $path; 
           $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
-          $config['overwrite'] = TRUE;
+          $config['overwrite'] = FALSE;
           $config['file_name'] = $_FILES['files']['name'][$i];
           
           $this->upload->initialize($config);
@@ -388,7 +392,7 @@ class Order extends CI_Controller {
   
             $config['upload_path'] = $path; 
             $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
-            $config['overwrite'] = TRUE;
+            $config['overwrite'] = FALSE;
             $config['file_name'] = $_FILES['files']['name'][$i];
             
             $this->upload->initialize($config);
@@ -422,48 +426,127 @@ class Order extends CI_Controller {
     {
       
       $order_id = $this->input->post('order_id');
+      $assign_type = $this->input->post('assign_type');
       $order_row = $this->db->where('order_id',$order_id)->get('orders')->row();
+      $task_revision_count_row = $this->db->where('order_id',$order_id)->order_by('task_revision_count','desc')->get('tasks')->row();
+      $task_new_count_row = $this->db->where('order_id',$order_id)->order_by('task_new_count','desc')->get('tasks')->row();
+
+      if($task_revision_count_row){
+        $task_revision_count = $task_revision_count_row->task_revision_count + 1;
+      }
+      else{
+        $task_revision_count = 1;
+      }
+
+      if($task_new_count_row ){
+        $task_new_count = $task_new_count_row->task_new_count + 1;
+      }
+      else{
+        $task_new_count = 1;
+      }
+
       if($order_row->order_status=='On Progress'){
         $task_type = "New";
       }
       else{
         $task_type = "Revision";
       }
+
+      if($task_type == 'New'){
+        $task_revision_count = "";
+      }
+      else{
+        $task_new_count = "";
+
+      }
+
       $employee_id = $this->input->post('employee_id');
+      $task_id = $this->input->post('task_id');
       $task_date = Date('Y-m-d');
       $task_estimation_hour = $this->input->post('task_estimation_hour');
       $task_estimation_minute = $this->input->post('task_estimation_minute');
       $task_start = $this->input->post('task_start');
       $task_brief = $order_row->brief;
       $tag_id = $this->input->post('tag_id');
-
       $employee_row = $this->db->where('employee_id',$employee_id)->get('employees')->row();
       $data = array(
         'order_id' => $order_id,
         'task_type' => $task_type,
         'employee_id' => $employee_id,
+        'task_name' => $task_date,
         'task_date' => $task_date,
         'task_estimation_hour' => $task_estimation_hour,
         'task_estimation_minute' => $task_estimation_minute,
         'task_start' => $task_start,
-        'task_brief' => $task_brief,
+        'task_brief' => 'As described on the initial requirement',
         'tag_id' => $tag_id,
-        'task_status' => 'Open'
+        'task_status' => 'Open',
+        'task_new_count' => $task_new_count,
+        'task_revision_count' => $task_revision_count,
       );
+      
+      // if($order_row->assign_to != '' || $order_row->assign_to != null){
+      //   $assign_to = $order_row->assign_to.', '.$employee_row->employee_name;
+      // }
+      // else{
+      //   $assign_to = $employee_row->employee_name;
+      // }
       $data_order = array(
-        'assign_to' => $employee_row->employee_name
+        'assign_to' =>  $employee_row->employee_name
       );
 
-      
-      $add = $this->crud_model->createData('tasks',$data);
+      if($assign_type=='update'){
+        $where = 'task_id='.$task_id;
+        $add = $this->crud_model->updateData('tasks',$data,$where);
+      }      
+      else{
+        $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+        $estimate_hour = 0;
+        $estimate_minute = 0;
+        foreach ($task_todays as $task_today) {
+          $estimate_hour += $task_today->task_estimation_hour;
+          $estimate_minute += $task_today->task_estimation_minute;
+        } 
+  
+        $current_estimate = ($estimate_hour*60) + $estimate_minute;
+        $new_estimate = ($task_estimation_hour*60) + $task_estimation_minute;
+        $total_estimate = $new_estimate + $current_estimate;
+        $overtime_time = ($new_estimate + $current_estimate) - 420;
+        if(Date('D') =='Sun'){
+          $overtime_type = 'Weekend';
+        }else{
+          $overtime_type = 'Weekday';
+        }
+        if($total_estimate >420){
+          $data_overtime = array(
+            'employee_id' => $employee_id,
+            'date' => Date('Y-m-d'),
+            'overtime_type' => $overtime_type,
+            'overtime_time' => $overtime_time,
+          );
+          $overtimes = $this->db->get('overtimes');
+          if($overtimes->num_rows() > 0){
+            $where_overtime = "employee_id=".$employee_id." AND date='".Date('Y-m-d')."'";
+            $this->crud_model->updateData('overtimes',$data_overtime,$where_overtime);          
+          }else{
+            $this->crud_model->createData('overtimes',$data_overtime);
+          }
+        }
+        $add = $this->crud_model->createData('tasks',$data);
+      }
       if($add){
         $where = 'order_id='.$order_id;
         $update = $this->crud_model->updateData('orders',$data_order,$where);
-        $this->session->set_flashdata("success", "Your Data Has Been Added !");
+        if($assign_type=='update'){
+          $this->session->set_flashdata("success", "Your Data Has Been Updated !");
+        }      
+        else{
+          $this->session->set_flashdata("success", "Your Data Has Been Added !");
+        }
         if($this->input->post('source_assign') == "fromDetailPage"){
           redirect('Order/detail/'.$order_id);
         }else{
-          redirect('Order/');
+          redirect('Order/detail/'.$order_id);
         }
       }
 
@@ -479,6 +562,8 @@ class Order extends CI_Controller {
       else{
         $task_type = "Revision";
       }
+      $assign_type = $this->input->post('assign_type');
+      $task_id = $this->input->post('task_id');
       $employee_id = $this->input->post('employee_id');
       $task_date = Date('Y-m-d');
       $task_estimation_hour = $this->input->post('task_estimation_hour');
@@ -492,6 +577,39 @@ class Order extends CI_Controller {
       $client_exist_row = $this->db->where('client_id',$order_row->client_id)->get('clients')->row();
 
       $employee_row = $this->db->where('employee_id',$employee_id)->get('employees')->row();
+
+      $task_revision_count_row = $this->db->where('order_id',$order_id)->order_by('task_revision_count','desc')->get('tasks')->row();
+      $task_new_count_row = $this->db->where('order_id',$order_id)->order_by('task_new_count','desc')->get('tasks')->row();
+
+      if($task_revision_count_row){
+        $task_revision_count = $task_revision_count_row->task_revision_count + 1;
+      }
+      else{
+        $task_revision_count = 1;
+      }
+
+      if($task_new_count_row ){
+        $task_new_count = $task_new_count_row->task_new_count + 1;
+      }
+      else{
+        $task_new_count = 1;
+      }
+
+      if($order_row->order_status=='On Progress'){
+        $task_type = "New";
+      }
+      else{
+        $task_type = "Revision";
+      }
+
+      if($task_type == 'New'){
+        $task_revision_count = "";
+      }
+      else{
+        $task_new_count = "";
+
+      }
+
       $data = array(
         'order_id' => $order_id,
         'task_type' => $task_type,
@@ -502,7 +620,9 @@ class Order extends CI_Controller {
         'task_start' => $task_start,
         'task_brief' => $task_brief,
         'tag_id' => $tag_id,
-        'task_status' => 'Open'
+        'task_status' => 'Open',
+        'task_new_count' => $task_new_count,
+        'task_revision_count' => $task_revision_count,
       );
       $data_order = array(
         'assign_to' => $employee_row->employee_name,
@@ -528,10 +648,11 @@ class Order extends CI_Controller {
           $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
           $_FILES['file']['error'] = $_FILES['files']['error'][$i];
           $_FILES['file']['size'] = $_FILES['files']['size'][$i];
-  
+          $_FILES['file']['file_ext'] = $_FILES['files']['file_ext'][$i];
+    
           $config['upload_path'] = $path; 
           $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
-          $config['overwrite'] = TRUE;
+          $config['overwrite'] = FALSE;
           $config['file_name'] = $_FILES['files']['name'][$i];
           
           $this->upload->initialize($config);
@@ -545,19 +666,226 @@ class Order extends CI_Controller {
             $data_attachments = array(
               'task_id' => $task_row->task_id+1,
               'task_attachment_name' => $filename,
+              'task_attachment_ext' =>$uploadData['file_ext'],
+              'task_attachment_width' => $uploadData['image_width'],
+              'task_attachment_height' => $uploadData['image_height'],
             );
             $add_attachments = $this->crud_model->createData('task_attachments',$data_attachments);
         
           }
         }
       }
-      $add = $this->crud_model->createData('tasks',$data);
+      if($assign_type=='update'){
+
+        $where = 'task_id='.$task_id;
+        $add = $this->crud_model->updateData('tasks',$data,$where);
+      }      
+      else{
+        $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+        $estimate_hour = 0;
+        $estimate_minute = 0;
+        foreach ($task_todays as $task_today) {
+          $estimate_hour += $task_today->task_estimation_hour;
+          $estimate_minute += $task_today->task_estimation_minute;
+        } 
+  
+        $current_estimate = ($estimate_hour*60) + $estimate_minute;
+        $new_estimate = ($task_estimation_hour*60) + $task_estimation_minute;
+        $total_estimate = $new_estimate + $current_estimate;
+        $overtime_time = ($new_estimate + $current_estimate) - 420;
+        if(Date('D') =='Sun'){
+          $overtime_type = 'Weekend';
+        }else{
+          $overtime_type = 'Weekday';
+        }
+        if($total_estimate >420){
+          $data_overtime = array(
+            'employee_id' => $employee_id,
+            'date' => Date('Y-m-d'),
+            'overtime_type' => $overtime_type,
+            'overtime_time' => $overtime_time,
+          );
+          $overtimes = $this->db->get('overtimes');
+          if($overtimes->num_rows() > 0){
+            $where_overtime = "employee_id=".$employee_id." AND date='".Date('Y-m-d')."'";
+            $this->crud_model->updateData('overtimes',$data_overtime,$where_overtime);          
+          }else{
+            $this->crud_model->createData('overtimes',$data_overtime);
+          }
+        }
+        $add = $this->crud_model->createData('tasks',$data);
+      }
+
       if($add){
         $where = 'order_id='.$order_id;
         $update = $this->crud_model->updateData('orders',$data_order,$where);
         $this->session->set_flashdata("success", "Your Data Has Been Added !");
         if($this->input->post('source_assign') == "fromDetailPage"){
           redirect('Order/detail/'.$order_id);
+        }else if($this->input->post('source_assign') == "fromTaskPage"){
+          redirect('Task');
+        }else{
+          redirect('Order/');
+        }
+      }
+
+    }
+    public function assignNewTaskAction()
+    {
+      
+      $order_id = $this->input->post('order_id');
+      $task_type = $this->input->post('task_type');
+      $order_row = $this->db->where('order_id',$order_id)->get('orders')->row();
+      $assign_type = $this->input->post('assign_type');
+      $task_id = $this->input->post('task_id');
+      $employee_id = $this->input->post('employee_id');
+      $task_date = Date('Y-m-d');
+      $task_estimation_hour = $this->input->post('task_estimation_hour');
+      $task_estimation_minute = $this->input->post('task_estimation_minute');
+      $task_start = $this->input->post('task_start');
+      $task_brief = $this->input->post('brief');
+      $tag_id = $this->input->post('tag_id');
+
+      $task_row = $this->db->limit(1)->order_by('task_id','desc')->get('tasks')->row();
+      $service_row = $this->db->where('service_id',$order_row->service_id)->get('services')->row();
+      $client_exist_row = $this->db->where('client_id',$order_row->client_id)->get('clients')->row();
+
+      $employee_row = $this->db->where('employee_id',$employee_id)->get('employees')->row();
+      $task_revision_count_row = $this->db->where('order_id',$order_id)->order_by('task_revision_count','desc')->get('tasks')->row();
+      $task_new_count_row = $this->db->where('order_id',$order_id)->order_by('task_new_count','desc')->get('tasks')->row();
+
+      if($task_revision_count_row){
+        $task_revision_count = $task_revision_count_row->task_revision_count + 1;
+      }
+      else{
+        $task_revision_count = 1;
+      }
+
+      if($task_new_count_row ){
+        $task_new_count = $task_new_count_row->task_new_count + 1;
+      }
+      else{
+        $task_new_count = 1;
+      }
+
+
+      if($task_type == 'New'){
+        $task_revision_count = "";
+      }
+      else{
+        $task_new_count = "";
+
+      }
+
+      $data = array(
+        'order_id' => $order_id,
+        'task_type' => $task_type,
+        'employee_id' => $employee_id,
+        'task_date' => $task_date,
+        'task_estimation_hour' => $task_estimation_hour,
+        'task_estimation_minute' => $task_estimation_minute,
+        'task_start' => $task_start,
+        'task_brief' => $task_brief,
+        'tag_id' => $tag_id,
+        'task_status' => 'Open',
+        'task_new_count' => $task_new_count,
+        'task_revision_count' => $task_revision_count,
+      );
+      $data_order = array(
+        'assign_to' => $employee_row->employee_name,
+        'order_status' => 'In Revision'
+      );
+
+      $attachments = [];
+   
+      $count = count($_FILES['files']['name']);
+    
+      for($i=0;$i<$count;$i++){
+    
+        if(!empty($_FILES['files']['name'][$i])){
+    
+
+          // $date = str_replace( ':', '', $date);
+          if (!is_dir('assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments')) {
+            mkdir('./assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments', 0777, TRUE);
+          }
+          $path = './assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments';
+          $_FILES['file']['name'] = $_FILES['files']['name'][$i];
+          $_FILES['file']['type'] = $_FILES['files']['type'][$i];
+          $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
+          $_FILES['file']['error'] = $_FILES['files']['error'][$i];
+          $_FILES['file']['size'] = $_FILES['files']['size'][$i];
+          $_FILES['file']['file_ext'] = $_FILES['files']['file_ext'][$i];
+    
+          $config['upload_path'] = $path; 
+          $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
+          $config['overwrite'] = FALSE;
+          $config['file_name'] = $_FILES['files']['name'][$i];
+          
+          $this->upload->initialize($config);
+  
+          if($this->upload->do_upload('file')){
+            $uploadData = $this->upload->data();
+            $filename = $uploadData['file_name'];
+   
+            $attachments['totalFiles'][] = $filename;
+  
+            $data_attachments = array(
+              'task_id' => $task_row->task_id+1,
+              'task_attachment_name' => $filename,
+              'task_attachment_ext' =>$uploadData['file_ext'],
+              'task_attachment_width' => $uploadData['image_width'],
+              'task_attachment_height' => $uploadData['image_height'],
+            );
+            $add_attachments = $this->crud_model->createData('task_attachments',$data_attachments);
+        
+          }
+        }
+      }
+
+      $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+      $estimate_hour = 0;
+      $estimate_minute = 0;
+      foreach ($task_todays as $task_today) {
+        $estimate_hour += $task_today->task_estimation_hour;
+        $estimate_minute += $task_today->task_estimation_minute;
+      } 
+
+      $current_estimate = ($estimate_hour*60) + $estimate_minute;
+      $new_estimate = ($task_estimation_hour*60) + $task_estimation_minute;
+      $total_estimate = $new_estimate + $current_estimate;
+      $overtime_time = ($new_estimate + $current_estimate) - 420;
+      if(Date('D') =='Sun'){
+        $overtime_type = 'Weekend';
+      }else{
+        $overtime_type = 'Weekday';
+      }
+      if($total_estimate >420){
+        $data_overtime = array(
+          'employee_id' => $employee_id,
+          'date' => Date('Y-m-d'),
+          'overtime_type' => $overtime_type,
+          'overtime_time' => $overtime_time,
+        );
+        $overtimes = $this->db->get('overtimes');
+        if($overtimes->num_rows() > 0){
+          $where_overtime = "employee_id=".$employee_id." AND date='".Date('Y-m-d')."'";
+          $this->crud_model->updateData('overtimes',$data_overtime,$where_overtime);          
+        }else{
+          $this->crud_model->createData('overtimes',$data_overtime);
+        }
+      }
+      $add = $this->crud_model->createData('tasks',$data);
+    
+
+      if($add){
+        $where = 'order_id='.$order_id;
+        $update = $this->crud_model->updateData('orders',$data_order,$where);
+        $this->session->set_flashdata("success", "Your Data Has Been Added !");
+        if($this->input->post('source_assign') == "fromDetailPage"){
+          redirect('Order/detail/'.$order_id);
+        }else if($this->input->post('source_assign') == "fromTaskPage"){
+          redirect('Task');
         }else{
           redirect('Order/');
         }
@@ -623,7 +951,7 @@ class Order extends CI_Controller {
     {
 
       $data_task = array(
-        'task_status' => 'Delivered'
+        'task_status' => 'Wait Rating'
       );
       $data_order = array(
         'order_status' => 'Delivered',
@@ -639,6 +967,92 @@ class Order extends CI_Controller {
           redirect('Order/detail/'.$order_id);  
         }
   
+      }
+
+    }
+    public function rejectTaskAction($task_id,$order_id)
+    {
+
+      $data_task = array(
+        'task_status' => 'Open'
+      );
+      $data_order = array(
+        'order_status' => 'Revision',
+      );
+      $where_task = 'task_id='.$task_id;
+      $where_order = 'order_id='.$order_id;
+      $update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
+      if($update_task){
+        $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
+
+        $task_delivery_attachments = $this->task_model->getTaskDeliveryByTaskId($task_id)->result();
+
+        foreach ($task_delivery_attachments as $task_delivery_attachment) {
+          if($task_delivery_attachment->task_delivery_attachment_type == "Preview"){
+            $task_delivery_attachment_type = 'preview';
+          }
+          else if($task_delivery_attachment->task_delivery_attachment_type == "Proven"){
+            $task_delivery_attachment_type = 'proven';
+          }
+          else if($task_delivery_attachment->task_delivery_attachment_type == "Source"){
+            $task_delivery_attachment_type = 'source';
+          }
+          $path = base_url().'assets/attachments/'.$task_delivery_attachment->service_name.'/'.$task_delivery_attachment->client_name.'/'.$task_delivery_attachment->order_number.'/'.$task_delivery_attachment_type.'/'.$task_delivery_attachment->task_delivery_attachment_name;
+          delete_files($path);
+        }
+        $delete_delivery_attachment = $this->crud_model->deleteData('task_delivery_attachments',$where_task);
+        $delete_delivery = $this->crud_model->deleteData('task_deliveries',$where_task);
+
+        if($update_order){
+          $this->session->set_flashdata("success", "Your Data Has Been Rejected !");
+          redirect('Order/detail/'.$order_id);  
+        }
+  
+      }
+
+    }
+    public function completedAction($order_id)
+    {
+      $data_order = array(
+        'order_status' => 'Completed',
+        'assign_to' => NULL
+      );
+      $where_order = 'order_id='.$order_id;
+      $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
+      if($update_order){
+        $this->session->set_flashdata("success", "Your Order Has Been Completed !");
+        redirect('Order/detail/'.$order_id);  
+      }
+
+    }
+    public function ratingAction()
+    {
+      $order_id = $this->input->post('order_id');
+      $task_id = $this->input->post('task_id');
+      $employee_id = $this->input->post('employee_id');
+      $brief_reading = $this->input->post('brief_reading');
+      $quality = $this->input->post('quality');
+      $speed = $this->input->post('speed');
+      $user_id = $this->session->userdata('user_id');
+
+      $data_task = array(
+        'task_status' => 'Delivered'
+      );
+      $data_rating = array(
+        'task_id' => $task_id,
+        'employee_id' => $employee_id,
+        'brief_reading' => $brief_reading,
+        'quality' => $quality,
+        'speed' => $speed,
+        'user_id' => $user_id
+      );
+      $add_rating = $this->crud_model->createData('ratings',$data_rating);
+      if($add_rating){
+        $where_task = 'task_id='.$task_id;
+        $update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
+  
+        $this->session->set_flashdata("success", "Your Rating Has Been Added !");
+        redirect('Order/detail/'.$order_id);  
       }
 
     }
@@ -721,4 +1135,13 @@ class Order extends CI_Controller {
 
 		echo "{}";
 	}
+
+  public function getAssignOrder()
+  {
+    $order_id = $this->input->post('order_id');
+    $where = "order_id=".$order_id." AND task_status='Open'";
+    $task = $this->crud_model->readData('*','tasks',$where)->row();
+    echo json_encode($task);
+
+  }
 }

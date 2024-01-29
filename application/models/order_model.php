@@ -47,6 +47,22 @@ class Order_model extends CI_Model
 
   }
   
+  public function getDataOrdersAll()
+  {
+
+
+    $query = $this->db->select('orders.*,services.*,clients.*,service_packages.*')
+             ->from('orders')
+             ->join("clients","orders.client_id = clients.client_id")
+             ->join("services","orders.service_id = services.service_id")
+             ->join("service_packages","orders.service_package_id = service_packages.service_package_id");
+            $this->db->order_by('order_deadline', 'asc');
+            $query = $this->db->get();
+
+            return $query;
+
+  }
+  
   public function getDetailDataOrder($order_id)
   {
 

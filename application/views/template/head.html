@@ -33,7 +33,7 @@
     <link rel="stylesheet" type="text/css" href="<?=base_url()?>assets/css/vendors/scrollbar.css">
     <link rel="stylesheet" type="text/css" href="<?=base_url()?>assets/css/vendors/flatpickr/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="<?=base_url()?>assets/css/vendors/summernote.css">
-
+    <link rel="stylesheet" type="text/css" href="<?=base_url()?>assets/css/vendors/photoswipe.css">
     <!-- Plugins css Ends-->
     <!-- Bootstrap css-->
     <link rel="stylesheet" type="text/css" href="<?=base_url()?>assets/css/vendors/bootstrap.css">
@@ -93,6 +93,11 @@
             </div>
             <div class="nav-right col-8 pull-right right-header p-0">
               <ul class="nav-menus">
+                <li>
+                  <a id="btn-check-in" style="display:none" href="<?=base_url()?>Attendance/checkInAction" ><button class="btn btn-primary">Check In</button></a>
+                  <a id="btn-check-out" style="display:none" href="<?=base_url()?>Attendance/checkOutAction"><button class="btn btn-danger">Check Out</button></a>
+                </li>
+
                 <!-- <li>
                   <span class="header-search"><i data-feather="search"></i></span></li>
                 <li class="onhover-dropdown">
@@ -168,6 +173,12 @@
                       <!-- <p>Overview Data</p> -->
                     </div>
                   </li>
+                  <?php if($this->session->userdata('role')=='Graphic Designer'){?>
+                    <li class="sidebar-list ">
+                      <a class="sidebar-link sidebar-title link-nav <?=$page == 'overview'?'active':''?> " href="<?=site_url()?>Dashboard/designer" ><i data-feather="home"></i><span>Overview</span></a>
+                    </li>  
+                  <?php } ?>
+                  <?php if($this->session->userdata('role')=='Admin' || $this->session->userdata('role')=='Project Manager'){?>
                   <li class="sidebar-list ">
                     <a class="sidebar-link sidebar-title link-nav <?=$page == 'overview'?'active':''?> " href="<?=site_url()?>Dashboard" ><i data-feather="home"></i><span>Overview</span></a>
                   </li>
@@ -181,6 +192,7 @@
                     <ul class="sidebar-submenu">
                       <li><a  href="<?=site_url('Employee')?>">Employee Data</a></li>
                       <li><a  href="<?=site_url('Account')?>">Account Data</a></li>
+                      <li><a  href="<?=site_url('Attendance')?>">Attendance</a></li>
                     </ul>
                   </li>
                   <li class="sidebar-list">
@@ -196,40 +208,50 @@
                   <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title link-nav" href="<?=site_url('Tag')?>"><i data-feather="tag"></i><span>Tags</span></a>
                   </li>
+                  <?php } ?>
                   <li class="sidebar-main-title">
                     <div>
                       <h6>Project Modul</h6>
                     </div>
                   </li>
+                  <?php if($this->session->userdata('role')=='Admin' || $this->session->userdata('role')=='Project Manager'){?>
                   <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title link-nav" href="<?=site_url('Order')?>"><i data-feather="shopping-cart"></i><span>Order</span></a>
                   </li>
+                  <?php } ?>
                   <!-- <li class="sidebar-list">
                     <a class="sidebar-link sidebar-title link-nav" href="#"><i data-feather="file-text"></i><span>Project</span></a>
                   </li> -->
                   <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title" href="#"><i data-feather="list"></i><span>Task</span></a>
+                    <a class="sidebar-link sidebar-title link-nav <?=$page == 'task'?'active':''?> " href="<?=site_url('Task')?>" ><i data-feather="list"></i><span>Task</span></a>
+                    <!-- <a class="sidebar-link sidebar-title" href="#"><i data-feather="list"></i><span>Task</span></a>
                     <ul class="sidebar-submenu">
                       <li><a  href="<?=site_url('Task')?>"">Task</a></li>
                       <li><a  href="#">Task History</a></li>
                       <li><a  href="#">Completed Task</a></li>
                       <li><a  href="#">Rating Task History</a></li>
-                    </ul>
+                    </ul> -->
                   </li>
+                  <!-- <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav <?=$page == 'history-task'?'active':''?> " href="<?=site_url('Task/history')?>" ><i data-feather="check-square"></i><span>History Task</span></a>
+                  </li> -->
+                  <?php if($this->session->userdata('role')=='Admin' || $this->session->userdata('role')=='Project Manager'){?>
                   <li class="sidebar-main-title">
                     <div>
                       <h6>Report Modul</h6>
                     </div>
                     <li class="sidebar-list">
-                      <a class="sidebar-link sidebar-title link-nav" href="#"><i data-feather="printer"></i><span>Order Report</span></a>
+                      <a class="sidebar-link sidebar-title link-nav" href="#"><i data-feather="bar-chart"></i><span>Order Report</span></a>
                     </li>
                     <li class="sidebar-list">
-                      <a class="sidebar-link sidebar-title link-nav" href="#"><i data-feather="printer"></i><span>Project Report</span></a>
+                      <a class="sidebar-link sidebar-title link-nav" href="#"><i data-feather="bar-chart-2"></i><span>Financial Report</span></a>
                     </li>
-                    <li class="sidebar-list">
+                    <!-- <li class="sidebar-list">
                       <a class="sidebar-link sidebar-title link-nav" href="#"><i data-feather="printer"></i><span>Overtime Report</span></a>
-                    </li>
+                    </li> -->
                   </li>
+                  <?php } ?>
+
                 </ul>
               </div>
               <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>

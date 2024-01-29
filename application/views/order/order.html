@@ -149,11 +149,7 @@
     
             <script>
               $(document).ready(function(){
-                // $('#employee_id').select2({
-                //     dropdownParent: $('#assignModal .form-group')
-                // });
-                // alert('trest');
-
+ 
                 var limit = 10;
                 var start = 0;
                 var action = 'inactive';
@@ -162,20 +158,6 @@
                 var keyword = $( "#keyword-form").val();
                 var client_id = $( "#client_id").val();
 
-                function lazzy_loader(limit)
-                {
-                  var output = '';
-                  for(var count=0; count<limit; count++)
-                  {
-                    output += '<div class="post_data">';
-                    output += '<p><span class="content-placeholder" style="width:100%; height: 30px;">&nbsp;</span></p>';
-                    output += '<p><span class="content-placeholder" style="width:100%; height: 100px;">&nbsp;</span></p>';
-                    output += '</div>';
-                  }
-                  // $('#top-home').html(output);
-                }
-
-                lazzy_loader(limit);
 
                 function load_data(limit, start, keyword, order_status, service_id, client_id)
                 {
@@ -440,8 +422,8 @@
 
 
               });
-              function assignOrder(order_id) {
-                $('#assignModal').modal('show'); 
-                $('#order_id').val(order_id);
-              }
+              // function assignOrder(order_id) {
+              //   $('#assignModal').modal('show'); 
+              //   $('#order_id').val(order_id);
+              // }
             </script>

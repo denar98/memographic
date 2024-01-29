@@ -7,7 +7,7 @@ class Login_model extends CI_Model
     public function loginCheck($username,$password){
 
         $where = array('username' => $username, 'password' => $password);
-        $user = $this->db->select('users.user_id,users.username,users.role,employees.employee_name')
+        $user = $this->db->select('users.user_id,users.username,users.role,employees.employee_name,employees.employee_id')
                  ->from('users')
                  ->join("employees","users.employee_id = employees.employee_id")
                  ->where($where)

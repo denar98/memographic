@@ -32,9 +32,21 @@ class Dashboard extends CI_Controller {
 	{
 		$data['page'] = 'overview';
 		$data['module'] = 'dashboard';
-
+		if($this->session->userdata('role')!='Admin' && $this->session->userdata('role')!='Project Manager'){
+			$this->session->set_flashdata("error", "You Don't Have Access To This Page");
+			redirect('Dashboard/designer');
+		}
 		$this->load->view('template/head.html',$data);
 		$this->load->view('dashboard/index.html');
+		$this->load->view('template/foot.html');
+	}
+	public function designer()
+	{
+		$data['page'] = 'overview';
+		$data['module'] = 'dashboard';
+
+		$this->load->view('template/head.html',$data);
+		$this->load->view('dashboard/designer.html');
 		$this->load->view('template/foot.html');
 	}
 }

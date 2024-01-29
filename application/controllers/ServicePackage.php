@@ -26,6 +26,10 @@ class ServicePackage extends CI_Controller {
 			$this->session->set_flashdata("error", 'Please Login Before You Access This Page');
 			redirect('Login');
 		}
+		if($this->session->userdata('role')!='Admin' && $this->session->userdata('role')!='Project Manager'){
+			$this->session->set_flashdata("error", "You Don't Have Access To This Page");
+			redirect('Dashboard/designer');
+		}
     error_reporting(0);
     $this->load->model('datatable_model');
     $this->load->model('crud_model');

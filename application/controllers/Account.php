@@ -22,10 +22,15 @@ class Account extends CI_Controller {
  	public function __construct()
 	{
 		parent::__construct();
-		// if($this->session->userdata('login_status')!='logged'){
-		// 	$this->session->set_flashdata("error", 'Please Login Before You Access This Page');
-		// 	redirect('Login');
-		// }
+		if($this->session->userdata('login_status')!='logged'){
+			$this->session->set_flashdata("error", 'Please Login Before You Access This Page');
+			redirect('Login');
+		}
+		if($this->session->userdata('role')!='Admin' && $this->session->userdata('role')!='Project Manager'){
+			$this->session->set_flashdata("error", "You Don't Have Access To This Page");
+      $cur_url = current_url();
+			redirect('Dashboard/designer');
+		}
     error_reporting(0);
     $this->load->model('datatable_model');
     $this->load->model('crud_model');
@@ -123,7 +128,7 @@ class Account extends CI_Controller {
             $data[]= array(
                 $rows->employee_name,
                 $rows->username,
-                $role,
+                $rows->role,
                 $rows->last_login,
                 '<a href="#" class="btn btn-warning mr-1  btn-action" onclick="getAccount('.$rows->user_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
                  <a href="'.base_url().'Account/deleteAction/'.$rows->user_id.'" class="btn btn-danger mr-1  btn-action"><i class="fa fa-trash"></i></a>'

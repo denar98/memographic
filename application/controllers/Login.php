@@ -51,13 +51,14 @@ class Login extends CI_Controller {
         $session_data = array(
             'user_id'   => $user->user_id,
             'username'  => $user->username,
+            'employee_id' => $user->employee_id,
             'employee_name' => $user->employee_name,
-            'role' => $role,
+            'role' => $user->role,
             'login_status' => 'logged',
         );
         //buat session berdasarkan user yang login
         $this->session->set_userdata($session_data);
-				redirect('Dashboard');
+				redirect('Task');
 
     } else {
 
