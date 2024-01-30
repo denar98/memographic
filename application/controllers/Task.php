@@ -127,9 +127,11 @@ class Task extends CI_Controller {
       $order_id = $detail_task->order_id;
 	  $task_delivery = $this->db->limit(1)->order_by('task_delivery_id','desc')->get('task_deliveries')->row();
 	  $task_delivery_last_count = $this->db->where('order_id',$order_id)->limit(1)->order_by('task_delivery_count','desc')->get('task_deliveries')->row();
+	  $task_delivery_id =  $this->uuid->v4();
 	  if($detail_task->task_type == 'Revision'){
 		$task_delivery_final_count = $task_delivery_last_count->task_delivery_count + 1;
 		$data_task_delivery = array(
+			'task_delivery_id'=>$task_delivery_id,
 			'task_id'=>$task_id,
 			'order_id'=>$order_id,
 			'task_delivery_date' => Date('Y-m-d H:i:s'),
@@ -139,6 +141,7 @@ class Task extends CI_Controller {
 	   }
 	   else{
 		$data_task_delivery = array(
+			'task_delivery_id'=>$task_delivery_id,
 			'task_id'=>$task_id,
 			'order_id'=>$order_id,
 			'task_delivery_date' => Date('Y-m-d H:i:s'),
@@ -154,8 +157,8 @@ class Task extends CI_Controller {
       $data_order = array(
         'order_status' => 'Done',
       );
-	  $where_task = 'task_id='.$task_id;
-	  $where_order = 'order_id='.$detail_task->order_id;
+	  $where_task = "task_id='".$task_id."'";
+	  $where_order = "order_id='".$detail_task->order_id."'";
 
       $preview_files_attachments = [];
       $preview_files_count = count($_FILES['preview_files']['name']);
@@ -191,10 +194,12 @@ class Task extends CI_Controller {
             $filename = $uploadData['file_name'];
    
             $preview_files_attachments['totalFiles'][] = $filename;
-  
+			$task_delivery_attachments_id  =  $this->uuid->v4();
+
             $preview_files_attachments_data = array(
+              'task_delivery_attachments_id ' => $task_delivery_attachments_id ,
               'task_id' => $task_id,
-              'task_delivery_id' => $task_delivery->task_delivery_id+1,
+              'task_delivery_id' => $task_delivery_id,
               'task_delivery_attachment_type' => 'Preview',
               'task_delivery_attachment_name' => $filename,
               'task_delivery_attachment_ext' => $uploadData['file_ext'],
@@ -239,10 +244,12 @@ class Task extends CI_Controller {
             $filename = $uploadData['file_name'];
    
             $source_files_attachments['totalFiles'][] = $filename;
-  
+			$task_delivery_attachments_id  =  $this->uuid->v4();
+
             $source_files_attachments_data = array(
-              'task_id' => $task_id,
-              'task_delivery_id' => $task_delivery->task_delivery_id+1,
+  			  'task_delivery_attachments_id ' => $task_delivery_attachments_id ,
+			  'task_id' => $task_id,
+              'task_delivery_id' => $task_delivery_id,
               'task_delivery_attachment_type' => 'Source',
               'task_delivery_attachment_name' => $filename,
 			  'task_delivery_attachment_ext' => $uploadData['file_ext'],
@@ -288,10 +295,12 @@ class Task extends CI_Controller {
             $filename = $uploadData['file_name'];
    
             $proven_files_attachments['totalFiles'][] = $filename;
-  
+			$task_delivery_attachments_id  =  $this->uuid->v4();
+
             $proven_files_attachments_data = array(
+  			  'task_delivery_attachments_id ' => $task_delivery_attachments_id ,
               'task_id' => $task_id,
-              'task_delivery_id' => $task_delivery->task_delivery_id+1,
+              'task_delivery_id' => $task_delivery_id,
               'task_delivery_attachment_type' => 'Proven',
               'task_delivery_attachment_name' => $filename,
 			  'task_delivery_attachment_ext' => $uploadData['file_ext'],
@@ -308,16 +317,13 @@ class Task extends CI_Controller {
 
 	  
       $add_task_delivery = $this->crud_model->createData('task_deliveries',$data_task_delivery);
-      if($add_task_delivery){
-		$update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
-		if($update_task){
-		  $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
-		  if($update_task){
-			  $this->session->set_flashdata("success", "Your Task Has Been Delivered !");
-			  redirect('Task/');	
-		  }
-		}		
-	  }	
+	  $update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
+	  $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
+	  $this->session->set_flashdata("success", "Your Task Has Been Delivered !");
+	  redirect('Task/');	
+	
+	
+	  
 
 
     }

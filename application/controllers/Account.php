@@ -125,12 +125,13 @@ class Account extends CI_Controller {
           else if($rows->role==4){
             $role="Graphic Designer";
           }
+          $user_id = "'$rows->user_id'";
             $data[]= array(
                 $rows->employee_name,
                 $rows->username,
                 $rows->role,
                 $rows->last_login,
-                '<a href="#" class="btn btn-warning mr-1  btn-action" onclick="getAccount('.$rows->user_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
+                '<a href="#" class="btn btn-warning mr-1  btn-action" onclick="getAccount('.$user_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
                  <a href="'.base_url().'Account/deleteAction/'.$rows->user_id.'" class="btn btn-danger mr-1  btn-action"><i class="fa fa-trash"></i></a>'
             );
         }
@@ -161,6 +162,28 @@ class Account extends CI_Controller {
       $username = $this->input->post('username');
       $password = md5($this->input->post('password'));
       $role = $this->input->post('role');
+      $user_id = $this->uuid->v4();
+
+      $data = array(
+        'user_id' => $user_id,
+        'employee_id' => $employee_id,
+        'username' => $username,
+        'password' => $password,
+        'role' => $role,
+      );
+      $add = $this->crud_model->createData('users',$data);
+      $this->session->set_flashdata("success", "Your Data Has Been Added !");
+      redirect('Account');
+
+    }
+
+    public function updateAction()
+    {
+      $user_id = $this->input->post('user_id');
+      $employee_id = $this->input->post('employee_id');
+      $username = $this->input->post('username');
+      $password = md5($this->input->post('password'));
+      $role = $this->input->post('role');
 
       $data = array(
         'employee_id' => $employee_id,
@@ -168,43 +191,17 @@ class Account extends CI_Controller {
         'password' => $password,
         'role' => $role,
       );
-      $add = $this->crud_model->createData('users',$data);
-      if($add){
-        $this->session->set_flashdata("success", "Your Data Has Been Added !");
-        redirect('Account');
-      }
-
-    }
-
-    public function updateAction()
-    {
-      $employee_id = $this->input->post('employee_id');
-      $employee_name = $this->input->post('employee_name');
-      $employee_phone = $this->input->post('employee_phone');
-      $employee_address = $this->input->post('employee_address');
-      $employee_job = $this->input->post('employee_job');
-      $employee_sallary = $this->input->post('employee_sallary');
-      $employee_level = $this->input->post('employee_level');
-
-      $data = array(
-        'employee_name' => $employee_name,
-        'employee_phone' => $employee_phone,
-        'employee_address' => $employee_address,
-        'employee_job' => $employee_job,
-        'employee_sallary' => $employee_sallary,
-        'employee_level' => $employee_level
-      );
-      $where="employee_id=".$employee_id;
+      $where="user_id='".$user_id."'";
       $update = $this->crud_model->updateData('users',$data,$where);
       if($update){
         $this->session->set_flashdata("success", "Your Data Has Been Updated !");
-        redirect('Employee');
+        redirect('Account');
       }
     }
 
     public function deleteAction($user_id)
     {
-      $where="user_id=".$user_id;
+      $where="user_id='".$user_id."'";
       $delete = $this->crud_model->deleteData('users',$where);
       if($delete){
         $this->session->set_flashdata("success", "Your Data Has Been Deleted !");

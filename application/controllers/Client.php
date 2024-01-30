@@ -109,10 +109,12 @@ class Client extends CI_Controller {
         foreach($clients->result() as $rows)
         {
           $i++;
+          $client_id = "'$rows->client_id'";
+
             $data[]= array(
-                $rows->client_id,
+                $i,
                 $rows->client_name,
-                '<a href="#" class="btn btn-warning mr-1 btn-action" onclick="getClient('.$rows->client_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
+                '<a href="#" class="btn btn-warning mr-1 btn-action" onclick="getClient('.$client_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
                  <a href="'.base_url().'Client/deleteAction/'.$rows->client_id.'" class="btn btn-danger mr-1 btn-action"><i class="fa fa-trash"></i></a>'
             );
         }
@@ -141,8 +143,10 @@ class Client extends CI_Controller {
       $client_address = $this->input->post('client_address');
       $client_email = $this->input->post('client_email');
       $client_company = $this->input->post('client_company');
+      $client_id = $this->uuid->v4();
 
       $data = array(
+        'client_id' => $client_id,
         'client_name' => $client_name,
         'client_phone' => $client_phone,
         'client_address' => $client_address,
@@ -150,10 +154,8 @@ class Client extends CI_Controller {
         'client_company' => $client_company,
       );
       $add = $this->crud_model->createData('clients',$data);
-      if($add){
-        $this->session->set_flashdata("success", "Your Data Has Been Added !");
-        redirect('Client');
-      }
+      $this->session->set_flashdata("success", "Your Data Has Been Added !");
+      redirect('Client');
 
     }
 
@@ -173,7 +175,7 @@ class Client extends CI_Controller {
         'client_email' => $client_email,
         'client_company' => $client_company,
       );
-      $where="client_id=".$client_id;
+      $where="client_id='".$client_id."'";
       $update = $this->crud_model->updateData('clients',$data,$where);
       if($update){
         $this->session->set_flashdata("success", "Your Data Has Been Updated !");
@@ -183,7 +185,7 @@ class Client extends CI_Controller {
 
     public function deleteAction($client_id)
     {
-      $where="client_id=".$client_id;
+      $where="client_id='".$client_id."'";
       $delete = $this->crud_model->deleteData('clients',$where);
       if($delete){
         $this->session->set_flashdata("success", "Your Data Has Been Deleted !");
@@ -195,7 +197,7 @@ class Client extends CI_Controller {
     public function getClient()
     {
       $client_id = $this->input->post('client_id');
-      $where = "client_id=".$client_id;
+      $where="client_id='".$client_id."'";
       $client = $this->crud_model->readData('*','clients',$where)->row();
       echo json_encode($client);
 

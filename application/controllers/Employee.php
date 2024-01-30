@@ -109,7 +109,7 @@ class Employee extends CI_Controller {
         $data = array();
         foreach($employees->result() as $rows)
         {
-
+          $employee_id = "'$rows->employee_id'";
             $data[]= array(
                 $rows->employee_name,
                 $rows->employee_phone,
@@ -117,7 +117,7 @@ class Employee extends CI_Controller {
                 $rows->employee_job,
                 number_format($rows->employee_sallary),
                 $rows->employee_level,
-                '<a href="#" class="btn btn-warning mr-1 btn-action" onclick="getEmployee('.$rows->employee_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
+                '<a href="#" class="btn btn-warning mr-1 btn-action" onclick="getEmployee('.$employee_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
                  <a href="'.base_url().'Employee/deleteAction/'.$rows->employee_id.'" class="btn btn-danger mr-1  btn-action"><i class="fa fa-trash"></i></a>'
             );
         }
@@ -147,8 +147,9 @@ class Employee extends CI_Controller {
       $employee_job = $this->input->post('employee_job');
       $employee_sallary = $this->input->post('employee_sallary');
       $employee_level = $this->input->post('employee_level');
-
+      $employee_id = $this->uuid->v4();
       $data = array(
+        'employee_id' => $employee_id,
         'employee_name' => $employee_name,
         'employee_phone' => $employee_phone,
         'employee_address' => $employee_address,
@@ -157,10 +158,10 @@ class Employee extends CI_Controller {
         'employee_level' => $employee_level
       );
       $add = $this->crud_model->createData('employees',$data);
-      if($add){
-        $this->session->set_flashdata("success", "Your Data Has Been Added !");
-        redirect('Employee');
-      }
+
+      $this->session->set_flashdata("success", "Your Data Has Been Added !");
+      redirect('Employee');
+  
 
     }
 
@@ -182,7 +183,7 @@ class Employee extends CI_Controller {
         'employee_sallary' => $employee_sallary,
         'employee_level' => $employee_level
       );
-      $where="employee_id=".$employee_id;
+      $where="employee_id='".$employee_id."'";
       $update = $this->crud_model->updateData('employees',$data,$where);
       if($update){
         $this->session->set_flashdata("success", "Your Data Has Been Updated !");
@@ -192,7 +193,7 @@ class Employee extends CI_Controller {
 
     public function deleteAction($employee_id)
     {
-      $where="employee_id=".$employee_id;
+      $where="employee_id='".$employee_id."'";
       $delete = $this->crud_model->deleteData('employees',$where);
       if($delete){
         $this->session->set_flashdata("success", "Your Data Has Been Deleted !");
@@ -205,7 +206,7 @@ class Employee extends CI_Controller {
     {
       $employee_id = $this->input->post('employee_id');
       
-      $where = "employee_id=".$employee_id;
+      $where="employee_id='".$employee_id."'";
       $employee = $this->crud_model->readData('*','employees',$where)->row();
       echo json_encode($employee);
 

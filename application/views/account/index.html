@@ -97,6 +97,7 @@
                           <option value="">-</option>
                           <option value="Admin">Admin</option>
                           <option value="Project Manager">Project Manager</option>
+                          <option value="Head Designer">Head Designer</option>
                           <option value="Graphic Designer">Graphic Designer</option>
                         </select>
                       </div>
@@ -114,7 +115,7 @@
         <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <form class="" action="<?=base_url()?>Employee/updateAction" method="post">
+              <form class="" action="<?=base_url()?>Account/updateAction" method="post">
                 <div class="modal-header">
                   <h5 class="modal-title" id="exampleModalLabel">Update Account</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -158,6 +159,7 @@
                         <option value="">-</option>
                         <option value="Admin">Admin</option>
                         <option value="Project Manager">Project Manager</option>
+                        <option value="Head Designer">Head Designer</option>
                         <option value="Graphic Designer">Graphic Designer</option>
                       </select>
                     </div>
@@ -240,11 +242,12 @@
           }); // End Document Ready Function
 
           function getAccount(user_id){
+            // alert(user_id);
             var user_id = user_id;
             $.ajax({
               type: "POST",
               url: "<?php echo site_url('Account/getAccount');?>",
-              data: "user_id="+user_id,
+              data: "user_id='"+user_id+"'",
               success: function (response) {
                 var row = JSON.parse(response);
                 $('#user_id').val(row.user_id);

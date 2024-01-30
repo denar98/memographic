@@ -156,9 +156,12 @@ class Crud_model extends CI_Model {
 			$this->set_error($this->db->error());
 			// $this->set_insert_id($this->db->insert_id($this->insert_id_key));
 			$insert_id = $this->db->insert_id();
+			
 			return $insert_id;
 		}
 		else if (is_array_multi($data)) {
+			
+	
 			if ($this->track_trans === TRUE) {
 				for ($a = 0; $a < count($data); $a++) {
 					$data[$a][$table . '_create_date'] = date('Y-m-d H:i:s');
@@ -172,6 +175,7 @@ class Crud_model extends CI_Model {
 			$this->set_insert_id($start);
 			$this->set_insert_ids($start, $end);
 		}
+		
 		if ($this->log_query === TRUE) { $this->log($this->db->last_query()); }
 		if ($callback) {
 			$error = $this->error();

@@ -104,13 +104,15 @@ class Service extends CI_Controller {
         $this->db->limit($length,$start);
         $services = $this->db->get("services");
         $data = array();
+        $i=0;
         foreach($services->result() as $rows)
         {
-
+          $i++;
+          $service_id = "'$rows->service_id'";
             $data[]= array(
-                $rows->service_id,
+                $i,
                 $rows->service_name,
-                '<a href="#" class="btn btn-warning mr-1 btn-action" onclick="getService('.$rows->service_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
+                '<a href="#" class="btn btn-warning mr-1 btn-action" onclick="getService('.$service_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
                  <a href="'.base_url().'Service/deleteAction/'.$rows->service_id.'" class="btn btn-danger mr-1 btn-action"><i class="fa fa-trash"></i></a>'
             );
         }
@@ -135,15 +137,15 @@ class Service extends CI_Controller {
     public function addAction()
     {
       $service_name = $this->input->post('service_name');
+      $service_id = $this->uuid->v4();
 
       $data = array(
+        'service_id' => $service_id,
         'service_name' => $service_name,
       );
       $add = $this->crud_model->createData('services',$data);
-      if($add){
-        $this->session->set_flashdata("success", "Your Data Has Been Added !");
-        redirect('Service');
-      }
+      $this->session->set_flashdata("success", "Your Data Has Been Added !");
+      redirect('Service');
 
     }
 
@@ -155,7 +157,7 @@ class Service extends CI_Controller {
       $data = array(
         'service_name' => $service_name,
       );
-      $where="service_id=".$service_id;
+      $where="service_id='".$service_id."'";
       $update = $this->crud_model->updateData('services',$data,$where);
       if($update){
         $this->session->set_flashdata("success", "Your Data Has Been Updated !");
@@ -165,7 +167,7 @@ class Service extends CI_Controller {
 
     public function deleteAction($service_id)
     {
-      $where="service_id=".$service_id;
+      $where="service_id='".$service_id."'";
       $delete = $this->crud_model->deleteData('services',$where);
       if($delete){
         $this->session->set_flashdata("success", "Your Data Has Been Deleted !");
@@ -177,7 +179,7 @@ class Service extends CI_Controller {
     public function getService()
     {
       $service_id = $this->input->post('service_id');
-      $where = "service_id=".$service_id;
+      $where="service_id='".$service_id."'";
       $service = $this->crud_model->readData('*','services',$where)->row();
       echo json_encode($service);
 

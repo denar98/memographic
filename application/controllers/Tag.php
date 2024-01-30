@@ -104,13 +104,15 @@ class Tag extends CI_Controller {
         $this->db->limit($length,$start);
         $tags = $this->db->get("tags");
         $data = array();
+        $i=0;
         foreach($tags->result() as $rows)
         {
-
+          $tag_id = "'$rows->tag_id'";
+          $i++;
             $data[]= array(
-                $rows->tag_id,
+                $i,
                 $rows->tag_name,
-                '<a href="#" class="btn btn-warning mr-1 btn-action" onclick="getTag('.$rows->tag_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
+                '<a href="#" class="btn btn-warning mr-1 btn-action" onclick="getTag('.$tag_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
                  <a href="'.base_url().'Tag/deleteAction/'.$rows->tag_id.'" class="btn btn-danger mr-1 btn-action"><i class="fa fa-trash"></i></a>'
             );
         }
@@ -135,15 +137,15 @@ class Tag extends CI_Controller {
     public function addAction()
     {
       $tag_name = $this->input->post('tag_name');
+      $tag_id = $this->uuid->v4();
 
       $data = array(
+        'tag_id' => $tag_id,
         'tag_name' => $tag_name,
       );
       $add = $this->crud_model->createData('tags',$data);
-      if($add){
-        $this->session->set_flashdata("success", "Your Data Has Been Added !");
-        redirect('Tag');
-      }
+      $this->session->set_flashdata("success", "Your Data Has Been Added !");
+      redirect('Tag');
 
     }
 
@@ -155,7 +157,7 @@ class Tag extends CI_Controller {
       $data = array(
         'tag_name' => $tag_name,
       );
-      $where="tag_id=".$tag_id;
+      $where="tag_id='".$tag_id."'";
       $update = $this->crud_model->updateData('tags',$data,$where);
       if($update){
         $this->session->set_flashdata("success", "Your Data Has Been Updated !");
@@ -165,7 +167,7 @@ class Tag extends CI_Controller {
 
     public function deleteAction($tag_id)
     {
-      $where="tag_id=".$tag_id;
+      $where="tag_id='".$tag_id."'";
       $delete = $this->crud_model->deleteData('tags',$where);
       if($delete){
         $this->session->set_flashdata("success", "Your Data Has Been Deleted !");
@@ -177,7 +179,7 @@ class Tag extends CI_Controller {
     public function getTag()
     {
       $tag_id = $this->input->post('tag_id');
-      $where = "tag_id=".$tag_id;
+      $where="tag_id='".$tag_id."'";
       $tag = $this->crud_model->readData('*','tags',$where)->row();
       echo json_encode($tag);
 

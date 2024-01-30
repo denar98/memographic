@@ -109,7 +109,7 @@ class Task_model extends CI_Model
     $this->db->join('services', 'orders.service_id = services.service_id');
     $this->db->join('service_packages', 'orders.service_package_id = service_packages.service_package_id');
     $this->db->where('tasks.order_id',$order_id);
-    $this->db->order_by('tasks.task_id','asc');
+    $this->db->order_by('tasks.created_at','asc');
     // $this->db->where('task_status','Open');
     return $this->db->get();
   }

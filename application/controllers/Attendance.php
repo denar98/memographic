@@ -154,6 +154,7 @@ class Attendance extends CI_Controller {
 
       $user_id = $this->session->userdata('user_id');
       $cur_hour = Date('H');
+      $attendance_id = $this->uuid->v4();
 
       $check_in = Date('Y-m-d H:i:s');
       $date = Date('Y-m-d');
@@ -166,6 +167,7 @@ class Attendance extends CI_Controller {
         $shift = "Malam";
       }
       $data = array(
+        'attendance_id' => $attendance_id,
         'user_id' => $user_id,
         'date' => $date,
         'check_in' => $check_in,
@@ -173,11 +175,10 @@ class Attendance extends CI_Controller {
       );
       $url = $this->uri->segment(1, 0);
       $add = $this->crud_model->createData('attendances',$data);
-      if($add){
-        $this->session->set_flashdata("success", "Checkin Success !");
-
-        redirect($url);
-      }
+     
+      $this->session->set_flashdata("success", "Checkin Success !");
+      redirect($url);
+  
 
     }
     public function checkOutAction()

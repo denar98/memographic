@@ -38,7 +38,7 @@ class Order extends CI_Controller {
 
 	public function index()
 	{
-    if($this->session->userdata('role')!='Admin' && $this->session->userdata('role')!='Project Manager'){
+    if($this->session->userdata('role')!='Admin' && $this->session->userdata('role')!='Project Manager' && $this->session->userdata('role')!='Head Designer'){
 			$this->session->set_flashdata("error", "You Don't Have Access To This Page");
 			redirect('Dashboard/designer');
 		}
@@ -180,6 +180,7 @@ class Order extends CI_Controller {
       }
       // date_format(date_create($row->order_deadline),"d M Y")
       // echo "There are $days_remaining days and $hours_remaining hours left";
+      $order_id = "'$row->order_id'";
       $output .= '
       
       <div class="row">
@@ -198,13 +199,25 @@ class Order extends CI_Controller {
                   <h7 class="mb-0 mt-2">Client Name</h7>
                   <h6>'.$row->client_name.'</h6>
                 </div>
-              </div>
-              <div class="media col-md-2 mt-2 mb-1">
+              </div>';
+              if($this->session->userdata('role')=='Admin' || $this->session->userdata('role')=='Project Manager'){
+                $output .= '<div class="media col-md-2 mt-2 mb-1">
                 <div class="media-body pt-2">
                   <h7 class="mb-0 mt-2">Nominal</h7>
                   <h6>$'.$row->order_nominal.'</h6>
                 </div>
-              </div>
+                </div>';
+              }else{
+                $output .= '<div class="media col-md-2 mt-2 mb-1">
+                <div class="media-body pt-2">
+                  <h7 class="mb-0 mt-2">Service</h7>
+                  <h6>'.$row->service_name.'</h6>
+                </div>
+                </div>';
+              }
+      
+
+              $output .= '
               <div class="media col-md-2 mt-2 mb-1">
                 <div class="media-body pt-2">
                   <h7 class="mb-0 mt-2">Deadline</h7>
@@ -214,7 +227,7 @@ class Order extends CI_Controller {
               <div class="media col-md-2 mt-2 mb-1">
                 <div class="media-body pt-2">
                   <button class="btn btn-'.$service_color.'" style="padding: 1px 30px; display:block; width: 95px; cursor:context-menu;">'.$service_package_name.'</button>
-                  <button class="btn btn-secondary mt-1 btn-not-assign" data-assign="'.$assign.'" '.$btn_status.'   onclick="assignOrder('.$row->order_id.')" style="padding: 1px 10px; display:block;">'.$assign.'</button>
+                  <button class="btn btn-secondary mt-1 btn-not-assign" data-assign="'.$assign.'" '.$btn_status.'   onclick="assignOrder('.$order_id.')" style="padding: 1px 10px; display:block;">'.$assign.'</button>
                 </div>
               </div>
             </div>
@@ -234,6 +247,7 @@ class Order extends CI_Controller {
   
     public function addAction()
     {
+      $order_id = $this->uuid->v4();
       $client_id = $this->input->post('client_id');
       $client_name = $this->input->post('client_name');
       $order_nominal = $this->input->post('order_nominal');
@@ -245,21 +259,17 @@ class Order extends CI_Controller {
       $order_status = "On Progress";
       $brief= $this->input->post('brief');
       $user_id = $this->session->userdata('user_id');
-      $order_id="1";
       $order_row = $this->db->limit(1)->order_by('order_id','desc')->get('orders')->row();
       $service_row = $this->db->where('service_id',$service_id)->get('services')->row();
   
-      if($order_row->order_id !=0 || $order_row->order_id != ''){
-        $order_id = $order_row->order_id + 1;
-      }
-  
+
       if($client_name == ''){
         $client_id = $client_id;
         $client_exist_row = $this->db->where('client_id',$client_id)->get('clients')->row();
       }
       else{
         $client_row = $this->db->limit(1)->order_by('client_id','desc')->get('clients')->row();
-        $client_id = $client_row->client_id + 1;
+        $client_id = $this->uuid->v4();
         $client_data = array(
           'client_id' => $client_id,
           'client_name' => $client_name,
@@ -268,6 +278,7 @@ class Order extends CI_Controller {
       }
 
       $data = array(
+        'order_id' => $order_id,
         'client_id' => $client_id,
         'user_id' => $user_id,
         'order_nominal' =>  str_replace( ',', '', $order_nominal),
@@ -312,8 +323,10 @@ class Order extends CI_Controller {
             $filename = $uploadData['file_name'];
    
             $attachments['totalFiles'][] = $filename;
-  
+            $order_attachment_id  = $this->uuid->v4();
+
             $data_attachments = array(
+              'order_attachment_id ' => $order_attachment_id ,
               'order_id' => $order_id,
               'order_attachment_name' => $filename,
             );
@@ -324,10 +337,10 @@ class Order extends CI_Controller {
   
       }
       $add = $this->crud_model->createData('orders',$data);
-      if($add){
-        $this->session->set_flashdata("success", "Your Data Has Been Added !");
-        redirect('Order/');
-      }
+     
+    $this->session->set_flashdata("success", "Your Data Has Been Added !");
+    redirect('Order/');
+  
 
     }
     public function updateAction()
@@ -350,7 +363,7 @@ class Order extends CI_Controller {
       }
       else{
         $client_row = $this->db->limit(1)->order_by('client_id','desc')->get('clients')->row();
-        $client_id = $client_row->client_id + 1;
+        $client_id = $this->uuid->v4();
         $client_data = array(
           'client_id' => $client_id,
           'client_name' => $client_name,
@@ -403,23 +416,24 @@ class Order extends CI_Controller {
      
               $attachments['totalFiles'][] = $filename;
     
+              $order_attachment_id  = $this->uuid->v4();
+
               $data_attachments = array(
+                'order_attachment_id ' => $order_attachment_id ,
                 'order_id' => $order_id,
                 'order_attachment_name' => $filename,
               );
-              $add_attachments = $this->crud_model->createData('order_attachments',$data_attachments);
+                $add_attachments = $this->crud_model->createData('order_attachments',$data_attachments);
           
             }
           }
     
         }
     }
-      $where="order_id=".$order_id;
+      $where="order_id='".$order_id."'";
       $update = $this->crud_model->updateData('orders',$data,$where);
-      if($update){
-        $this->session->set_flashdata("success", "Your Data Has Been Updated !");
-        redirect('Order/');
-      }
+      $this->session->set_flashdata("success", "Your Data Has Been Updated !");
+      redirect('Order/');
 
     }
     public function assignAction()
@@ -459,9 +473,12 @@ class Order extends CI_Controller {
         $task_new_count = "";
 
       }
-
+      if($assign_type=='update'){
+        $task_id = $this->input->post('task_id');
+      }else{
+        $task_id = $this->uuid->v4();
+      }     
       $employee_id = $this->input->post('employee_id');
-      $task_id = $this->input->post('task_id');
       $task_date = Date('Y-m-d');
       $task_estimation_hour = $this->input->post('task_estimation_hour');
       $task_estimation_minute = $this->input->post('task_estimation_minute');
@@ -470,6 +487,7 @@ class Order extends CI_Controller {
       $tag_id = $this->input->post('tag_id');
       $employee_row = $this->db->where('employee_id',$employee_id)->get('employees')->row();
       $data = array(
+        'task_id' => $task_id,
         'order_id' => $order_id,
         'task_type' => $task_type,
         'employee_id' => $employee_id,
@@ -496,13 +514,15 @@ class Order extends CI_Controller {
       );
 
       if($assign_type=='update'){
-        $where = 'task_id='.$task_id;
+        $where = "task_id='".$task_id."'";
         $add = $this->crud_model->updateData('tasks',$data,$where);
       }      
       else{
         $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
         $estimate_hour = 0;
         $estimate_minute = 0;
+        $overtime_id = $this->uuid->v4();
+
         foreach ($task_todays as $task_today) {
           $estimate_hour += $task_today->task_estimation_hour;
           $estimate_minute += $task_today->task_estimation_minute;
@@ -519,6 +539,7 @@ class Order extends CI_Controller {
         }
         if($total_estimate >420){
           $data_overtime = array(
+            'overtime_id' => $overtime_id,
             'employee_id' => $employee_id,
             'date' => Date('Y-m-d'),
             'overtime_type' => $overtime_type,
@@ -526,7 +547,7 @@ class Order extends CI_Controller {
           );
           $overtimes = $this->db->get('overtimes');
           if($overtimes->num_rows() > 0){
-            $where_overtime = "employee_id=".$employee_id." AND date='".Date('Y-m-d')."'";
+            $where_overtime = "employee_id='".$employee_id."' AND date='".Date('Y-m-d')."'";
             $this->crud_model->updateData('overtimes',$data_overtime,$where_overtime);          
           }else{
             $this->crud_model->createData('overtimes',$data_overtime);
@@ -534,21 +555,18 @@ class Order extends CI_Controller {
         }
         $add = $this->crud_model->createData('tasks',$data);
       }
-      if($add){
-        $where = 'order_id='.$order_id;
-        $update = $this->crud_model->updateData('orders',$data_order,$where);
-        if($assign_type=='update'){
-          $this->session->set_flashdata("success", "Your Data Has Been Updated !");
-        }      
-        else{
-          $this->session->set_flashdata("success", "Your Data Has Been Added !");
-        }
-        if($this->input->post('source_assign') == "fromDetailPage"){
-          redirect('Order/detail/'.$order_id);
-        }else{
-          redirect('Order/detail/'.$order_id);
-        }
+      
+      $where = "order_id='".$order_id."'";
+      $update = $this->crud_model->updateData('orders',$data_order,$where);
+      if($assign_type=='update'){
+        $this->session->set_flashdata("success", "Your Data Has Been Updated !");
+      }      
+      else{
+        $this->session->set_flashdata("success", "Your Data Has Been Added !");
       }
+      redirect('Order/detail/'.$order_id);
+ 
+      
 
     }
     public function assignRevisionAction()
@@ -563,7 +581,11 @@ class Order extends CI_Controller {
         $task_type = "Revision";
       }
       $assign_type = $this->input->post('assign_type');
-      $task_id = $this->input->post('task_id');
+      if($assign_type=='update'){
+        $task_id = $this->input->post('task_id');
+      }else{
+        $task_id = $this->uuid->v4();
+      }     
       $employee_id = $this->input->post('employee_id');
       $task_date = Date('Y-m-d');
       $task_estimation_hour = $this->input->post('task_estimation_hour');
@@ -611,6 +633,7 @@ class Order extends CI_Controller {
       }
 
       $data = array(
+        'task_id' => $task_id,
         'order_id' => $order_id,
         'task_type' => $task_type,
         'employee_id' => $employee_id,
@@ -662,9 +685,10 @@ class Order extends CI_Controller {
             $filename = $uploadData['file_name'];
    
             $attachments['totalFiles'][] = $filename;
-  
+            $task_attachment_id =  $this->uuid->v4();
             $data_attachments = array(
-              'task_id' => $task_row->task_id+1,
+              'task_attachment_id' => $task_attachment_id,
+              'task_id' => $task_id,
               'task_attachment_name' => $filename,
               'task_attachment_ext' =>$uploadData['file_ext'],
               'task_attachment_width' => $uploadData['image_width'],
@@ -677,7 +701,7 @@ class Order extends CI_Controller {
       }
       if($assign_type=='update'){
 
-        $where = 'task_id='.$task_id;
+        $where = "task_id='".$task_id."'";
         $add = $this->crud_model->updateData('tasks',$data,$where);
       }      
       else{
@@ -707,7 +731,7 @@ class Order extends CI_Controller {
           );
           $overtimes = $this->db->get('overtimes');
           if($overtimes->num_rows() > 0){
-            $where_overtime = "employee_id=".$employee_id." AND date='".Date('Y-m-d')."'";
+            $where_overtime = "employee_id='".$employee_id."' AND date='".Date('Y-m-d')."'";
             $this->crud_model->updateData('overtimes',$data_overtime,$where_overtime);          
           }else{
             $this->crud_model->createData('overtimes',$data_overtime);
@@ -716,18 +740,18 @@ class Order extends CI_Controller {
         $add = $this->crud_model->createData('tasks',$data);
       }
 
-      if($add){
-        $where = 'order_id='.$order_id;
-        $update = $this->crud_model->updateData('orders',$data_order,$where);
-        $this->session->set_flashdata("success", "Your Data Has Been Added !");
-        if($this->input->post('source_assign') == "fromDetailPage"){
-          redirect('Order/detail/'.$order_id);
-        }else if($this->input->post('source_assign') == "fromTaskPage"){
-          redirect('Task');
-        }else{
-          redirect('Order/');
-        }
+      
+      $where = "order_id='".$order_id."'";
+      $update = $this->crud_model->updateData('orders',$data_order,$where);
+      $this->session->set_flashdata("success", "Your Data Has Been Added !");
+      if($this->input->post('source_assign') == "fromDetailPage"){
+        redirect('Order/detail/'.$order_id);
+      }else if($this->input->post('source_assign') == "fromTaskPage"){
+        redirect('Task');
+      }else{
+        redirect('Order/');
       }
+    
 
     }
     public function assignNewTaskAction()
@@ -737,7 +761,7 @@ class Order extends CI_Controller {
       $task_type = $this->input->post('task_type');
       $order_row = $this->db->where('order_id',$order_id)->get('orders')->row();
       $assign_type = $this->input->post('assign_type');
-      $task_id = $this->input->post('task_id');
+      $task_id = $this->uuid->v4();
       $employee_id = $this->input->post('employee_id');
       $task_date = Date('Y-m-d');
       $task_estimation_hour = $this->input->post('task_estimation_hour');
@@ -778,6 +802,7 @@ class Order extends CI_Controller {
       }
 
       $data = array(
+        'task_id' => $task_id,
         'order_id' => $order_id,
         'task_type' => $task_type,
         'employee_id' => $employee_id,
@@ -829,9 +854,11 @@ class Order extends CI_Controller {
             $filename = $uploadData['file_name'];
    
             $attachments['totalFiles'][] = $filename;
-  
+            $task_attachment_id =  $this->uuid->v4();
+
             $data_attachments = array(
-              'task_id' => $task_row->task_id+1,
+              'task_attachment_id' => $task_attachment_id,
+              'task_id' => $task_id,
               'task_attachment_name' => $filename,
               'task_attachment_ext' =>$uploadData['file_ext'],
               'task_attachment_width' => $uploadData['image_width'],
@@ -869,7 +896,7 @@ class Order extends CI_Controller {
         );
         $overtimes = $this->db->get('overtimes');
         if($overtimes->num_rows() > 0){
-          $where_overtime = "employee_id=".$employee_id." AND date='".Date('Y-m-d')."'";
+          $where_overtime = "employee_id='".$employee_id."' AND date='".Date('Y-m-d')."'";
           $this->crud_model->updateData('overtimes',$data_overtime,$where_overtime);          
         }else{
           $this->crud_model->createData('overtimes',$data_overtime);
@@ -878,8 +905,8 @@ class Order extends CI_Controller {
       $add = $this->crud_model->createData('tasks',$data);
     
 
-      if($add){
-        $where = 'order_id='.$order_id;
+    
+        $where = "order_id='".$order_id."'";
         $update = $this->crud_model->updateData('orders',$data_order,$where);
         $this->session->set_flashdata("success", "Your Data Has Been Added !");
         if($this->input->post('source_assign') == "fromDetailPage"){
@@ -889,7 +916,7 @@ class Order extends CI_Controller {
         }else{
           redirect('Order/');
         }
-      }
+      
 
     }
   function uploadImageSummernote(){
@@ -927,26 +954,7 @@ class Order extends CI_Controller {
       echo 'File Delete Successfully';
     }
   }
-    public function addOrderProjectAction()
-    {
-      $order_id = $this->input->post('order_id');
-      $service_package_id = $this->input->post('service_package_id');
-      $project_brief = $this->input->post('project_brief');
-      $project_notes = $this->input->post('project_notes');
-      $project_status = 0;
-
-      $data = array(
-        'order_id' => $order_id,
-        'service_package_id' => $service_package_id,
-        'project_brief' => $project_brief,
-        'project_notes' => $project_notes,
-        'project_status' => $project_status
-      );
-      $add = $this->crud_model->createData('projects',$data);
-      $this->session->set_flashdata("success", "Your Data Has Been Added !");
-      redirect('Order/createOrderProject/'.$order_id);
-
-    }
+   
     public function sentTaskAction($task_id,$order_id)
     {
 
@@ -957,8 +965,8 @@ class Order extends CI_Controller {
         'order_status' => 'Delivered',
         'assign_to' => NULL
       );
-      $where_task = 'task_id='.$task_id;
-      $where_order = 'order_id='.$order_id;
+      $where_task = "task_id='".$task_id."'";
+      $where_order = "order_id='".$order_id."'";
       $update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
       if($update_task){
         $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
@@ -979,8 +987,8 @@ class Order extends CI_Controller {
       $data_order = array(
         'order_status' => 'Revision',
       );
-      $where_task = 'task_id='.$task_id;
-      $where_order = 'order_id='.$order_id;
+      $where_task = "task_id='".$task_id."'";
+      $where_order = "order_id='".$order_id."'";
       $update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
       if($update_task){
         $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
@@ -1017,7 +1025,7 @@ class Order extends CI_Controller {
         'order_status' => 'Completed',
         'assign_to' => NULL
       );
-      $where_order = 'order_id='.$order_id;
+      $where_order = "order_id='".$order_id."'";
       $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
       if($update_order){
         $this->session->set_flashdata("success", "Your Order Has Been Completed !");
@@ -1034,11 +1042,13 @@ class Order extends CI_Controller {
       $quality = $this->input->post('quality');
       $speed = $this->input->post('speed');
       $user_id = $this->session->userdata('user_id');
+      $rating_id = $this->uuid->v4();
 
       $data_task = array(
         'task_status' => 'Delivered'
       );
       $data_rating = array(
+        'rating_id' => $rating_id,
         'task_id' => $task_id,
         'employee_id' => $employee_id,
         'brief_reading' => $brief_reading,
@@ -1047,99 +1057,19 @@ class Order extends CI_Controller {
         'user_id' => $user_id
       );
       $add_rating = $this->crud_model->createData('ratings',$data_rating);
-      if($add_rating){
-        $where_task = 'task_id='.$task_id;
-        $update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
-  
-        $this->session->set_flashdata("success", "Your Rating Has Been Added !");
-        redirect('Order/detail/'.$order_id);  
-      }
+      $where_task = "task_id='".$task_id."'";
+      $update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
+
+      $this->session->set_flashdata("success", "Your Rating Has Been Added !");
+      redirect('Order/detail/'.$order_id);  
 
     }
 
-   
-
-    public function getOrder()
-    {
-      $orders_id = $this->input->post('orders_id');
-      $where = "orders_id=".$orders_id;
-      $orders = $this->crud_model->readData('*','orderss',$where)->row();
-      echo json_encode($orders);
-
-    }
-
-    function projectAttachment(){
-        if(!empty($_FILES)){
-            // File upload configuration
-            echo "test";
-            $uploadPath = './uploads/project_attachment/';
-            $config['upload_path'] = $uploadPath;
-            $config['allowed_types'] = '*';
-
-            // Load and initialize upload library
-            $this->load->library('upload', $config);
-            $this->upload->initialize($config);
-
-            // Upload file to the server
-            if($this->upload->do_upload('userfile')){
-                $fileData = $this->upload->data();
-                $this->db->order_by('project_id', 'DESC');
-                $this->db->limit('1');
-                $project_last_id_row = $this->db->get('projects')->row();
-                if($project_last_id_row!=null){
-                  $project_last_id = $project_last_id_row;
-                }
-                else{
-                  $project_last_id = 1;
-                }
-                $token=$this->input->post('token_foto');
-                $uploadData['project_id'] = $project_last_id;
-                $uploadData['token'] = $token;
-                $uploadData['file_name'] = $fileData['file_name'];
-                $uploadData['uploaded_date'] = date("Y-m-d H:i:s");
-
-                // Insert files info into the database
-                $insert = $this->crud_model->createData('project_attachments',$uploadData);
-                echo"uploaded";
-            }
-            else {
-              $error = array('error' => $this->upload->display_errors());
-              print_r($error);
-              // $this->load->view('display', $error);
-            }
-        }
-    }
-
-    //Untuk menghapus foto
-	function removeProjectAttachment(){
-
-		//Ambil token foto
-		$token=$this->input->post('token');
-
-		$foto=$this->db->get_where('project_attachments',array('token'=>$token));
-
-
-		if($foto->num_rows()>0){
-			$hasil=$foto->row();
-			$nama_foto=$hasil->file_name;
-			if(file_exists($file='./uploads/project_attachment/'.$nama_foto)){
-				unlink($file);
-        echo "deleted";
-			}else{
-        echo "nope";
-      }
-			$this->db->delete('project_attachments',array('token'=>$token));
-
-		}
-
-
-		echo "{}";
-	}
 
   public function getAssignOrder()
   {
     $order_id = $this->input->post('order_id');
-    $where = "order_id=".$order_id." AND task_status='Open'";
+    $where = "order_id='".$order_id."' AND task_status='Open'";
     $task = $this->crud_model->readData('*','tasks',$where)->row();
     echo json_encode($task);
 

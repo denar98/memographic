@@ -110,15 +110,17 @@ class ServicePackage extends CI_Controller {
                  ->join("services","services.service_id = service_packages.service_id")
                  ->get();
         $data = array();
+        
         foreach($service_packages->result() as $rows)
         {
+          $service_package_id = "'$rows->service_package_id'";
 
             $data[]= array(
                 $rows->service_name,
                 $rows->service_package_name,
                 $rows->service_package_price,
                 $rows->service_package_detail,
-                '<a href="#" class="btn btn-warning mr-1 btn-action" onclick="getServicePackage('.$rows->service_package_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
+                '<a href="#" class="btn btn-warning mr-1 btn-action" onclick="getServicePackage('.$service_package_id.')" data-toggle="modal" data-target="#updateModal"><i class="fa fa-pencil"></i></a>
                  <a href="'.base_url().'ServicePackage/deleteAction/'.$rows->service_package_id.'" class="btn btn-danger mr-1  btn-action"><i class="fa fa-trash"></i></a>'
             );
         }
@@ -149,18 +151,18 @@ class ServicePackage extends CI_Controller {
       $service_package_name = $this->input->post('service_package_name');
       $service_package_price = $this->input->post('service_package_price');
       $service_package_detail = $this->input->post('service_package_detail');
+      $service_package_id = $this->uuid->v4();
 
       $data = array(
+        'service_package_id' => $service_package_id,
         'service_id' => $service_id,
         'service_package_name' => $service_package_name,
         'service_package_price' => $service_package_price,
         'service_package_detail' => $service_package_detail,
       );
       $add = $this->crud_model->createData('service_packages',$data);
-      if($add){
-        $this->session->set_flashdata("success", "Your Data Has Been Added !");
-        redirect('ServicePackage');
-      }
+      $this->session->set_flashdata("success", "Your Data Has Been Added !");
+      redirect('ServicePackage');
 
     }
 
@@ -178,7 +180,7 @@ class ServicePackage extends CI_Controller {
         'service_package_price' => $service_package_price,
         'service_package_detail' => $service_package_detail,
       );
-      $where="service_package_id=".$service_package_id;
+      $where="service_package_id='".$service_package_id."'";
       $update = $this->crud_model->updateData('service_packages',$data,$where);
       if($update){
         $this->session->set_flashdata("success", "Your Data Has Been Updated !");
@@ -188,7 +190,7 @@ class ServicePackage extends CI_Controller {
 
     public function deleteAction($service_package_id)
     {
-      $where="service_package_id=".$service_package_id;
+      $where="service_package_id='".$service_package_id."'";
       $delete = $this->crud_model->deleteData('service_packages',$where);
       if($delete){
         $this->session->set_flashdata("success", "Your Data Has Been Deleted !");
@@ -200,7 +202,7 @@ class ServicePackage extends CI_Controller {
     public function getServicePackage()
     {
       $service_package_id = $this->input->post('service_package_id');
-      $where = "service_package_id=".$service_package_id;
+      $where="service_package_id='".$service_package_id."'";
       $service = $this->crud_model->readData('*','service_packages',$where)->row();
       echo json_encode($service);
 
@@ -208,7 +210,7 @@ class ServicePackage extends CI_Controller {
     public function getServicePackageByServiceID()
     {
       $service_id = $this->input->post('service_id');
-      $where = "service_id=".$service_id;
+      $where = "service_id='".$service_id."'";
       $service = $this->crud_model->readData('*','service_packages',$where)->result();
       echo json_encode($service);
 

@@ -209,6 +209,75 @@
                                 <?php } ?>
       
                               </div>
+                              <?php } else if($this->session->userdata('role') == 'Head Designer'){?>   
+                                <div class="col-md-5 text-right align-bottom">
+                                  
+                                       
+                                  <?php 
+                                  $task_delivery_attachments = $this->task_model->getTaskDeliveryAttachment($task_delivery->task_delivery_id)->result();
+                                  foreach($task_delivery_attachments as $task_delivery_attachment){
+                                    if($task_delivery_attachment->task_delivery_attachment_type == "Preview"){
+                                      $task_delivery_attachment_type = 'preview';
+                                    }
+                                    else if($task_delivery_attachment->task_delivery_attachment_type == "Proven"){
+                                      $task_delivery_attachment_type = 'proven';
+                                    }
+                                    else if($task_delivery_attachment->task_delivery_attachment_type == "Source"){
+                                      $task_delivery_attachment_type = 'source';
+                                      if($task_delivery_attachment->task_delivery_attachment_ext == ".pdf"){
+                                        $task_delivery_attachment_ext = "PDF";
+                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".ai"){
+                                        $task_delivery_attachment_ext = "AI";
+                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".psd"){
+                                        $task_delivery_attachment_ext = "PS";
+                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".afdesign"){
+                                        $task_delivery_attachment_ext = "AF";
+                                      }
+
+                                    }
+                                  ?>
+                                  <div class="mr-3 text-center float-right">
+                                
+                                    <?php 
+                                    if($task_delivery_attachment->task_delivery_attachment_ext=='.jpg' || $task_delivery_attachment->task_delivery_attachment_ext=='.png' || $task_delivery_attachment->task_delivery_attachment_ext=='.jpeg'){
+                                    ?> 
+                                  <div class="gallery my-gallery" itemscope="" data-pswp-uid="1">
+                                    <figure class="" itemprop="associatedMedia" itemscope="">
+                                      <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="contentUrl" data-size="<?=$task_delivery_attachment->task_delivery_attachment_width?>x<?=$task_delivery_attachment->task_delivery_attachment_height?>">
+                                        <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="thumbnail" alt="Image description">
+                                      </a>
+                                      <figcaption itemprop="caption description"><?=$task_delivery_attachment->task_delivery_attachment_name?></figcaption>
+                                    </figure>
+                                  </div>
+                                    <p title="<?=$task_delivery_attachment->task_delivery_attachment_name?>"><?=$task_delivery_attachment->task_delivery_attachment_type	?></p>  
+                                    <?php } else{ ?>
+                                      <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
+                                      <?php if($task_delivery_attachment->task_delivery_attachment_type =='Preview'){?>
+                                      <img src="<?=base_url()?>assets/images/Download-01.png" style="width: 50px;" alt="" title="<?=$task_delivery_attachment->task_delivery_attachment_name?>">
+                                      <?php } else { ?>
+                                      <img src="<?=base_url()?>assets/images/Download-03.png" style="width: 50px;" alt="" title="<?=$task_delivery_attachment->task_delivery_attachment_name?>">
+                                      <?php } ?>
+                                    </a>
+                                    <p title="<?=$task_delivery_attachment->task_delivery_attachment_name?>"><?=$task_delivery_attachment->task_delivery_attachment_type	?> <?=$task_delivery_attachment_ext?></p>  
+                                    <?php } ?>
+                               
+                                  </div>
+                                  <?php } ?>
+                                </div>
+                                <div class="col-md-1 align-middle text-center" style="border-left:1px solid #dfdfdf">
+                                  <!-- <div style="border-left:2px solid #b3bac0; height: 100%; float:left; margin-left:15px;"></div> -->
+                                  <?php 
+                                    if($task_delivery->task_status =='Wait Rating' || $task_delivery->task_status =='Delivered' ){
+                                      $rating = $this->task_model->getTaskRatingByTaskID($task_delivery->task_id)->row();
+                                      $avarage_ratings = ($rating->brief_reading + $rating->quality + $rating->speed) / 3;
+                                      if($rating == ''){ 
+                                  ?>
+    
+                                    <a href="#" title="Rating" class="btn btn-warning mt-1" style="padding: 8px 15px;"  onclick="ratingTask('<?=$task_delivery->task_id?>','<?=$task_delivery->employee_id?>','<?=$task_delivery->order_id?>')"><i data-feather="star" class="text-white mt-2" ></i></a>
+                                    <?php }else{ ?>
+                                    <btn title="Rating" class="btn btn-warning mt-1" style="padding: 17px 11px 7px 11px; min-width:57px; max-width:57px;"><h5><?=substr($avarage_ratings,0,3)?></h5></btn>
+                                    <?php }} ?>
+                                </div>
                               <?php } else { ?>
                                 <div class="col-md-6 text-right align-bottom">
                                   
@@ -224,9 +293,19 @@
                                     }
                                     else if($task_delivery_attachment->task_delivery_attachment_type == "Source"){
                                       $task_delivery_attachment_type = 'source';
+                                      if($task_delivery_attachment->task_delivery_attachment_ext == ".pdf"){
+                                        $task_delivery_attachment_ext = "PDF";
+                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".ai"){
+                                        $task_delivery_attachment_ext = "AI";
+                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".psd"){
+                                        $task_delivery_attachment_ext = "PS";
+                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".afdesign"){
+                                        $task_delivery_attachment_ext = "AF";
+                                      }
+
                                     }
                                   ?>
-                                <div class="mr-3 text-center float-right">
+                                  <div class="mr-3 text-center float-right">
                                 
                                   <?php 
                                   if($task_delivery_attachment->task_delivery_attachment_ext=='.jpg' || $task_delivery_attachment->task_delivery_attachment_ext=='.png' || $task_delivery_attachment->task_delivery_attachment_ext=='.jpeg'){
@@ -238,9 +317,9 @@
                                     </a>
                                     <figcaption itemprop="caption description"><?=$task_delivery_attachment->task_delivery_attachment_name?></figcaption>
                                   </figure>
-                                </div>
-                                <p title="<?=$task_delivery_attachment->task_delivery_attachment_name?>"><?=$task_delivery_attachment->task_delivery_attachment_type	?></p>  
-                                <?php } else{ ?>
+                                 </div>
+                                  <p title="<?=$task_delivery_attachment->task_delivery_attachment_name?>"><?=$task_delivery_attachment->task_delivery_attachment_type	?></p>  
+                                  <?php } else{ ?>
                                  <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
                                     <?php if($task_delivery_attachment->task_delivery_attachment_type =='Preview'){?>
                                     <img src="<?=base_url()?>assets/images/Download-01.png" style="width: 50px;" alt="" title="<?=$task_delivery_attachment->task_delivery_attachment_name?>">
@@ -249,7 +328,7 @@
                                     <?php } ?>
                                   </a>
                                   <p title="<?=$task_delivery_attachment->task_delivery_attachment_name?>"><?=$task_delivery_attachment->task_delivery_attachment_type	?> <?=$task_delivery_attachment_ext?></p>  
-                                <?php } ?>
+                                  <?php } ?>
                                
                                 </div>
                                 <?php } ?>

@@ -16,7 +16,7 @@ class Login_model extends CI_Model
 
         if($user){
             $this->session->set_userdata(['user_logged' => $user]);
-            $this->_updateLastLogin($user->user_id);
+            $this->_updateLastLogin("'$user->user_id'");
             return $user;
         }
 
