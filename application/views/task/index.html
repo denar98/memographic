@@ -176,7 +176,7 @@
                                             ?>
                                           <tr> 
                                             <td style="width:5%; min-width:50px;">
-                                              <a  href="#" onclick="assignUpdate('<?=$task->order_id?>')"><i data-feather="edit"></i></a>
+                                              <a  href="#" onclick="assignUpdate('<?=$task->task_id?>')"><i data-feather="edit"></i></a>
                                             </td>
                                             <td id="task-row" data-id="<?=$task->order_id?>">
                                               <h7 class="task_title_0"><?=$task->client_name?></h7>
@@ -325,8 +325,20 @@
                       <div class="modal-body" style="overflow-y: auto;"> 
                         <div class="theme-form">
                           <div class="row">
-                            <div class="col-md-12">
-                              <input class="form-control" name="order_id" id="order_id_revision" type="hidden" required>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Order</label>
+                                <select class="form-control" name="order_id" id="order_id_revision" readonly required>
+                                  <?php
+                                  foreach($orders as $order){
+                                  ?>
+                                  <option value="<?=$order->order_id?>"><?=$order->client_name?> - <?=$order->order_number?>  </option>
+                                  <?php } ?>
+                                </select>
+                              </div>  
+                            </div>
+                            <div class="col-md-6">
+                              <input class="form-control" name="employee_id_before" id="employee_id_before_revision" type="hidden" required>
                               <input class="form-control" name="task_id" id="task_id_revision" type="hidden" required>
                               <input class="form-control" name="assign_type" id="assign_type_revision" type="hidden" required>
                               <input class="form-control" name="source_assign" id="source_assign_revision" type="hidden" value="fromTaskPage" required>
@@ -341,7 +353,16 @@
                                 </select>
                               </div>  
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Task Type</label>
+                                <select class="form-control" name="task_type" id="task_type_revision" required>
+                                  <option value="New">New</option>
+                                  <option value="Revision">Revision</option>
+                                </select>
+                              </div>  
+                            </div>
+                            <div class="col-md-6">
                               <div class="form-group">
                                 <label>Start Date</label>
                                 <div class="input-group flatpicker-calender">
@@ -452,7 +473,7 @@
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label>Task Type</label>
-                                <select class="form-control select2" name="task_type" required>
+                                <select class="form-control" name="task_type" required>
                                   <option value="New">New</option>
                                   <option value="Revision">Revision</option>
                                 </select>
@@ -470,7 +491,7 @@
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label>Tag Priority</label>
-                                <select class="form-control select2" name="tag_id" id="tag_id_revision" required>
+                                <select class="form-control" name="tag_id" id="tag_id_revision" required>
                                   <?php
                                   foreach($tags as $tag){
                                   ?>
@@ -665,18 +686,18 @@
                 $('#task_id').val(task_id);
               }
 
-          function assignUpdate(order_id) {
+          function assignUpdate(task_id) {
             $('.summernote4').summernote( {
               height: 350,
 
             });
             $('#assignUpdate').modal('show'); 
             $('#assign_type_revision').val('update');
-            $('#order_id').val(order_id);
+            // $('#order_id').val(order_id);
             $.ajax({
               type: "POST",
-              url: "<?php echo site_url('Order/getAssignOrder');?>",
-              data: "order_id="+order_id,
+              url: "<?php echo site_url('Order/getTask');?>",
+              data: "task_id="+task_id,
               success: function (response) {
                 var row = JSON.parse(response);
                 console.log(row);
@@ -686,7 +707,9 @@
                 $('#employee_id_revision').val(row.employee_id);
                 $('#tag_id_revision').val(row.tag_id);
                 $('#task_id_revision').val(row.task_id);
+                $('#task_type_revision').val(row.task_type);
                 $('#order_id_revision').val(row.order_id);
+                $('#employee_id_before_revision').val(row.employee_id);
                 // $('#brief_revision').html(row.task_brief);
                 $("#brief_revision").summernote("code", row.task_brief);
                 // $('#role').val(row.role);

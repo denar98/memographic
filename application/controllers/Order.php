@@ -514,10 +514,7 @@ class Order extends CI_Controller {
       );
 
       if($assign_type=='update'){
-        $where = "task_id='".$task_id."'";
-        $add = $this->crud_model->updateData('tasks',$data,$where);
-      }      
-      else{
+        
         $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
         $estimate_hour = 0;
         $estimate_minute = 0;
@@ -532,11 +529,13 @@ class Order extends CI_Controller {
         $new_estimate = ($task_estimation_hour*60) + $task_estimation_minute;
         $total_estimate = $new_estimate + $current_estimate;
         $overtime_time = ($new_estimate + $current_estimate) - 420;
+
         if(Date('D') =='Sun'){
           $overtime_type = 'Weekend';
         }else{
           $overtime_type = 'Weekday';
         }
+        
         if($total_estimate >420){
           $data_overtime = array(
             'overtime_id' => $overtime_id,
@@ -552,6 +551,50 @@ class Order extends CI_Controller {
           }else{
             $this->crud_model->createData('overtimes',$data_overtime);
           }
+
+        $where = "task_id='".$task_id."'";
+        $add = $this->crud_model->updateData('tasks',$data,$where);
+        }      
+      }
+      else{
+
+        $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+        $estimate_hour = 0;
+        $estimate_minute = 0;
+        $overtime_id = $this->uuid->v4();
+
+        foreach ($task_todays as $task_today) {
+          $estimate_hour += $task_today->task_estimation_hour;
+          $estimate_minute += $task_today->task_estimation_minute;
+        } 
+  
+        $current_estimate = ($estimate_hour*60) + $estimate_minute;
+        $new_estimate = ($task_estimation_hour*60) + $task_estimation_minute;
+        $total_estimate = $new_estimate + $current_estimate;
+        $overtime_time = ($new_estimate + $current_estimate) - 420;
+
+        if(Date('D') =='Sun'){
+          $overtime_type = 'Weekend';
+        }else{
+          $overtime_type = 'Weekday';
+        }
+
+        if($total_estimate >420){
+          $data_overtime = array(
+            'overtime_id' => $overtime_id,
+            'employee_id' => $employee_id,
+            'date' => Date('Y-m-d'),
+            'overtime_type' => $overtime_type,
+            'overtime_time' => $overtime_time,
+          );
+          $overtimes = $this->db->get('overtimes');
+          if($overtimes->num_rows() > 0){
+            $where_overtime = "employee_id='".$employee_id."' AND date='".Date('Y-m-d')."'";
+            $this->crud_model->updateData('overtimes',$data_overtime,$where_overtime);          
+          }else{
+            $this->crud_model->createData('overtimes',$data_overtime);
+          }
+
         }
         $add = $this->crud_model->createData('tasks',$data);
       }
@@ -574,19 +617,12 @@ class Order extends CI_Controller {
       
       $order_id = $this->input->post('order_id');
       $order_row = $this->db->where('order_id',$order_id)->get('orders')->row();
-      if($order_row->order_status=='On Progress'){
-        $task_type = "New";
-      }
-      else{
-        $task_type = "Revision";
-      }
+
       $assign_type = $this->input->post('assign_type');
-      if($assign_type=='update'){
-        $task_id = $this->input->post('task_id');
-      }else{
-        $task_id = $this->uuid->v4();
-      }     
+      $task_id = $this->input->post('task_id');
+      $task_type = $this->input->post('task_type');
       $employee_id = $this->input->post('employee_id');
+      $employee_id_before = $this->input->post('employee_id_before');
       $task_date = Date('Y-m-d');
       $task_estimation_hour = $this->input->post('task_estimation_hour');
       $task_estimation_minute = $this->input->post('task_estimation_minute');
@@ -594,43 +630,17 @@ class Order extends CI_Controller {
       $task_brief = $this->input->post('brief');
       $tag_id = $this->input->post('tag_id');
 
-      $task_row = $this->db->limit(1)->order_by('task_id','desc')->get('tasks')->row();
       $service_row = $this->db->where('service_id',$order_row->service_id)->get('services')->row();
       $client_exist_row = $this->db->where('client_id',$order_row->client_id)->get('clients')->row();
-
       $employee_row = $this->db->where('employee_id',$employee_id)->get('employees')->row();
 
-      $task_revision_count_row = $this->db->where('order_id',$order_id)->order_by('task_revision_count','desc')->get('tasks')->row();
-      $task_new_count_row = $this->db->where('order_id',$order_id)->order_by('task_new_count','desc')->get('tasks')->row();
-
-      if($task_revision_count_row){
-        $task_revision_count = $task_revision_count_row->task_revision_count + 1;
-      }
-      else{
-        $task_revision_count = 1;
-      }
-
-      if($task_new_count_row ){
-        $task_new_count = $task_new_count_row->task_new_count + 1;
-      }
-      else{
-        $task_new_count = 1;
-      }
-
-      if($order_row->order_status=='On Progress'){
-        $task_type = "New";
-      }
-      else{
-        $task_type = "Revision";
-      }
-
       if($task_type == 'New'){
-        $task_revision_count = "";
+        $order_status = "On Progress";
       }
       else{
-        $task_new_count = "";
-
-      }
+        $order_status = "In Revision";
+      }     
+     
 
       $data = array(
         'task_id' => $task_id,
@@ -644,12 +654,10 @@ class Order extends CI_Controller {
         'task_brief' => $task_brief,
         'tag_id' => $tag_id,
         'task_status' => 'Open',
-        'task_new_count' => $task_new_count,
-        'task_revision_count' => $task_revision_count,
       );
       $data_order = array(
         'assign_to' => $employee_row->employee_name,
-        'order_status' => 'In Revision'
+        'order_status' => $order_status
       );
 
       $attachments = [];
@@ -699,13 +707,11 @@ class Order extends CI_Controller {
           }
         }
       }
-      if($assign_type=='update'){
-
-        $where = "task_id='".$task_id."'";
-        $add = $this->crud_model->updateData('tasks',$data,$where);
-      }      
-      else{
+      // Step 1 Overtime
+      if($employee_id == $employee_id_before){
         $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+        $this_task = $this->task_model->getDetailTask($task_id)->row();
+
         $estimate_hour = 0;
         $estimate_minute = 0;
         foreach ($task_todays as $task_today) {
@@ -713,17 +719,22 @@ class Order extends CI_Controller {
           $estimate_minute += $task_today->task_estimation_minute;
         } 
   
-        $current_estimate = ($estimate_hour*60) + $estimate_minute;
-        $new_estimate = ($task_estimation_hour*60) + $task_estimation_minute;
-        $total_estimate = $new_estimate + $current_estimate;
-        $overtime_time = ($new_estimate + $current_estimate) - 420;
+        $current_estimate = ((int)$estimate_hour*60) + (int)$estimate_minute;
+        $this_estimate = (((int)$this_task->task_estimation_hour*60) + (int)$this_task->task_estimation_minute);
+        $new_estimate = (((int)$task_estimation_hour*60) + (int)$task_estimation_minute);
+
+        $total_estimate = (int)$new_estimate + (int)$current_estimate - (int)$this_estimate;
+        $overtime_time = (int)$total_estimate - 420;
         if(Date('D') =='Sun'){
           $overtime_type = 'Weekend';
         }else{
           $overtime_type = 'Weekday';
         }
-        if($total_estimate >420){
+        if($total_estimate > 420){
+          $overtime_id =  $this->uuid->v4();
+
           $data_overtime = array(
+            'overtime_id' => $overtime_id,
             'employee_id' => $employee_id,
             'date' => Date('Y-m-d'),
             'overtime_type' => $overtime_type,
@@ -731,25 +742,103 @@ class Order extends CI_Controller {
           );
           $overtimes = $this->db->get('overtimes');
           if($overtimes->num_rows() > 0){
-            $where_overtime = "employee_id='".$employee_id."' AND date='".Date('Y-m-d')."'";
-            $this->crud_model->updateData('overtimes',$data_overtime,$where_overtime);          
+            $where_overtime = "employee_id='".$employee_id."' AND date=CURDATE()";
+            $this->crud_model->deleteData('overtimes',$where_overtime);          
+            $this->crud_model->createData('overtimes',$data_overtime);
           }else{
             $this->crud_model->createData('overtimes',$data_overtime);
           }
         }
-        $add = $this->crud_model->createData('tasks',$data);
-      }
+        else{
+          $where_overtime = "employee_id='".$employee_id."' AND date=CURDATE()";
+          $this->crud_model->deleteData('overtimes',$where_overtime);          
+        }
+      }else{
+        // Employee 1
+        $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+        $this_task = $this->task_model->getDetailTask($task_id)->row();
 
+        $estimate_hour = 0;
+        $estimate_minute = 0;
+        foreach ($task_todays as $task_today) {
+          $estimate_hour += $task_today->task_estimation_hour;
+          $estimate_minute += $task_today->task_estimation_minute;
+        } 
+  
+        $current_estimate = ((int)$estimate_hour*60) + (int)$estimate_minute;
+        $this_estimate = (((int)$this_task->task_estimation_hour*60) + (int)$this_task->task_estimation_minute);
+        $new_estimate = (((int)$task_estimation_hour*60) + (int)$task_estimation_minute);
+
+        $total_estimate = (int)$new_estimate + (int)$current_estimate;
+        $overtime_time = (int)$total_estimate - 420;
+        if(Date('D') =='Sun'){
+          $overtime_type = 'Weekend';
+        }else{
+          $overtime_type = 'Weekday';
+        }
+        if($total_estimate > 420){
+          $overtime_id =  $this->uuid->v4();
+
+          $data_overtime = array(
+            'overtime_id' => $overtime_id,
+            'employee_id' => $employee_id,
+            'date' => Date('Y-m-d'),
+            'overtime_type' => $overtime_type,
+            'overtime_time' => $overtime_time,
+          );
+          $overtimes = $this->db->get('overtimes');
+          if($overtimes->num_rows() > 0){
+            $where_overtime = "employee_id='".$employee_id."' AND date=CURDATE()";
+            $this->crud_model->deleteData('overtimes',$where_overtime);          
+            $this->crud_model->createData('overtimes',$data_overtime);
+          }else{
+            $this->crud_model->createData('overtimes',$data_overtime);
+          }
+        }
+        else{
+          $where_overtime = "employee_id='".$employee_id."' AND date=CURDATE()";
+          $this->crud_model->deleteData('overtimes',$where_overtime);          
+        }
+
+        // Employee 2
+        $task_todays_before = $this->task_model->getTaskByEmployee($employee_id_before)->result();
+        $this_task_before = $this->task_model->getDetailTask($task_id)->row();
+
+        $estimate_hour_before = 0;
+        $estimate_minute_before = 0;
+        foreach ($task_todays_before as $task_today_before) {
+          $estimate_hour_before += $task_today_before->task_estimation_hour;
+          $estimate_minute_before += $task_today_before->task_estimation_minute;
+        } 
+        $current_estimate_before = ((int)$estimate_hour_before*60) + (int)$estimate_minute_before;
+        $this_estimate_before = (((int)$this_task_before->task_estimation_hour*60) + (int)$this_task_before->task_estimation_minute);
+
+        $total_estimate_before = (int)$current_estimate_before - (int)$this_estimate_before;
+        $overtime_time_before = (int)$total_estimate_before - 420;;
+        $where_overtime = "employee_id='".$employee_id_before."' AND date='".Date('Y-m-d')."'";
+        if($total_estimate_before > 420){
+          $data_overtime_before = array(
+            'date' => Date('Y-m-d'),
+            'overtime_time' => $overtime_time_before,
+          );
+          $this->crud_model->updateData('overtimes',$data_overtime_before,$where_overtime);       
+        }else{
+          $this->crud_model->deleteData('overtimes',$where_overtime);          
+        }
+      }
       
+
+      $where_task = "task_id='".$task_id."'";
+      $this->crud_model->updateData('tasks',$data,$where_task);
       $where = "order_id='".$order_id."'";
-      $update = $this->crud_model->updateData('orders',$data_order,$where);
+      $this->crud_model->updateData('orders',$data_order,$where);
       $this->session->set_flashdata("success", "Your Data Has Been Added !");
       if($this->input->post('source_assign') == "fromDetailPage"){
         redirect('Order/detail/'.$order_id);
       }else if($this->input->post('source_assign') == "fromTaskPage"){
         redirect('Task');
       }else{
-        redirect('Order/');
+        redirect('Order');
       }
     
 
@@ -795,10 +884,11 @@ class Order extends CI_Controller {
 
       if($task_type == 'New'){
         $task_revision_count = "";
+        $order_status = "On Progress";
       }
       else{
         $task_new_count = "";
-
+        $order_status = "In Revision";
       }
 
       $data = array(
@@ -816,9 +906,10 @@ class Order extends CI_Controller {
         'task_new_count' => $task_new_count,
         'task_revision_count' => $task_revision_count,
       );
+
       $data_order = array(
         'assign_to' => $employee_row->employee_name,
-        'order_status' => 'In Revision'
+        'order_status' => $order_status
       );
 
       $attachments = [];
@@ -887,16 +978,21 @@ class Order extends CI_Controller {
       }else{
         $overtime_type = 'Weekday';
       }
-      if($total_estimate >420){
+
+      if($total_estimate > 420){
+        $overtime_id =  $this->uuid->v4();
+
         $data_overtime = array(
+          'overtime_id' => $overtime_id,
           'employee_id' => $employee_id,
           'date' => Date('Y-m-d'),
           'overtime_type' => $overtime_type,
           'overtime_time' => $overtime_time,
         );
-        $overtimes = $this->db->get('overtimes');
-        if($overtimes->num_rows() > 0){
-          $where_overtime = "employee_id='".$employee_id."' AND date='".Date('Y-m-d')."'";
+        $overtimes = $this->db->where("employee_id = '".$employee_id."' and date = '".Date('Y-m-d')."'")->get('overtimes');
+     
+        if($overtimes->num_rows()>0){
+            $where_overtime = "employee_id='".$employee_id."' AND date='".Date('Y-m-d')."'";
           $this->crud_model->updateData('overtimes',$data_overtime,$where_overtime);          
         }else{
           $this->crud_model->createData('overtimes',$data_overtime);
@@ -919,41 +1015,41 @@ class Order extends CI_Controller {
       
 
     }
-  function uploadImageSummernote(){
-    if(isset($_FILES["image"]["name"])){
-      $config['upload_path'] = 'assets/requirement_attachments/';
-      $config['allowed_types'] = 'jpg|jpeg|png|gif';
-      $this->upload->initialize($config);
-      if(!$this->upload->do_upload('image')){
-        $this->upload->display_errors();
-        return FALSE;
-      }else{
-        $data = $this->upload->data();
+  // function uploadImageSummernote(){
+  //   if(isset($_FILES["image"]["name"])){
+  //     $config['upload_path'] = 'assets/requirement_attachments/';
+  //     $config['allowed_types'] = 'jpg|jpeg|png|gif';
+  //     $this->upload->initialize($config);
+  //     if(!$this->upload->do_upload('image')){
+  //       $this->upload->display_errors();
+  //       return FALSE;
+  //     }else{
+  //       $data = $this->upload->data();
 
-        $config['image_library']='gd2';
-        $config['source_image']='assets/requirement_attachments/'.$data['file_name'];
-        $config['create_thumb']= FALSE;
-        $config['maintain_ratio']= TRUE;
-        $config['quality']= '60%';
-        $config['width']= 800;
-        $config['height']= 800;
-        $config['new_image']= 'assets/requirement_attachments/'.$data['file_name'];
-        $this->load->library('image_lib', $config);
-        $this->image_lib->resize();
-        echo base_url().'assets/requirement_attachments/'.$data['file_name'];
-        }
-    }
-  }
+  //       $config['image_library']='gd2';
+  //       $config['source_image']='assets/requirement_attachments/'.$data['file_name'];
+  //       $config['create_thumb']= FALSE;
+  //       $config['maintain_ratio']= TRUE;
+  //       $config['quality']= '60%';
+  //       $config['width']= 800;
+  //       $config['height']= 800;
+  //       $config['new_image']= 'assets/requirement_attachments/'.$data['file_name'];
+  //       $this->load->library('image_lib', $config);
+  //       $this->image_lib->resize();
+  //       echo base_url().'assets/requirement_attachments/'.$data['file_name'];
+  //       }
+  //   }
+  // }
     
-  //Delete image summernote
-  function deleteImageSummernote(){
-    $src = $this->input->post('src');
-    $file_name = str_replace(base_url(), '', $src);
-    if(unlink($file_name))
-    {
-      echo 'File Delete Successfully';
-    }
-  }
+  // //Delete image summernote
+  // function deleteImageSummernote(){
+  //   $src = $this->input->post('src');
+  //   $file_name = str_replace(base_url(), '', $src);
+  //   if(unlink($file_name))
+  //   {
+  //     echo 'File Delete Successfully';
+  //   }
+  // }
    
     public function sentTaskAction($task_id,$order_id)
     {
@@ -1070,6 +1166,15 @@ class Order extends CI_Controller {
   {
     $order_id = $this->input->post('order_id');
     $where = "order_id='".$order_id."' AND task_status='Open'";
+    $task = $this->crud_model->readData('*','tasks',$where)->row();
+    echo json_encode($task);
+
+  }
+
+  public function getTask()
+  {
+    $task_id = $this->input->post('task_id');
+    $where = "task_id='".$task_id."' AND task_status='Open'";
     $task = $this->crud_model->readData('*','tasks',$where)->row();
     echo json_encode($task);
 

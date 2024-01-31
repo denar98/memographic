@@ -22,23 +22,23 @@
                     <?php
                       if($order->order_status=='Delivered'){
                     ?>
-                    <a href="<?=base_url()?>Order/completedAction/<?=$order->order_id?>"> <button type="button" class="btn btn-primary float-right mr-3" name="button" >Mark as Complete</button></a>
+                    <a href="<?=base_url()?>Order/completedAction/<?=$order->order_id?>"> <button type="button" class="btn btn-secondary float-right mr-3" name="button" >Mark as Complete</button></a>
                     <?php } ?>
                     <?php
                       if($order->assign_to==null && $order->order_status=='On Progress'){
                     ?>
-                      <a href="#"> <button type="button" class="btn btn-info float-right mr-3" onclick="assignOrder('<?=$order->order_id?>')" name="button" >Assign Order</button></a>
+                      <!-- <a href="#"> <button type="button" class="btn btn-info float-right mr-3" onclick="assignOrder('<?=$order->order_id?>')" name="button" >Assign Order</button></a> -->
                     <?php }else if($order->assign_to!=null  && $order->order_status=='On Progress' ){ ?>
-                      <a href="#"> <button type="button" class="btn btn-info float-right mr-3"  onclick="updateAssignOrder('<?=$order->order_id?>')" name="button" >Assigned to <?=$order->assign_to?></button></a>
+                      <!-- <a href="#"> <button type="button" class="btn btn-info float-right mr-3"  name="button" >Assigned to <?=$order->assign_to?></button></a> -->
                     <?php } ?>
 
                     <?php
                       if($order->assign_to==null && $order->order_status=='Delivered' || $order->order_status=='Completed' ){
                     ?>
-                      <a href="#"> <button type="button" class="btn btn-info float-right mr-3" onclick="assignRevision('<?=$order->order_id?>')" name="button" >Assign Revision</button></a>
+                      <!-- <a href="#"> <button type="button" class="btn btn-info float-right mr-3" onclick="assignRevision('<?=$order->order_id?>')" name="button" >Assign Revision</button></a> -->
 
                     <?php } else if($order->assign_to!=null && $order->order_status=='Delivered' || $order->order_status=='Completed' || $order->order_status=='In Revision' || $order->order_status=='Done'){ ?>
-                      <a href="#"> <button type="button" class="btn btn-info float-right mr-3"  onclick="updateAssignRevision('<?=$order->order_id?>')" name="button" >Assigned to <?=$order->assign_to?></button></a>
+                      <!-- <a href="#"> <button type="button" class="btn btn-info float-right mr-3"  name="button" >Assigned to <?=$order->assign_to?></button></a> -->
 
                     <?php } ?>
                     <a onclick="assignTask('<?=$order->order_id?>')"> <button type="button" class="btn btn-primary float-right mr-3" name="button" >Add New Task</button></a>
@@ -392,10 +392,18 @@
 
                   
                     <div class="card  project-detail-div" >
-                      <div class="card-header p-4"><h6>Project Detail</h6></div>
+                      <div class="card-header p-4">
+                        <h6 class="float-left mt-2">Project Detail</h6>
+
+                        <?php if( $order->assign_to == null){ ?>
+                          <span class="badge badge-secondary text-white float-right"> Not Assigned</span>
+                        <?php } else{ ?>
+                          <span class="badge badge-info text-white float-right"> Assigned to <?= $order->assign_to?></span>
+                        <?php } ?>
+
+                      </div>
                       <div class="card-body p-4" style="border-radius:10px;">
                         <h6 class=""><?= $order->service_name ?></h6>
-                        <span class="btn btn-primary btn-xs mb-3 text-white"> Project <?= $order->service_name?></span>
                         <p>Order Date  <span class="pull-right font-weight-bold"> <?= $order->order_date?></span></p>
                         <p>Client Name  <span class="pull-right font-weight-bold"> <?= $order->client_name?></span></p>
                         <p>Order Number  <span class="pull-right font-weight-bold"> <?= $order->order_number?></span></p>
@@ -459,84 +467,6 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="modal fade" id="assignModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:hidden;">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <form class="" action="<?=base_url()?>Order/assignAction" method="post">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Assign Order</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <div class="theme-form">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <input class="form-control" name="assign_type" id="assign_type" type="hidden" required>
-                        <input class="form-control" name="order_id" id="order_id_order" type="hidden" required>
-                        <input class="form-control" name="task_id" id="task_id_order" type="hidden" required>
-                        <input class="form-control" name="source_assign" id="source_assign_order" type="hidden" value="fromDetailPage" required>
-                        <div class="form-group">
-                          <label>Assign to</label>
-                          <select class="form-control" name="employee_id" id="employee_id_order" required>
-                            <?php
-                            foreach($employees as $employee){
-                            ?>
-                            <option value="<?=$employee->employee_id?>"><?=$employee->employee_name?></option>
-                            <?php } ?>
-                          </select>
-                        </div>  
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label>Start Date</label>
-                          <div class="input-group flatpicker-calender">
-                            <input class="form-control datetime-local_order" id="datetime-local" name="task_start" type="date"  required>
-                          </div>
-                            <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label>Tag Priority</label>
-                          <select class="form-control" name="tag_id" id="tag_id_order" required>
-                            <?php
-                            foreach($tags as $tag){
-                            ?>
-                            <option value="<?=$tag->tag_id?>" ><?=$tag->tag_name?></option>
-                            <?php } ?>
-                          </select>
-                        </div>  
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label>Estimation </label>
-                          <div class="row">
-                            <div class="col-md-6">
-                              <input class="form-control" name="task_estimation_hour" id="task_estimation_hour_order" type="number" placeholder="Hours" required>
-                            </div>
-                            <div class="col-md-6">
-                              <input class="form-control" name="task_estimation_minute" id="task_estimation_minute_order" type="number" placeholder="Minutes" required>
-                            </div>
-                          </div>
-                        </div>  
-                      </div>
-                      
-                    </div>
-                      
-                    
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-              </form>
-            </div>
-          </div>
-
         </div>
         <div class="modal fade" id="ratingModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:hidden;">
           <div class="modal-dialog" role="document">
@@ -670,7 +600,7 @@
                       </div>
                       
 
-<!-- 
+                      <!-- 
                       <div class="col-md-12">
                         <div class="form-group">
                           <label>Quality</label>
@@ -699,7 +629,85 @@
           </div>
 
         </div>
-        <div class="modal fade " id="assignRevisionModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:scroll;">
+        <!-- <div class="modal fade" id="assignModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:hidden;">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form class="" action="<?=base_url()?>Order/assignAction" method="post">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Assign Order</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="theme-form">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <input class="form-control" name="assign_type" id="assign_type" type="hidden" required>
+                        <input class="form-control" name="order_id" id="order_id_order" type="hidden" required>
+                        <input class="form-control" name="task_id" id="task_id_order" type="hidden" required>
+                        <input class="form-control" name="employee_id_before" id="employee_id_before_order" type="hidden" required>
+                        <input class="form-control" name="source_assign" id="source_assign_order" type="hidden" value="fromDetailPage" required>
+                        <div class="form-group">
+                          <label>Assign to</label>
+                          <select class="form-control" name="employee_id" id="employee_id_order" required>
+                            <?php
+                            foreach($employees as $employee){
+                            ?>
+                            <option value="<?=$employee->employee_id?>"><?=$employee->employee_name?></option>
+                            <?php } ?>
+                          </select>
+                        </div>  
+                      </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Start Date</label>
+                          <div class="input-group flatpicker-calender">
+                            <input class="form-control datetime-local_order" id="datetime-local" name="task_start" type="date"  required>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Tag Priority</label>
+                          <select class="form-control" name="tag_id" id="tag_id_order" required>
+                            <?php
+                            foreach($tags as $tag){
+                            ?>
+                            <option value="<?=$tag->tag_id?>" ><?=$tag->tag_name?></option>
+                            <?php } ?>
+                          </select>
+                        </div>  
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Estimation </label>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <input class="form-control" name="task_estimation_hour" id="task_estimation_hour_order" type="number" placeholder="Hours" required>
+                            </div>
+                            <div class="col-md-6">
+                              <input class="form-control" name="task_estimation_minute" id="task_estimation_minute_order" type="number" placeholder="Minutes" required>
+                            </div>
+                          </div>
+                        </div>  
+                      </div>
+                      
+                    </div>
+                      
+                    
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div> -->
+        <!-- <div class="modal fade " id="assignRevisionModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:scroll;">
           <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
               <form class="" action="<?=base_url()?>Order/assignRevisionAction" method="post" enctype="multipart/form-data">
@@ -734,7 +742,6 @@
                           <div class="input-group flatpicker-calender">
                             <input class="form-control datetime-local_revision" id="datetime-local" name="task_start" type="date"  required>
                           </div>
-                            <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -767,14 +774,11 @@
                       </div>
                       <div class="col-md-12">
                         <div class="form-group mt-2" id="brief_revision_div">
-                          <!-- <label>Revision Notes</label> -->
                           <textarea class="summernote4" name="brief" id="brief_revision" style="max-height: 300px; overflow: scroll;">
                             <br>
-                            <!-- <h5>Revision Notes</h5> -->
                             <p class="text-muted">
                             </p>
                           </textarea>
-                          <!-- <textarea class="form-control" id="exampleFormControlTextarea4" rows="3"></textarea> -->
                         </div>
                       </div>
                       <div class="col-md-12">
@@ -796,7 +800,7 @@
             </div>
           </div>
 
-        </div>
+        </div> -->
         <div class="modal fade " id="assignTask"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:scroll;">
           <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
@@ -951,6 +955,7 @@
                 $('#tag_id_order').val(row.tag_id);
                 $('#task_id_order').val(row.task_id);
                 $('#order_id_order').val(row.order_id);
+                $('#employee_id_before_order').val(row.employee_id);
                 // $('#role').val(row.role);
               }
             });
