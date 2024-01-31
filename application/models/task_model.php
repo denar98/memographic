@@ -128,5 +128,17 @@ class Task_model extends CI_Model
     $this->db->where('task_attachments.task_id',$task_id);
     return $this->db->get();
   }
+
+  public function getTaskRatingByEmployee()
+  {
+    $this->db->select('ratings.*,employees.*,users.*,AVG(brief_reading) AS avg_brief_reading,AVG(quality) AS avg_quality,AVG(speed) AS avg_speed');
+    $this->db->from('employees');
+    $this->db->join('ratings', 'ratings.employee_id = employees.employee_id','left');
+    $this->db->join('users', 'users.employee_id = employees.employee_id');
+    $this->db->where("users.role = 'Graphic Designer' or users.role = 'Head Designer'");
+    $this->db->order_by('AVG(brief_reading + quality + speed)/3','desc');
+    $this->db->group_by('employees.employee_id');
+    return $this->db->get();
+  }
   
 }

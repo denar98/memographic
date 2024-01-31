@@ -26,6 +26,8 @@ class Dashboard extends CI_Controller {
 			$this->session->set_flashdata("error", 'Please Login Before You Access This Page');
 			redirect('Login');
 		}
+		$this->load->model('task_model');
+
 	}
 
 	public function index()
@@ -36,8 +38,10 @@ class Dashboard extends CI_Controller {
 			$this->session->set_flashdata("error", "You Don't Have Access To This Page");
 			redirect('Dashboard/designer');
 		}
+		$data['employee_ratings'] = $this->task_model->getTaskRatingByEmployee()->result();
+
 		$this->load->view('template/head.html',$data);
-		$this->load->view('dashboard/index.html');
+		$this->load->view('dashboard/designer.html',$data);
 		$this->load->view('template/foot.html');
 	}
 	public function designer()
