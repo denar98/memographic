@@ -19955,6 +19955,12 @@ select.crypto-select.primary {
   }
 }
 
+.widget-1 .widget-round.info{
+border-color:#17a2b8 !important;
+}
+.info .svg-fill {
+  fill: #17a2b8;
+}
 .profit-chart > div {
   margin-top: -45px;
   margin-bottom: -48px;

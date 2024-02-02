@@ -216,3 +216,6 @@ div.dataTables_wrapper div.dataTables_paginate{
         right: 20px;
         animation: bounce-effect 5s infinite ease-in;
     }
+    .default-according .card .card-header .btn-link{
+        border:0px !important;
+    }
