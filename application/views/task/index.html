@@ -282,7 +282,7 @@
     
                     </div>
                     <div class="modal-body">
-                      <form class="form-bookmark needs-validation" action="<?=site_url()?>/Task/deliveryAction" method="post" enctype="multipart/form-data">
+                      <form class="form-bookmark needs-validation" action="<?=site_url()?>/Task/deliveryAction" method="post" enctype="multipart/form-data" onsubmit="deliveryButton.disabled = true; return true;">
                         <div class="row">
                           <input class="form-control" id="task_id" name="task_id" type="hidden" required="" autocomplete="off">
                           <div class="mb-3 mt-0 col-md-4">
@@ -305,8 +305,8 @@
                           </div>
                           
                         </div>
-                        <button class="btn btn-primary float-right"  type="submit">Save</button>
-                        <button class="btn btn-secondary  float-right mr-3" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-primary float-right"  id="delivery-btn" name="deliveryButton" type="submit">Save</button>
+                        <button class="btn btn-secondary  float-right mr-3"  type="button" data-dismiss="modal">Cancel</button>
                       </form>
                     </div>
                   </div>
@@ -316,7 +316,7 @@
               <div class="modal fade " id="assignUpdate"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:scroll;">
                 <div class="modal-dialog modal-xl" role="document">
                   <div class="modal-content">
-                    <form class="" action="<?=base_url()?>Order/assignRevisionAction" method="post" enctype="multipart/form-data">
+                    <form class="" action="<?=base_url()?>Order/assignRevisionAction" method="post" enctype="multipart/form-data" onsubmit="updateButton.disabled = true; return true;">
                       <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Assign Task</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -425,7 +425,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary" name="updateButton" id="btn-update">Save changes</button>
                       </div>
                     </form>
                   </div>
@@ -435,7 +435,7 @@
               <div class="modal fade " id="assignTask"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:scroll;">
                 <div class="modal-dialog modal-xl" role="document">
                   <div class="modal-content">
-                    <form class="" action="<?=base_url()?>Order/assignNewTaskAction" method="post" enctype="multipart/form-data">
+                    <form class="" action="<?=base_url()?>Order/assignNewTaskAction" method="post" enctype="multipart/form-data" onsubmit="assignButton.disabled = true; return true;">
                       <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Add New Task</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -474,7 +474,7 @@
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label>Task Type</label>
-                                <select class="form-control" name="task_type" required>
+                                <select class="form-control select2" name="task_type" required>
                                   <option value="New">New</option>
                                   <option value="Revision">Revision</option>
                                 </select>
@@ -492,7 +492,7 @@
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label>Tag Priority</label>
-                                <select class="form-control" name="tag_id" id="tag_id_revision" required>
+                                <select class="form-control select2" name="tag_id" id="tag_id_revision" required>
                                   <?php
                                   foreach($tags as $tag){
                                   ?>
@@ -542,7 +542,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary" name="assignButton" id="btn-assign">Save changes</button>
                       </div>
                     </form>
                   </div>
@@ -651,6 +651,20 @@
               setTimeout(function(){
                 load_data(limit, start, employee_id);
               }, 500);
+
+            });
+
+            $('#delivery-btn').click(function() {
+              $(this).html('Uploading...')
+              // $(this).attr('disabled','disabled');
+
+            });
+            $('#btn-update').click(function() {
+              $(this).html('Uploading...')
+
+            });
+            $('#btn-assign').click(function() {
+              $(this).html('Uploading...')
 
             });
 

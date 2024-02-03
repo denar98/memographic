@@ -18,7 +18,7 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-sm-12">
-        <form class="" action="<?=site_url()?>/Order/updateAction" method="post"   enctype="multipart/form-data">
+        <form class="" action="<?=site_url()?>/Order/updateAction" method="post"   enctype="multipart/form-data" onsubmit="updateButton.disabled = true; return true;">
           <div class="row">
             <div class="col-md-4">
               <div class="card">
@@ -151,7 +151,7 @@
                               </div>
 
      
-                              <div class="form-group mt-3 mb-0 pull-right"><a class="btn btn-danger" href="<?=base_url()?>Order">Cancel</a><input type="submit" class="btn btn-primary ml-3" value="Create Order"></div>
+                              <div class="form-group mt-3 mb-0 pull-right"><a class="btn btn-danger" href="<?=base_url()?>Order">Cancel</a><input type="submit" class="btn btn-primary ml-3" name="updateButton" value="Create Order"></div>
                           </div>
 
                         </div>
