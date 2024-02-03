@@ -54,12 +54,12 @@
                                   <div class="media-size-email"><img class="me-3 rounded-circle" src="<?=base_url()?>assets/images/user/user.png" alt=""></div>
                                   <div class="media-body">
                                     <div class="row">
-                                      <div class="col-md-8">
+                                      <div class="col-md-12">
                                         <h6 class="f-w-600 ml-3">I'm <?= $this->session->userdata('employee_name')?></h6>
                                         <p class="ml-3"><?= $this->session->userdata('role')?></p>                                            
                                       </div>
                                       <div class="col-md-4">
-                                        <button class="btn btn-primary float-right pl-2 pr-2 pb-0 pt-0" id="pills-my-tab" role="tab" aria-selected="true"><i data-feather="eye" class="mt-2 mb-1"></i></button>
+                                        <!-- <button class="btn btn-primary float-right pl-2 pr-2 pb-0 pt-0" id="pills-my-tab" role="tab" aria-selected="true"><i data-feather="eye" class="mt-2 mb-1"></i></button> -->
                                       </div>
                                     </div>
                                   </div>
@@ -67,6 +67,7 @@
                                 <ul class="nav main-menu" role="tablist">
                                   <li class="nav-item">
                                     <button class="btn text-left mt-3 btn-primary text-white w-100" type="button" onclick="assignTask('<?=$task->order_id?>')"><i data-feather="check-circle"></i> Add New Task</button>
+                                    <!-- <button class="btn btn-primary float-right pl-2 pr-2 pb-0 pt-0" id="pills-my-tab" role="tab" aria-selected="true"><i data-feather="eye" class="mt-2 mb-1"></i></button> -->
                                   </li>
                                   <li class="nav-item"><hr></li>
                                   <!-- <li class="nav-item"><span class="main-title mt-2" style="margin-left:20px;"> Task List</span></li> -->

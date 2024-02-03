@@ -58,7 +58,7 @@ class Login extends CI_Controller {
         );
         //buat session berdasarkan user yang login
         $this->session->set_userdata($session_data);
-				redirect('Task');
+				redirect('Dashboard');
 
     } else {
 

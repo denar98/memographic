@@ -27,7 +27,7 @@
                     <div class="media media-wrapper justify-content-between">
                       <div class="media-body"> 
                         <div class="greeting-user">
-                          <h4 class="f-w-600">Welcome to Memographic</h4>
+                          <h4 class="f-w-600">Welcome Back <?=$this->session->userdata('employee_name')?></h4>
                           <p>Here whats happing in your account today</p>
                           <div class="whatsnew-btn"><a href="<?=base_url()?>Attendance/checkInAction"  class="btn btn-outline-white">Checkin Now !</a></div>
                         </div>
@@ -61,7 +61,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-xxl-auto col-xl-4 col-sm-4 box-col-4"> 
+              <div class="col-md-4"> 
                 <div class="row"> 
                   <div class="col-xl-12"> 
                     <div class="card widget-1"> 
@@ -80,7 +80,7 @@
                             </div>
                           </div>
                           <div> 
-                            <h4>Rp 450.000</h4><span class="f-light">Overtime Fee</span>
+                            <h4>Rp <?=number_format($my_overtime_fee)?></h4><span class="f-light">Overtime Fee</span>
                           </div>
                         </div>
                         <!-- <div class="font-secondary f-w-500"><i class="icon-arrow-up icon-rotate me-1"></i><span>+50%</span></div> -->
@@ -103,7 +103,17 @@
                             </div>
                           </div>
                           <div> 
-                            <h4>24.5 Hours</h4><span class="f-light">Overtime Hours</span>
+                            <h4><?php 
+                              if($my_overtime_hours!=''){
+                                echo substr((int)$my_overtime_hours->overtime_hours/60,0,3);
+                              }
+                              else{
+                                echo '0';
+                              }
+                              ?>  
+                              Hours
+                            </h4>
+                            <span class="f-light">Overtime Hours</span>
                           </div>
                         </div>
                         <!-- <div class="font-primary f-w-500"><i class="icon-arrow-up icon-rotate me-1"></i><span>+70%</span></div> -->
@@ -112,7 +122,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-xxl-auto col-xl-4 col-sm-3 box-col-4"> 
+              <div class="col-md-4"> 
                 <div class="row"> 
                   <div class="col-xl-12"> 
                     <div class="card widget-1">
@@ -127,7 +137,18 @@
                             </div>
                           </div>
                           <div> 
-                            <h4>4.9 Star</h4><span class="f-light">My Rating</span>
+                            <h4>
+                              <?php 
+                              if($my_rating!=''){
+                                echo substr(($my_rating->avg_brief_reading + $my_rating->avg_quality + $my_rating->avg_speed)/3,0,3);
+                              }
+                              else{
+                                echo '0';
+                              }
+                              ?> 
+                              Star
+                            </h4>
+                            <span class="f-light">My Rating</span>
                           </div>
                         </div>
                         <!-- <div class="font-warning f-w-500"><i class="icon-arrow-down icon-rotate me-1"></i><span>-20%</span></div> -->
@@ -150,7 +171,7 @@
                             </div>
                           </div>
                           <div> 
-                            <h4>16 Task</h4><span class="f-light">Total Task Today</span>
+                            <h4><?=$my_total_task?> Task</h4><span class="f-light">Total Task Today</span>
                           </div>
                         </div>
                         <!-- <div class="font-success f-w-500"><i class="icon-arrow-up icon-rotate me-1"></i><span>+70%</span></div> -->
@@ -160,7 +181,7 @@
                 </div>
               </div>
               
-              <div class="col-xl-4  box-col-12">
+              <div class="col-xxl-4 col-md-6 col-xl-4">
                 <div class="card">
                   <div class="card-header card-no-border">
                     <h5>Rating Leaderboard</h5>
@@ -215,7 +236,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-xxl-4 col-ed-4 col-xl-4 col-md-4 box-col-4"> 
+              <div class="col-xxl-4 col-md-6 col-xl-4 "> 
                 <div class="card">
                   <div class="card-header card-no-border">
                     <div class="header-top"> 
@@ -250,19 +271,31 @@
                   </div>
                 </div>
               </div>
-              <div class="col-xxl-2 col-ed-2 col-xl-2 col-sm-2 box-col-2">
+              <div class="col-xxl-2 col-md-3 col-xl-2">
+                <div class="card"> 
+                  <div class="card-header card-no-border"> 
+                    <h5>Today Progress</h5>
+                  </div>
+                  <div class="card-body pt-0"> 
+                    <div class="monthly-profit mt-2">
+                      <div id="progresstoday"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="col-xxl-2 col-md-3 col-xl-2 ">
                 <div class="card get-card">
                   <div class="card-header card-no-border">
                     <h5>Today Progress</h5>
                   </div>
                   <div class="card-body pt-0">
-                    <div class="progress-chart-wrap">
-                      <div id="progresschart"></div>
+                    <div class="progress-chart-wrap text-center">
+                      <div id="progresschart" style="margin-left:auto; margin-right:auto;"></div>
                     </div>
                   </div>
                 </div> 
-              </div>
-              <div class="col-xl-2 col-ed-2">
+              </div> -->
+              <div class="col-xxl-2 col-md-3 col-xl-2 ">
                 <div class="card get-card overflow-hidden"> 
                   <div class="card-header card-no-border">
                     <h5>Let's Working Some Art !</h5>
@@ -342,254 +375,384 @@
         <script src="<?=base_url()?>assets/js/animation/wow/wow.min.js"></script>
 
 <script>
-  // activity chart
-  var optionsactivity = {
-    series: [
-      {
-        name: "Activity",
-        data: [2, 4, 2.5, 1.5, 5.5, 1.5, 4],
-      },
-    ],
-    chart: {
-      height: 300,
-      type: "bar",
-      toolbar: {
-        show: false,
-      },
-      dropShadow: {
-        enabled: true,
-        top: 10,
-        left: 0,
-        blur: 5,
-        color: "#7064F5",
-        opacity: 0.35,
-      },
-    },
-    plotOptions: {
-      bar: {
-        borderRadius: 6,
-        columnWidth: "30%",
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    xaxis: {
-      categories: ["S", "M", "T", "W", "T", "F", "S"],
-      labels: {
-        style: {
-          fontSize: "12px",
-          fontFamily: "Rubik, sans-serif",
-          colors: "var(--chart-text-color)",
-        },
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      tooltip: {
-        enabled: false,
-      },
-    },
-    yaxis: {
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      labels: {
-        formatter: function (val) {
-          return val + " " + "Hr";
-        },
-        style: {
-          fontSize: "12px",
-          fontFamily: "Rubik, sans-serif",
-          colors: "var(--chart-text-color)",
-        },
-      },
-    },
-    grid: {
-      borderColor: "var(--chart-dashed-border)",
-      strokeDashArray: 5,
-    },
-    colors: ["#7064F5", "#8D83FF"],
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "light",
-        type: "vertical",
-        gradientToColors: ["#7064F5", "#8D83FF"],
-        opacityFrom: 0.98,
-        opacityTo: 0.85,
-        stops: [0, 100],
-      },
-    },
-    responsive: [
-      {
-        breakpoint: 1200,
-        options: {
+  
+
+ // activity chart
+ var optionsactivity = {
+          series: [
+            {
+              name: "Activity",
+              data: [<?=$total_hour_1?>,<?=$total_hour_2?>,<?=$total_hour_3?>,<?=$total_hour_4?>,<?=$total_hour_5?>,<?=$total_hour_6?>,<?=$total_hour_7?>],
+            },
+          ],
           chart: {
-            height: 200,
-          },
-        },
-      },
-    ],
-  };
-
-  var chartactivity = new ApexCharts(
-    document.querySelector("#activity-chart"),
-    optionsactivity
-  );
-  chartactivity.render();
-
-
-
-  // progress chart
-  var options = {
-    series: [38, 60],
-    chart: {
-      width: 240,
-      height: 360,
-      type: "radialBar",
-      offsetX: -28,
-    },
-    plotOptions: {
-      radialBar: {
-        dataLabels: {
-          name: {
-            offsetY: 20,
-            color: "var(--chart-text-color)",
-            fontFamily: "Rubik, sans-serif",
-            fontWeight: 500,
-          },
-          value: {
-            fontSize: "22px",
-            offsetY: -16,
-            fontFamily: "Rubik, sans-serif",
-            fontWeight: 500,
-          },
-          total: {
-            show: true,
-            label: "Task Done!",
-            fontSize: "12px",
-            formatter: function () {
-              return "89%";
+            height: 300,
+            type: "bar",
+            toolbar: {
+              show: false,
+            },
+            dropShadow: {
+              enabled: true,
+              top: 10,
+              left: 0,
+              blur: 5,
+              color: "#e7fcd9",
+              opacity: 0.35,
             },
           },
-        },
-        hollow: {
-          margin: 5,
-          size: "70%",
-          image: "../assets/images/dashboard-3/round.png",
-          imageWidth: 115,
-          imageHeight: 115,
-          imageClipped: false,
-        },
-        track: {
-          background: "transparent",
-        },
-      },
-    },
-    colors: ["var(--theme-deafult)", "#FFA941"],
-    labels: ["Progress", "Done"],
-    stroke: {
-      lineCap: "round",
-    },
-    legend: {
-      show: true,
-      position: "bottom",
-      horizontalAlign: "center",
-      offsetY: -15,
-      fontSize: "14px",
-      fontFamily: "Rubik, sans-serif",
-      fontWeight: 500,
-      labels: {
-        colors: "var(--chart-text-color)",
-      },
-      markers: {
-        width: 6,
-        height: 6,
-      },
-    },
-    responsive: [
-      {
-        breakpoint: 1830,
-        options: {
-          chart: {
-            offsetX: -40,
+          plotOptions: {
+            bar: {
+              borderRadius: 6,
+              columnWidth: "30%",
+            },
           },
-        },
-      },
-      {
-        breakpoint: 1750,
-        options: {
-          chart: {
-            offsetX: -50,
+          dataLabels: {
+            enabled: false,
           },
-        },
-      },
-      {
-        breakpoint: 1661,
-        options: {
-          chart: {
-            offsetX: -10,
+          xaxis: {
+            categories: ['<?=$day_name_1?>','<?=$day_name_2?>','<?=$day_name_3?>','<?=$day_name_4?>','<?=$day_name_5?>','<?=$day_name_6?>','<?=$day_name_7?>'],
+            labels: {
+              style: {
+                fontSize: "12px",
+                fontFamily: "Rubik, sans-serif",
+                colors: "var(--chart-text-color)",
+              },
+            },
+            axisBorder: {
+              show: false,
+            },
+            axisTicks: {
+              show: false,
+            },
+            tooltip: {
+              enabled: false,
+            },
           },
-        },
-      },
-      {
-        breakpoint: 1530,
-        options: {
-          chart: {
-            offsetX: -25,
+          yaxis: {
+            axisBorder: {
+              show: false,
+            },
+            axisTicks: {
+              show: false,
+            },
+            labels: {
+              formatter: function (val) {
+                return val + " " + "Hr";
+              },
+              style: {
+                fontSize: "12px",
+                fontFamily: "Rubik, sans-serif",
+                colors: "var(--chart-text-color)",
+              },
+            },
           },
-        },
-      },
-      {
-        breakpoint: 1400,
-        options: {
-          chart: {
-            offsetX: 10,
+          grid: {
+            borderColor: "var(--chart-dashed-border)",
+            strokeDashArray: 5,
           },
-        },
-      },
-      {
-        breakpoint: 1300,
-        options: {
-          chart: {
-            offsetX: -10,
+          colors: ["var(--theme-deafult)", "#fcc062"],
+          fill: {
+            type: "gradient",
+            gradient: {
+              shade: "light",
+              type: "vertical",
+              gradientToColors: ["var(--theme-deafult)", "#fcc062"],
+              opacityFrom: 0.98,
+              opacityTo: 0.85,
+              stops: [0, 100],
+            },
           },
-        },
-      },
-      {
-        breakpoint: 1200,
-        options: {
-          chart: {
-            width: 255,
-          },
-        },
-      },
-      {
-        breakpoint: 992,
-        options: {
-          chart: {
-            width: 245,
-          },
-        },
-      },
-      {
-        breakpoint: 600,
-        options: {
-          chart: {
-            width: 225,
-          },
-        },
-      },
-    ],
-  };
+          responsive: [
+            {
+              breakpoint: 1200,
+              options: {
+                chart: {
+                  height: 200,
+                },
+              },
+            },
+          ],
+        };
 
-  var chart = new ApexCharts(document.querySelector("#progresschart"), options);
-  chart.render();
+        var chartactivity = new ApexCharts(
+          document.querySelector("#activity-chart"),
+          optionsactivity
+        );
+        chartactivity.render();
+
+
+       
+      
+// A $( document ).ready() block.
+$( document ).ready(function() {
+  $.ajax({
+      type: "POST",
+      url: "<?php echo site_url('Dashboard/getProgressToday');?>",
+      success: function (response) {
+        var row = JSON.parse(response);
+        // console.log(row);
+        // progress chart
+        var total_task = parseInt(row.progress_today_done) + parseInt(row.progress_today_progress);
+        var presentation_done = (parseInt(row.progress_today_done) / total_task) * 100;
+              
+        var optionsprogress = {
+          labels: ["Done", "Progress"],
+          // series: [7, 5],
+          series: [row.progress_today_done, row.progress_today_progress],
+          chart: {
+            type: "donut",
+            height: 300,
+          },
+          dataLabels: {
+            enabled: false,
+          },
+          legend: {
+            position: "bottom",
+            fontSize: "14px",
+            fontFamily: "Rubik, sans-serif",
+            fontWeight: 500,
+            labels: {
+              colors: ["var(--chart-text-color)"],
+            },
+            markers: {
+              width: 6,
+              height: 6,
+            },
+            itemMargin: {
+              horizontal: 7,
+              vertical: 0,
+            },
+          },
+          // stroke: {
+          //   width: 10,
+          //   colors: ["var(--light2)"],
+          // },
+          plotOptions: {
+            pie: {
+              expandOnClick: false,
+              donut: {
+                size: "83%",
+                labels: {
+                  show: true,
+                  name: {
+                    offsetY: 4,
+                  },
+                  total: {
+                    show: true,
+                    fontSize: "16px",
+                    fontFamily: "Rubik, sans-serif",
+                    fontWeight: 500,
+                    label: presentation_done+"%",
+                    formatter: () => "Task Done",
+                  },
+                },
+              },
+            },
+          },
+          states: {
+            normal: {
+              filter: {
+                type: "none",
+              },
+            },
+            hover: {
+              filter: {
+                type: "none",
+              },
+            },
+            active: {
+              allowMultipleDataPointsSelection: false,
+              filter: {
+                type: "none",
+              },
+            },
+          },
+          colors: ["var(--theme-deafult)", "#fcc062" ],
+          responsive: [
+            {
+              breakpoint: 1630,
+              options: {
+                chart: {
+                  height: 360,
+                },
+              },
+            },
+            {
+              breakpoint: 1584,
+              options: {
+                chart: {
+                  height: 400,
+                },
+              },
+            },
+            {
+              breakpoint: 1473,
+              options: {
+                chart: {
+                  height: 250,
+                },
+              },
+            },
+            {
+              breakpoint: 1425,
+              options: {
+                chart: {
+                  height: 270,
+                },
+              },
+            },
+            {
+              breakpoint: 1400,
+              options: {
+                chart: {
+                  height: 320,
+                },
+              },
+            },
+            {
+              breakpoint: 480,
+              options: {
+                chart: {
+                  height: 250,
+                },
+              },
+            },
+          ],
+        };
+
+        var chartprogress = new ApexCharts(
+          document.querySelector("#progresstoday"),
+          optionsprogress
+        );
+        chartprogress.render();
+      }
+    });
+
+    // $.ajax({
+    //   type: "POST",
+    //   url: "<?php echo site_url('Dashboard/getWorkHours');?>",
+    //   success: function (response) {
+    //     var row = JSON.parse(response);
+    //     const total_hours = [];
+    //     const day_names = [];
+    //     for (const key in row) {
+    //       total_hours.push(Math.trunc( row[key].total_hours ));
+    //       day_names.push("'"+row[key].day_names+"'");
+    //     // console.log(`${key}: ${row[key].total_hours}`);
+    //     }
+    //     console.log(total_hours.join(", "));
+    //     console.log(day_names.join(", "));
+    //     var text_total_hours= total_hours.join(", ");
+    //     var text_day_names= day_names.join(", ");
+
+    //     // activity chart
+    //     var optionsactivity = {
+    //       series: [
+    //         {
+    //           name: "Activity",
+    //           data: [total_hours],
+    //         },
+    //       ],
+    //       chart: {
+    //         height: 300,
+    //         type: "bar",
+    //         toolbar: {
+    //           show: false,
+    //         },
+    //         dropShadow: {
+    //           enabled: true,
+    //           top: 10,
+    //           left: 0,
+    //           blur: 5,
+    //           color: "#e7fcd9",
+    //           opacity: 0.35,
+    //         },
+    //       },
+    //       plotOptions: {
+    //         bar: {
+    //           borderRadius: 6,
+    //           columnWidth: "30%",
+    //         },
+    //       },
+    //       dataLabels: {
+    //         enabled: false,
+    //       },
+    //       xaxis: {
+    //         categories: ['a','b'],
+    //         labels: {
+    //           style: {
+    //             fontSize: "12px",
+    //             fontFamily: "Rubik, sans-serif",
+    //             colors: "var(--chart-text-color)",
+    //           },
+    //         },
+    //         axisBorder: {
+    //           show: false,
+    //         },
+    //         axisTicks: {
+    //           show: false,
+    //         },
+    //         tooltip: {
+    //           enabled: false,
+    //         },
+    //       },
+    //       yaxis: {
+    //         axisBorder: {
+    //           show: false,
+    //         },
+    //         axisTicks: {
+    //           show: false,
+    //         },
+    //         labels: {
+    //           formatter: function (val) {
+    //             return val + " " + "Hr";
+    //           },
+    //           style: {
+    //             fontSize: "12px",
+    //             fontFamily: "Rubik, sans-serif",
+    //             colors: "var(--chart-text-color)",
+    //           },
+    //         },
+    //       },
+    //       grid: {
+    //         borderColor: "var(--chart-dashed-border)",
+    //         strokeDashArray: 5,
+    //       },
+    //       colors: ["var(--theme-deafult)", "#fcc062"],
+    //       fill: {
+    //         type: "gradient",
+    //         gradient: {
+    //           shade: "light",
+    //           type: "vertical",
+    //           gradientToColors: ["var(--theme-deafult)", "#fcc062"],
+    //           opacityFrom: 0.98,
+    //           opacityTo: 0.85,
+    //           stops: [0, 100],
+    //         },
+    //       },
+    //       responsive: [
+    //         {
+    //           breakpoint: 1200,
+    //           options: {
+    //             chart: {
+    //               height: 200,
+    //             },
+    //           },
+    //         },
+    //       ],
+    //     };
+
+    //     var chartactivity = new ApexCharts(
+    //       document.querySelector("#activity-chart"),
+    //       optionsactivity
+    //     );
+    //     chartactivity.render();
+
+
+       
+    //   }
+    // });
+  });
+
+  
 </script>
