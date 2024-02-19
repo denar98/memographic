@@ -2,7 +2,7 @@
 
 class Task_model extends CI_Model
 {
-  public function getTaskByEmployee($employee_id)
+  public function getTaskByEmployee($employee_id,$type)
   {
     $this->db->select('tasks.*,orders.*,employees.*,services.*,service_packages.*,clients.*,tags.*');
     $this->db->from('tasks');
@@ -13,7 +13,13 @@ class Task_model extends CI_Model
     $this->db->join('services', 'orders.service_id = services.service_id');
     $this->db->join('service_packages', 'orders.service_package_id = service_packages.service_package_id');
     $this->db->where('tasks.employee_id',$employee_id);
-    $this->db->where('task_status != "Delivered"');
+    if($type="all"){
+      $this->db->where('task_status != "Delivered"');
+    }
+    else{
+      $this->db->where('task_status != "Delivered" AND task_start <= CURDATE()');
+    }
+    $this->db->order_by('task_start','asc');
     return $this->db->get();
   }
   public function getDataHistoryTask($limit, $start, $employee_id)

@@ -234,3 +234,6 @@ div.dataTables_wrapper div.dataTables_paginate{
     .select2-selection__arrow{
         top:5px;
     }
+    .form-control{
+        padding: 5px 10px !important;
+    }

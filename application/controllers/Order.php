@@ -515,7 +515,7 @@ class Order extends CI_Controller {
 
       if($assign_type=='update'){
         
-        $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+        $task_todays = $this->task_model->getTaskByEmployee($employee_id,'all')->result();
         $estimate_hour = 0;
         $estimate_minute = 0;
         $overtime_id = $this->uuid->v4();
@@ -558,7 +558,7 @@ class Order extends CI_Controller {
       }
       else{
 
-        $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+        $task_todays = $this->task_model->getTaskByEmployee($employee_id,'all')->result();
         $estimate_hour = 0;
         $estimate_minute = 0;
         $overtime_id = $this->uuid->v4();
@@ -709,7 +709,7 @@ class Order extends CI_Controller {
       }
       // Step 1 Overtime
       if($employee_id == $employee_id_before){
-        $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+        $task_todays = $this->task_model->getTaskByEmployee($employee_id,'all')->result();
         $this_task = $this->task_model->getDetailTask($task_id)->row();
 
         $estimate_hour = 0;
@@ -755,7 +755,7 @@ class Order extends CI_Controller {
         }
       }else{
         // Employee 1
-        $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+        $task_todays = $this->task_model->getTaskByEmployee($employee_id,'all')->result();
         $this_task = $this->task_model->getDetailTask($task_id)->row();
 
         $estimate_hour = 0;
@@ -801,7 +801,7 @@ class Order extends CI_Controller {
         }
 
         // Employee 2
-        $task_todays_before = $this->task_model->getTaskByEmployee($employee_id_before)->result();
+        $task_todays_before = $this->task_model->getTaskByEmployee($employee_id_before,'all')->result();
         $this_task_before = $this->task_model->getDetailTask($task_id)->row();
 
         $estimate_hour_before = 0;
@@ -961,7 +961,7 @@ class Order extends CI_Controller {
         }
       }
 
-      $task_todays = $this->task_model->getTaskByEmployee($employee_id)->result();
+      $task_todays = $this->task_model->getTaskByEmployee($employee_id,'all')->result();
       $estimate_hour = 0;
       $estimate_minute = 0;
       foreach ($task_todays as $task_today) {
@@ -1174,7 +1174,7 @@ class Order extends CI_Controller {
   public function getTask()
   {
     $task_id = $this->input->post('task_id');
-    $where = "task_id='".$task_id."' AND task_status='Open'";
+    $where = "task_id='".$task_id."'";
     $task = $this->crud_model->readData('*','tasks',$where)->row();
     echo json_encode($task);
 

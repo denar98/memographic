@@ -42,7 +42,7 @@
             <div class="container-fluid">
               <div class="email-wrap bookmark-wrap">
                 <div class="row">
-                  <div class="col-xl-3 box-col-6">
+                  <div class="col-xl-2 box-col-6">
                     <div class="md-sidebar">
                       <!-- <a class="btn btn-primary md-sidebar-toggle" href="javascript:void(0)">task filter</a> -->
                       <div class="md-sidebar-aside job-left-aside custom-scrollbar">
@@ -55,7 +55,7 @@
                                   <div class="media-body">
                                     <div class="row">
                                       <div class="col-md-12">
-                                        <h6 class="f-w-600 ml-3">I'm <?= $this->session->userdata('employee_name')?></h6>
+                                        <h6 class="f-w-600 ml-3"><?= $this->session->userdata('employee_name')?></h6>
                                         <p class="ml-3"><?= $this->session->userdata('role')?></p>                                            
                                       </div>
                                       <div class="col-md-4">
@@ -66,7 +66,7 @@
                                 </div>
                                 <ul class="nav main-menu" role="tablist">
                                   <li class="nav-item">
-                                    <button class="btn text-left mt-3 btn-primary text-white w-100" type="button" onclick="assignTask('<?=$task->order_id?>')"><i data-feather="check-circle"></i> Add New Task</button>
+                                    <button class="btn text-left mt-3 btn-primary text-white w-100" type="button" onclick="assignTask('<?=$task->order_id?>')"><i data-feather="check-circle"></i> Add Task</button>
                                     <!-- <button class="btn btn-primary float-right pl-2 pr-2 pb-0 pt-0" id="pills-my-tab" role="tab" aria-selected="true"><i data-feather="eye" class="mt-2 mb-1"></i></button> -->
                                   </li>
                                   <li class="nav-item"><hr></li>
@@ -100,10 +100,15 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-xl-9 col-md-12 box-col-12">
+                  <div class="col-xl-10 col-md-12 box-col-12">
                     <div class="email-right-aside bookmark-tabcontent default-according ">
                       <?php foreach($employees as $employee){ 
-                        $tasks = $this->task_model->getTaskByEmployee($employee->employee_id)->result();
+                        if($this->session->userdata('role') == 'Admin' || $this->session->userdata('role') == 'Project Manager'){
+                          $tasks = $this->task_model->getTaskByEmployee($employee->employee_id,'all')->result();
+                        }
+                        else{
+                          $tasks = $this->task_model->getTaskByEmployee($employee->employee_id,'designer')->result();
+                        }
                         $estimation_hour = 0;
                         $estimation_minute = 0;
                         
@@ -165,6 +170,12 @@
                                             else{
                                               $tag_color = "normal";
                                             }
+                                            if($task->task_type == 'New'){
+                                              $task_type_color = "primary";
+                                            }
+                                            else{
+                                              $task_type_color = "danger";
+                                            }
                                             if($task->service_package_name== 'Basic'){
                                               $service_package_color = "primary";
                                             }
@@ -180,33 +191,29 @@
                                               <a  href="#" onclick="assignUpdate('<?=$task->task_id?>')"><i data-feather="edit"></i></a>
                                             </td>
                                             <td id="task-row" data-id="<?=$task->order_id?>">
-                                              <h7 class="task_title_0"><?=$task->client_name?></h7>
+                                              <h7 class="task_title_0"><?=date_format(date_create($task->task_start),"d-m-y")?></h7>
                                               <!-- <p class="project_name_0"><?=$task->service_name?></p> -->
                                             </td>
                                             <td id="task-row" data-id="<?=$task->order_id?>">
-                                              <h7 class="task_title_0"><?=$task->service_name?></h7>
+                                              <h7 class="task_title_0"><?=$task->service_name?> <?=$task->client_name?> <?=$task->order_number?></h7>
                                               <!-- <p class="project_name_0"><?=$task->service_name?></p> -->
-                                            </td>
-                                            <td>
-                                              <h7 class="task_title_0"><?=$task->order_number?></h7>
-                                              <!-- <p class="project_name_0">Order Number</p> -->
-                                            </td>
-                                            <td class="text-center">
-                                              <h7 class="task_title_0"><?=$task->task_type?></h7>
-                                              <!-- <p class="project_name_0">Task Type</p> -->
-                                            </td>
+                                            </td>                                           
                                             <td class="text-center">
                                               <h7 class="task_title_0"><?=$task->task_estimation_hour?>h, <?=$task->task_estimation_minute?>m </h7>
                                               <!-- <p class="project_name_0">Estimation</p> -->
                                             </td>
+                                            <td class="text-center">
+                                              <h7 class="task_title_0"><button class="btn btn-xs text-center btn-<?=$task_type_color?>"><?=$task->task_type?></button></h7>
+                                              <!-- <p class="project_name_0">Task Type</p> -->
+                                            </td>
                                             <td style="width:10%;  text-align: center;">
                                               <!-- <button class="btn btn-<?=$service_package_color?>" style="height: 28px; padding: 5px 30px; width: 135px; cursor: context-menu;"><h6 class="task_title_0"><?=$task->service_package_name?></h6></button> -->
-                                              <h7 class="task_title_0 text-<?=$service_package_color?>"><?=$task->service_package_name?></h7>
+                                              <h7 class="task_title_0"><button class="btn text-center btn-xs btn-<?=$service_package_color?>"><?=$task->service_package_name?></button></h7>
                                               <!-- <p class="project_name_0">Order Type</p> -->
                                             </td>
                                             <td style="width:10%; text-align: center;">
                                               <!-- <button class="btn btn-<?=$tag_color?>" style="height: 28px; padding: 5px 30px; width: 135px; cursor: context-menu;"><h6 class="task_title_0"><?=$task->tag_name?></h6></button> -->
-                                              <h7 class="task_title_0 text-<?=$tag_color?>"><?=$task->tag_name?></h7>
+                                              <h7 class="task_title_0"><button class="btn text-center btn-xs btn-<?=$tag_color?>"><?=$task->tag_name?></button></h7>
                                               <!-- <p class="project_name_0">Order Priority</p> -->
                                             </td>
                     
@@ -217,23 +224,23 @@
                                                 <?php 
                                                 if($task->employee_id == $this->session->userdata('employee_id')){
                                                 ?>
-                                                <a href="#" onclick="deliveryTask('<?=$task->task_id?>')"><i data-feather="navigation"></i></a>
-                                                <p class="project_name_0">Send</p>  
+                                                <a href="#" onclick="deliveryTask('<?=$task->task_id?>')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Sent Task"><i class="mt-2" data-feather="navigation"></i></a>
+                                                <!-- <p class="project_name_0">Send</p>   -->
                                                 <?php } ?>
                                               <?php } else if($task->task_status == 'Checking' ) { ?>
-                                              <a class="text-primary"><i class="text-primary" data-feather="search"></i></a>
-                                              <p class="project_name_0">Checking</p>
+                                              <a class="text-primary"><i class="text-primary mt-2" data-feather="search"></i></a>
+                                              <!-- <p class="project_name_0">Checking</p> -->
                                               <?php } else if($task->task_status == 'Wait Rating' ) { ?>
-                                              <a class="text-primary"><i class="text-primary" data-feather="star"></i></a>
-                                              <p class="project_name_0">Wait Rating</p>
+                                              <a class="text-primary"><i class="text-primary mt-2" data-feather="star"></i></a>
+                                              <!-- <p class="project_name_0">Wait Rating</p> -->
                                               <?php } else if($task->task_status == 'Delivered' ) { ?>
-                                              <a class="text-primary"><i class="text-primary" data-feather="check-circle"></i></a>
-                                              <p class="project_name_0">Delivered</p>
+                                              <a class="text-primary"><i class="text-primary mt-2" data-feather="check-circle"></i></a>
+                                              <!-- <p class="project_name_0">Delivered</p> -->
                                               <?php } ?>
                                             </td>
                                             <td style="width:5%; text-align:center;" style="min-width:50px">
-                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>"><i data-feather="eye"></i></a>
-                                              <p class="project_name_0 ">View</p>
+                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View Task"><i class="mt-2" data-feather="eye"></i></a>
+                                              <!-- <p class="project_name_0 ">View</p> -->
                                             </td>
                                             <!-- <td><a href="#"><i data-feather="trash-2"></i></a></td> -->
                                           </tr>
@@ -367,7 +374,7 @@
                               <div class="form-group">
                                 <label>Start Date</label>
                                 <div class="input-group flatpicker-calender">
-                                  <input class="form-control datetime-local_revision" id="datetime-local" name="task_start" type="date"  required>
+                                  <input class="form-control datetime-local_revision task_start_revision" id="datetime-local" name="task_start" type="date"  required>
                                 </div>
                                   <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
                               </div>
@@ -520,7 +527,7 @@
                             <div class="col-md-12">
                               <div class="form-group mt-2" id="brief_revision_div">
                                 <!-- <label>Revision Notes</label> -->
-                                <textarea class="summernote4" name="brief" id="brief_revision" style="max-height: 300px; overflow: scroll;">
+                                <textarea class="summernote5" name="brief" id="brief_revision" style="max-height: 300px; overflow: scroll;">
                                   <br>
                                   <!-- <h5>Revision Notes</h5> -->
                                   <p class="text-muted">
@@ -707,6 +714,8 @@
               dialogsInBody: true
 
             });
+            $('.note-editable').css('padding-top','43px');
+
             $('#assignUpdate').modal('show'); 
             $('#assign_type_revision').val('update');
             // $('#order_id').val(order_id);
@@ -717,7 +726,7 @@
               success: function (response) {
                 var row = JSON.parse(response);
                 console.log(row);
-                $('.datetime-local_revision').val(row.task_date);
+                $('.task_start_revision').val(row.task_start);
                 $('#task_estimation_hour_revision').val(row.task_estimation_hour);
                 $('#task_estimation_minute_revision').val(row.task_estimation_minute);
                 $('#employee_id_revision').val(row.employee_id);
@@ -733,11 +742,11 @@
             });             
            }
           function assignTask() {
-            $('.summernote4').summernote( {
+            $('.summernote5').summernote( {
               height: 350,
               dialogsInBody: true
-
             });
+            // $('.note-editable').css('padding-top','43px');
             $('#assignTask').modal('show'); 
                 $('.datetime-local_revision').val("");
                 $('#task_estimation_hour_revision').val("");
