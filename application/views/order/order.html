@@ -21,21 +21,26 @@
               <div class="col-md-12 project-list">
                 <div class="card">
                   <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-12">
                       <ul class="nav nav-tabs border-tab" id="top-tab" role="tablist">
                         <!-- <li class="nav-item"><a class="nav-link active" id="top-home-tab" data-toggle="tab" href="#top-home" role="tab" aria-controls="top-home" aria-selected="true"><i data-feather="target"></i>All</a></li> -->
-                        <li class="nav-item"><a class="nav-link active" id="progress-top-tab" style="cursor: pointer;"><i data-feather="info"></i>On Progress</a></li>
+                        <li class="nav-item" style="min-width:170px;"><a class="nav-link active" id="progress-top-tab" style="cursor: pointer;"><i data-feather="info"></i>On Progress</a></li>
                         <li class="nav-item"><a class="nav-link" id="revision-top-tab" style="cursor: pointer;"><i data-feather="repeat"></i>Revision</a></li>
                         <li class="nav-item"><a class="nav-link" id="done-top-tab" style="cursor: pointer;"><i data-feather="check-square"></i>Done</a></li>
                         <li class="nav-item"><a class="nav-link" id="delivered-top-tab" style="cursor: pointer;"><i data-feather="send"></i>Delivered</a></li>
                         <li class="nav-item"><a class="nav-link" id="completed-top-tab" style="cursor: pointer;"><i data-feather="check-circle"></i>Complete</a></li>
+                        <li class="nav-item">
+                          <input type="text" class="form-control" placeholder="Search" name="keyword" id="keyword-form">
+                        </li>
+                        <li class="nav-item text-right" style="min-width:200px;">
+                          <div class="form-group mb-0 mr-0"></div><a class="btn btn-primary" href="<?=site_url()?>Order/createOrder"> <i data-feather="plus-square"> </i>New Order</a>
+                        </li>
                       </ul>
                     </div>
-                    <div class="col-sm-4">
+                    <!-- <div class="col-sm-3">
                       <div class="text-right">
-                        <div class="form-group mb-0 mr-0"></div><a class="btn btn-primary" href="<?=site_url()?>Order/createOrder"> <i data-feather="plus-square"> </i>Create New Order</a>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
@@ -150,7 +155,7 @@
             <script>
               $(document).ready(function(){
  
-                var limit = 10;
+                var limit = 35;
                 var start = 0;
                 var action = 'inactive';
                 var service_id = $( "#service_id").val();
@@ -191,6 +196,23 @@
 
                 $('#btnLoadMore').click(function() {
                   start = start + limit;
+                  var keyword = $( "#keyword-form").val();
+                  if($("#progress-top-tab").hasClass( "active" )){
+                      var order_status = 'On Progress';
+                    } 
+                    else if($("#revision-top-tab").hasClass( "active" )){
+                      var order_status = 'In Revision';
+                    } 
+                    else if($("#done-top-tab").hasClass( "active" )){
+                      var order_status = 'In Revision';
+                    } 
+                    else if($("#delivered-top-tab").hasClass( "active" )){
+                      var order_status = 'In Revision';
+                    } 
+                    else if($("#completed-top-tab").hasClass( "active" )){
+                      var order_status = 'In Revision';
+                    } 
+
                   $('#load_data_message').html('<h7><i>Please Wait...</i></h7>');
                   setTimeout(function(){
                     load_data(limit, start, keyword, order_status, service_id, client_id);
@@ -205,6 +227,8 @@
                   $('#delivered-top-tab').removeClass('active');
                   $('#completed-top-tab').removeClass('active');
                   var order_status = "On Progress";
+                  var keyword = $( "#keyword-form").val();
+
                   start = 0;
                   $('#load_data_message').html('<h7><i>Please Wait...</i></h7>');
 
@@ -242,6 +266,8 @@
                   $('#delivered-top-tab').removeClass('active');
                   $('#completed-top-tab').removeClass('active');
                   var order_status = "In Revision";
+                  var keyword = $( "#keyword-form").val();
+
                   start = 0;
                   $('#load_data_message').html('<h7><i>Please Wait...</i></h7>');
 
@@ -278,6 +304,8 @@
                   $('#delivered-top-tab').addClass('active');
                   $('#completed-top-tab').removeClass('active');
                   var order_status = "Delivered";
+                  var keyword = $( "#keyword-form").val();
+
                   start = 0;
                   $('#load_data_message').html('<h7><i>Please Wait...</i></h7>');
 
@@ -314,6 +342,7 @@
                   $('#delivered-top-tab').removeClass('active');
                   $('#completed-top-tab').addClass('active');
                   var order_status = "Completed";
+                  var keyword = $( "#keyword-form").val();
                   start = 0;
                   $('#load_data_message').html('<h7><i>Please Wait...</i></h7>');
 
@@ -350,6 +379,8 @@
                   $('#delivered-top-tab').removeClass('active');
                   $('#completed-top-tab').removeClass('active');
                   var order_status = "Done";
+                  var keyword = $( "#keyword-form").val();
+
                   start = 0;
                   $('#load_data_message').html('<h7><i>Please Wait...</i></h7>');
 
@@ -386,9 +417,25 @@
                 $( "#keyword-form").keyup(function() {
                   var keyword = $(this).val();
                   var service_id = $( "#service_id").val();
-                  var order_status = $( "#order_status").val();
                   var client_id = $( "#client_id").val();
-                  start = 0;
+
+                    if($("#progress-top-tab").hasClass( "active" )){
+                      var order_status = 'On Progress';
+                    } 
+                    else if($("#revision-top-tab").hasClass( "active" )){
+                      var order_status = 'In Revision';
+                    } 
+                    else if($("#done-top-tab").hasClass( "active" )){
+                      var order_status = 'In Revision';
+                    } 
+                    else if($("#delivered-top-tab").hasClass( "active" )){
+                      var order_status = 'In Revision';
+                    } 
+                    else if($("#completed-top-tab").hasClass( "active" )){
+                      var order_status = 'In Revision';
+                    } 
+
+                    start = 0;
                   console.log(start);
                   console.log('limit'+limit);
                   $('#load_data_message').html('<h7><i>Please Wait...</i></h7>');
@@ -397,7 +444,7 @@
                   function() 
                   {
                     $.ajax({
-                    url:"<?php echo base_url(); ?>Orders/fetchOrders",
+                    url:"<?php echo base_url(); ?>Order/fetchOrders",
                     method:"POST",
                     data:{limit:limit, start:start, keyword:keyword, order_status:order_status, service_id:service_id, client_id:client_id},
                     cache: false,
