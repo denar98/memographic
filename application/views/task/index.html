@@ -65,10 +65,14 @@
                                   </div>
                                 </div>
                                 <ul class="nav main-menu" role="tablist">
+                                  <?php 
+                                  if ($this->session->userdata('role') == 'Project Manager' || $this->session->userdata('role') == 'Head Designer' ){
+                                  ?>
                                   <li class="nav-item">
                                     <button class="btn text-left mt-3 btn-primary text-white w-100" type="button" onclick="assignTask('<?=$task->order_id?>')"><i data-feather="check-circle"></i> Add Task</button>
                                     <!-- <button class="btn btn-primary float-right pl-2 pr-2 pb-0 pt-0" id="pills-my-tab" role="tab" aria-selected="true"><i data-feather="eye" class="mt-2 mb-1"></i></button> -->
                                   </li>
+                                  <?php } ?>
                                   <li class="nav-item"><hr></li>
                                   <!-- <li class="nav-item"><span class="main-title mt-2" style="margin-left:20px;"> Task List</span></li> -->
                                   <!-- <li><a class="employee-task-my" id="pills-my-tab" role="tab" aria-selected="true" style="cursor: pointer;"><span class="title"> My Task</span></a></li> -->
@@ -148,17 +152,7 @@
                                     <div class="taskadd">
                                       <div class="table-responsive">
                                         <table class="table table-task table-striped pl-3 pr-3">
-                                          <!-- <tr>
-                                            <th>Client</th>
-                                            <th>Type</th>
-                                            <th>Order Number</th>
-                                            <th class="text-center">Task Type</th>
-                                            <th class="text-center">Estimation</th>
-                                            <th class="text-center">Package</th>
-                                            <th class="text-center">Priority</th>
-                                            <th class="text-center">Delivery</th>
-                                            <th class="text-center">View</th>
-                                          </tr> -->
+                                          
                                           <?php 
                                           $i=0;
                                           if ($tasks){
@@ -187,33 +181,30 @@
                                             }
                                             ?>
                                           <tr> 
-                                            <td style="width:5%; min-width:50px;">
-                                              <a  href="#" onclick="assignUpdate('<?=$task->task_id?>')"><i data-feather="edit"></i></a>
-                                            </td>
                                             <td id="task-row" data-id="<?=$task->order_id?>">
-                                              <h7 class="task_title_0"><?=date_format(date_create($task->task_start),"d-m-y")?></h7>
+                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>"><h7 class="task_title_0 text-black"><?=date_format(date_create($task->task_start),"d-m-y")?></h7></a>
                                               <!-- <p class="project_name_0"><?=$task->service_name?></p> -->
                                             </td>
                                             <td id="task-row" data-id="<?=$task->order_id?>">
-                                              <h7 class="task_title_0"><?=$task->service_name?> <?=$task->client_name?> <?=$task->order_number?></h7>
+                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>"><h7 class="task_title_0 text-black"><?=$task->service_name?> <?=$task->client_name?> <?=$task->order_number?></h7></a>
                                               <!-- <p class="project_name_0"><?=$task->service_name?></p> -->
                                             </td>                                           
                                             <td class="text-center">
-                                              <h7 class="task_title_0"><?=$task->task_estimation_hour?>h, <?=$task->task_estimation_minute?>m </h7>
+                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>"><h7 class="task_title_0 text-black"><?=$task->task_estimation_hour?>h, <?=$task->task_estimation_minute?>m </h7></a>
                                               <!-- <p class="project_name_0">Estimation</p> -->
                                             </td>
                                             <td class="text-center">
-                                              <h7 class="task_title_0"><button class="btn btn-xs text-center btn-<?=$task_type_color?>"><?=$task->task_type?></button></h7>
+                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>"><h7 class="task_title_0"><button class="btn btn-xs text-center btn-<?=$task_type_color?>"><?=$task->task_type?></button></h7></a>
                                               <!-- <p class="project_name_0">Task Type</p> -->
                                             </td>
                                             <td style="width:10%;  text-align: center;">
                                               <!-- <button class="btn btn-<?=$service_package_color?>" style="height: 28px; padding: 5px 30px; width: 135px; cursor: context-menu;"><h6 class="task_title_0"><?=$task->service_package_name?></h6></button> -->
-                                              <h7 class="task_title_0"><button class="btn text-center btn-xs btn-<?=$service_package_color?>"><?=$task->service_package_name?></button></h7>
+                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>"><h7 class="task_title_0"><button class="btn text-center btn-xs btn-<?=$service_package_color?>"><?=$task->service_package_name?></button></h7></a>
                                               <!-- <p class="project_name_0">Order Type</p> -->
                                             </td>
                                             <td style="width:10%; text-align: center;">
                                               <!-- <button class="btn btn-<?=$tag_color?>" style="height: 28px; padding: 5px 30px; width: 135px; cursor: context-menu;"><h6 class="task_title_0"><?=$task->tag_name?></h6></button> -->
-                                              <h7 class="task_title_0"><button class="btn text-center btn-xs btn-<?=$tag_color?>"><?=$task->tag_name?></button></h7>
+                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>"><h7 class="task_title_0"><button class="btn text-center btn-xs btn-<?=$tag_color?>"><?=$task->tag_name?></button></h7></a>
                                               <!-- <p class="project_name_0">Order Priority</p> -->
                                             </td>
                     
@@ -224,11 +215,11 @@
                                                 <?php 
                                                 if($task->employee_id == $this->session->userdata('employee_id')){
                                                 ?>
-                                                <a href="#" onclick="deliveryTask('<?=$task->task_id?>')" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Sent Task"><i class="mt-2" data-feather="navigation"></i></a>
+                                                <a href="#" onclick="deliveryTask('<?=$task->task_id?>')"  title="Sent Task"><i class="mt-2" data-feather="navigation"></i></a>
                                                 <!-- <p class="project_name_0">Send</p>   -->
                                                 <?php } ?>
                                               <?php } else if($task->task_status == 'Checking' ) { ?>
-                                              <a class="text-primary"><i class="text-primary mt-2" data-feather="search"></i></a>
+                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>" class="text-primary"><i class="text-primary mt-2" data-feather="search"></i></a>
                                               <!-- <p class="project_name_0">Checking</p> -->
                                               <?php } else if($task->task_status == 'Wait Rating' ) { ?>
                                               <a class="text-primary"><i class="text-primary mt-2" data-feather="star"></i></a>
@@ -238,10 +229,16 @@
                                               <!-- <p class="project_name_0">Delivered</p> -->
                                               <?php } ?>
                                             </td>
-                                            <td style="width:5%; text-align:center;" style="min-width:50px">
-                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View Task"><i class="mt-2" data-feather="eye"></i></a>
-                                              <!-- <p class="project_name_0 ">View</p> -->
+                                            <!-- <td style="width:5%; text-align:center;" style="min-width:50px">
+                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>" title="View Task"><i class="mt-2" data-feather="eye"></i></a>
+                                            </td> -->
+                                            <?php 
+                                            if ($this->session->userdata('role') == 'Project Manager' || $this->session->userdata('role') == 'Head Designer' ){
+                                            ?>          
+                                            <td style="width:5%; min-width:50px;">
+                                              <a  href="#" onclick="assignUpdate('<?=$task->task_id?>')"><i data-feather="edit"></i></a>
                                             </td>
+                                            <?php } ?>
                                             <!-- <td><a href="#"><i data-feather="trash-2"></i></a></td> -->
                                           </tr>
                                           <!-- <tr>

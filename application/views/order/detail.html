@@ -89,6 +89,44 @@
                     </div>
                   </div>
                 </div>
+                <div class="card">
+                  <div class="card-header">
+                    <h6>Project Attachment</h6>
+                  </div>
+                  <div class="card-body">
+                    <!-- <?php foreach($attachments as $attachment){ ?>
+                      <li class="list-group-item"><a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" download ><?=$attachment->order_attachment_name?></a></li>
+                    <?php } ?> -->
+
+                    <?php 
+                      foreach($attachments as $attachment){
+                      ?>
+
+                      <?php 
+                      if($attachment->attachment_ext=='.jpg' || $attachment->attachment_ext=='.png' || $attachment->attachment_ext=='.jpeg'){
+                      ?> 
+                      <div class="ml-3 text-center float-left">
+
+                        <div class="gallery my-gallery" itemscope="" data-pswp-uid="1">
+                          <figure class="" itemprop="associatedMedia" itemscope="">
+                            <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" itemprop="contentUrl" data-size="<?=$attachment->order_attachment_width?>x<?=$attachment->order_attachment_height?>">
+                              <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" itemprop="thumbnail" alt="Image description">
+                            </a>
+                            <figcaption itemprop="caption description"><?=$attachment->order_attachment_name?></figcaption>
+                          </figure>
+                        </div>
+                        <p title="<?=$attachment->order_attachment_name?>"><?=substr($attachment->order_attachment_name,0,5)	?>..</p>  
+                      </div>
+                    <?php } else{ ?>
+                    <div class="ml-3 text-center float-left">
+                      <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" download title="<?=$attachment->order_attachment_name?>">
+                        <img src="<?=base_url()?>assets/images/Download-02.png" style="width: 50px;" alt="">
+                      </a>
+                      <p><?=substr($attachment->order_attachment_name,0,5)	?>..</p>  
+                    </div>
+                    <?php }} ?>
+                  </div>
+                </div>
                 
 
                 <?php 
@@ -128,7 +166,8 @@
                           <div class="activity-timeline" id="activity-timeline">
                             <div class="row">
                               <div class="col-md-6  align-middle">
-                                <h6 class="float-left mt-3"><i data-feather="user" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->employee_name?></h6>
+                                <a  class="float-left mt-3 text-black" href="#" onclick="assignUpdate('<?=$task_delivery->task_id?>')"><h6><i class="mr-1 pt-2 text-black" data-feather="edit"></i></h6></a>
+                                <h6 class="float-left mt-3"> | <i data-feather="user" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->employee_name?></h6>
                                 <h6 class="ml-3 float-left mt-3"><i data-feather="clock" class="mr-1 pt-2 text-primary" ></i><?=date_format(date_create($task_delivery->task_delivery_date),"d M Y H:i")?></h6>
                                 <h6 class="ml-3 float-left mt-3"><i data-feather="flag" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->task_status?></h6>
                               </div>
@@ -275,7 +314,7 @@
     
                                     <a href="#" title="Rating" class="btn btn-warning mt-1" style="padding: 8px 15px;"  onclick="ratingTask('<?=$task_delivery->task_id?>','<?=$task_delivery->employee_id?>','<?=$task_delivery->order_id?>')"><i data-feather="star" class="text-white mt-2" ></i></a>
                                     <?php }else{ ?>
-                                    <btn title="Rating" class="btn btn-warning mt-1" style="padding: 17px 11px 7px 11px; min-width:57px; max-width:57px;"><h5><?=substr($avarage_ratings,0,3)?></h5></btn>
+                                    <btn title="Rating" class="btn btn-warning mt-1" style="padding:14px 11px 14px 11px; min-width:57px; max-width:57px;"><h5><?=substr($avarage_ratings,0,3)?></h5></btn>
                                     <?php }} ?>
                                 </div>
                               <?php } else { ?>
@@ -414,7 +453,7 @@
                         <?php } ?>
                       </div>
                     </div>
-                    <div class="card mt-4 project-attachement-div" >
+                    <!-- <div class="card mt-4 project-attachement-div" >
                       <div class="card-header p-4"><h6>Project Attachments</h6></div>
                       <div class="card-body p-4" style="border-radius:10px;">
                         <ul class="list-group list-group-flush">
@@ -423,7 +462,7 @@
                           <?php } ?>
                         </ul>                                
                       </div>
-                    </div>
+                    </div> -->
                     
                   </div>
                 </div>
@@ -629,90 +668,12 @@
           </div>
 
         </div>
-        <!-- <div class="modal fade" id="assignModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:hidden;">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <form class="" action="<?=base_url()?>Order/assignAction" method="post">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Assign Order</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <div class="theme-form">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <input class="form-control" name="assign_type" id="assign_type" type="hidden" required>
-                        <input class="form-control" name="order_id" id="order_id_order" type="hidden" required>
-                        <input class="form-control" name="task_id" id="task_id_order" type="hidden" required>
-                        <input class="form-control" name="employee_id_before" id="employee_id_before_order" type="hidden" required>
-                        <input class="form-control" name="source_assign" id="source_assign_order" type="hidden" value="fromDetailPage" required>
-                        <div class="form-group">
-                          <label>Assign to</label>
-                          <select class="form-control" name="employee_id" id="employee_id_order" required>
-                            <?php
-                            foreach($employees as $employee){
-                            ?>
-                            <option value="<?=$employee->employee_id?>"><?=$employee->employee_name?></option>
-                            <?php } ?>
-                          </select>
-                        </div>  
-                      </div>
-                      <div class="col-md-12">
-                        <div class="form-group">
-                          <label>Start Date</label>
-                          <div class="input-group flatpicker-calender">
-                            <input class="form-control datetime-local_order" id="datetime-local" name="task_start" type="date"  required>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label>Tag Priority</label>
-                          <select class="form-control" name="tag_id" id="tag_id_order" required>
-                            <?php
-                            foreach($tags as $tag){
-                            ?>
-                            <option value="<?=$tag->tag_id?>" ><?=$tag->tag_name?></option>
-                            <?php } ?>
-                          </select>
-                        </div>  
-                      </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label>Estimation </label>
-                          <div class="row">
-                            <div class="col-md-6">
-                              <input class="form-control" name="task_estimation_hour" id="task_estimation_hour_order" type="number" placeholder="Hours" required>
-                            </div>
-                            <div class="col-md-6">
-                              <input class="form-control" name="task_estimation_minute" id="task_estimation_minute_order" type="number" placeholder="Minutes" required>
-                            </div>
-                          </div>
-                        </div>  
-                      </div>
-                      
-                    </div>
-                      
-                    
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Save changes</button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-        </div> -->
-        <!-- <div class="modal fade " id="assignRevisionModal"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:scroll;">
+        <div class="modal fade " id="assignUpdate"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:scroll;">
           <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
-              <form class="" action="<?=base_url()?>Order/assignRevisionAction" method="post" enctype="multipart/form-data">
+              <form class="" action="<?=base_url()?>Order/assignRevisionAction" method="post" enctype="multipart/form-data" onsubmit="updateButton.disabled = true; return true;">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Assign Revision</h5>
+                  <h5 class="modal-title" id="exampleModalLabel">Assign Task</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -720,8 +681,20 @@
                 <div class="modal-body" style="overflow-y: auto;"> 
                   <div class="theme-form">
                     <div class="row">
-                      <div class="col-md-12">
-                        <input class="form-control" name="order_id" id="order_id_revision" type="hidden" required>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Order</label>
+                          <select class="form-control" name="order_id" id="order_id_revision" readonly required>
+                            <?php
+                            foreach($orders as $order){
+                            ?>
+                            <option value="<?=$order->order_id?>"><?=$order->client_name?> - <?=$order->order_number?>  </option>
+                            <?php } ?>
+                          </select>
+                        </div>  
+                      </div>
+                      <div class="col-md-6">
+                        <input class="form-control" name="employee_id_before" id="employee_id_before_revision" type="hidden" required>
                         <input class="form-control" name="task_id" id="task_id_revision" type="hidden" required>
                         <input class="form-control" name="assign_type" id="assign_type_revision" type="hidden" required>
                         <input class="form-control" name="source_assign" id="source_assign_revision" type="hidden" value="fromDetailPage" required>
@@ -736,12 +709,22 @@
                           </select>
                         </div>  
                       </div>
-                      <div class="col-md-12">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Task Type</label>
+                          <select class="form-control" name="task_type" id="task_type_revision" required>
+                            <option value="New">New</option>
+                            <option value="Revision">Revision</option>
+                          </select>
+                        </div>  
+                      </div>
+                      <div class="col-md-6">
                         <div class="form-group">
                           <label>Start Date</label>
                           <div class="input-group flatpicker-calender">
-                            <input class="form-control datetime-local_revision" id="datetime-local" name="task_start" type="date"  required>
+                            <input class="form-control datetime-local_revision task_start_revision" id="datetime-local" name="task_start" type="date"  required>
                           </div>
+                            <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -774,11 +757,14 @@
                       </div>
                       <div class="col-md-12">
                         <div class="form-group mt-2" id="brief_revision_div">
+                          <!-- <label>Revision Notes</label> -->
                           <textarea class="summernote4" name="brief" id="brief_revision" style="max-height: 300px; overflow: scroll;">
                             <br>
+                            <!-- <h5>Revision Notes</h5> -->
                             <p class="text-muted">
                             </p>
                           </textarea>
+                          <!-- <textarea class="form-control" id="exampleFormControlTextarea4" rows="3"></textarea> -->
                         </div>
                       </div>
                       <div class="col-md-12">
@@ -794,13 +780,13 @@
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Save changes</button>
+                  <button type="submit" class="btn btn-primary" name="updateButton" id="btn-update">Save changes</button>
                 </div>
               </form>
             </div>
           </div>
 
-        </div> -->
+        </div>
         <div class="modal fade " id="assignTask"  role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow:scroll;">
           <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
@@ -1022,5 +1008,38 @@
             $('.note-editable').css('padding-top','43px');
 
                      
+           }
+           function assignUpdate(task_id) {
+            $('.summernote4').summernote( {
+              height: 350,
+              dialogsInBody: true
+
+            });
+            $('.note-editable').css('padding-top','43px');
+
+            $('#assignUpdate').modal('show'); 
+            $('#assign_type_revision').val('update');
+            // $('#order_id').val(order_id);
+            $.ajax({
+              type: "POST",
+              url: "<?php echo site_url('Order/getTask');?>",
+              data: "task_id="+task_id,
+              success: function (response) {
+                var row = JSON.parse(response);
+                console.log(row);
+                $('.task_start_revision').val(row.task_start);
+                $('#task_estimation_hour_revision').val(row.task_estimation_hour);
+                $('#task_estimation_minute_revision').val(row.task_estimation_minute);
+                $('#employee_id_revision').val(row.employee_id);
+                $('#tag_id_revision').val(row.tag_id);
+                $('#task_id_revision').val(row.task_id);
+                $('#task_type_revision').val(row.task_type);
+                $('#order_id_revision').val(row.order_id);
+                $('#employee_id_before_revision').val(row.employee_id);
+                // $('#brief_revision').html(row.task_brief);
+                $("#brief_revision").summernote("code", row.task_brief);
+                // $('#role').val(row.role);
+              }
+            });             
            }
         </script>

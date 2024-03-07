@@ -60,6 +60,7 @@ class Order extends CI_Controller {
     $data['attachments'] = $this->order_model->getAttachmentOrder($order_id)->result();
     $data['employees'] = $this->db->get("employees")->result();
     $data['tags'] = $this->db->get("tags")->result();
+		$data['orders'] = $this->order_model->getDataOrdersAll()->result();
 
 		$this->load->view('template/head.html');
 		$this->load->view('order/detail.html',$data);

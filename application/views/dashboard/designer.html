@@ -29,7 +29,7 @@
                         <div class="greeting-user">
                           <h4 class="f-w-600">Welcome Back <?=$this->session->userdata('employee_name')?></h4>
                           <p>Here whats happing in your account today</p>
-                          <div class="whatsnew-btn"><a href="<?=base_url()?>Attendance/checkInAction"  class="btn btn-outline-white">Checkin Now !</a></div>
+                          <div class="whatsnew-btn"><a href="<?=base_url()?>Attendance/checkInAction"  class="btn btn-outline-white" id="check-in-now-btn">Checkin Now !</a></div>
                         </div>
                       </div>
                       <div>  
@@ -156,6 +156,7 @@
                     </div>
                   </div>
                   <div class="col-xl-12"> 
+                    <a href="<?=base_url()?>Task">
                     <div class="card widget-1  mt-2">
                       <div class="card-body pt-3 pb-3"> 
                         <div class="widget-content">
@@ -171,12 +172,13 @@
                             </div>
                           </div>
                           <div> 
-                            <h4><?=$my_total_task?> Task</h4><span class="f-light">Total Task Today</span>
+                            <h4 class="text-black"><?=$my_total_task?> Task</h4><span class="f-light">Total Task Today</span>
                           </div>
                         </div>
                         <!-- <div class="font-success f-w-500"><i class="icon-arrow-up icon-rotate me-1"></i><span>+70%</span></div> -->
                       </div>
                     </div>
+                    </a>
                   </div>
                 </div>
               </div>
