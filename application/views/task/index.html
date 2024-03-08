@@ -1,4 +1,8 @@
-
+<style>
+  .main-menu .active>span{
+    color:#a7d489 !important;
+  }
+</style>
         <div class="page-body">
           <div class="container-fluid">
             <div class="page-title">
@@ -186,7 +190,7 @@
                                               <!-- <p class="project_name_0"><?=$task->service_name?></p> -->
                                             </td>
                                             <td id="task-row" data-id="<?=$task->order_id?>">
-                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>"><h7 class="task_title_0 text-black"><?=$task->service_name?> <?=$task->client_name?> <?=$task->order_number?></h7></a>
+                                              <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>"><h7 class="task_title_0 text-black"><?=$task->task_name?> <?=$task->service_name?> <?=$task->client_name?> <?=$task->order_number?></h7></a>
                                               <!-- <p class="project_name_0"><?=$task->service_name?></p> -->
                                             </td>                                           
                                             <td class="text-center">
@@ -237,6 +241,9 @@
                                             ?>          
                                             <td style="width:5%; min-width:50px;">
                                               <a  href="#" onclick="assignUpdate('<?=$task->task_id?>')"><i data-feather="edit"></i></a>
+                                            </td>
+                                            <td style="width:5%;">
+                                              <a  href="#" onclick="confirmDelete('<?=$task->task_id?>')"><i data-feather="trash-2"></i></a>
                                             </td>
                                             <?php } ?>
                                             <!-- <td><a href="#"><i data-feather="trash-2"></i></a></td> -->
@@ -367,15 +374,7 @@
                                 </select>
                               </div>  
                             </div>
-                            <div class="col-md-6">
-                              <div class="form-group">
-                                <label>Start Date</label>
-                                <div class="input-group flatpicker-calender">
-                                  <input class="form-control datetime-local_revision task_start_revision" id="datetime-local" name="task_start" type="date"  required>
-                                </div>
-                                  <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
-                              </div>
-                            </div>
+                           
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label>Tag Priority</label>
@@ -389,6 +388,21 @@
                               </div>  
                             </div>
                             <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Task Name</label>
+                                <input type="text" class="form-control" name="task_name" id="task_name_revision" required>
+                              </div>  
+                            </div>
+                            <div class="col-md-3">
+                              <div class="form-group">
+                                <label>Start Date</label>
+                                <div class="input-group flatpicker-calender">
+                                  <input class="form-control datetime-local_revision task_start_revision" id="datetime-local" name="task_start" type="date"  required>
+                                </div>
+                                  <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
+                              </div>
+                            </div>
+                            <div class="col-md-3">
                               <div class="form-group">
                                 <label>Estimation </label>
                                 <div class="row">
@@ -449,6 +463,7 @@
                       <div class="modal-body" style="overflow-y: auto;"> 
                         <div class="theme-form">
                           <div class="row">
+                            
                             <div class="col-md-6">
                               <input class="form-control" name="source_assign" id="source_assign_revision" type="hidden" value="fromTaskPage" required>
                               
@@ -484,15 +499,7 @@
                                 </select>
                               </div>  
                             </div>
-                            <div class="col-md-6">
-                              <div class="form-group">
-                                <label>Start Date</label>
-                                <div class="input-group flatpicker-calender">
-                                  <input class="form-control datetime-local_revision" id="datetime-local" name="task_start" type="date"  required>
-                                </div>
-                                  <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
-                              </div>
-                            </div>
+                           
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label>Tag Priority</label>
@@ -506,6 +513,23 @@
                               </div>  
                             </div>
                             <div class="col-md-6">
+                              <input class="form-control" name="source_assign" id="source_assign_revision" type="hidden" value="fromTaskPage" required>
+                              
+                              <div class="form-group">
+                                <label>Task Name</label>
+                                <input type="text" class="form-control" name="task_name" required>
+                              </div>  
+                            </div>
+                            <div class="col-md-3">
+                              <div class="form-group">
+                                <label>Start Date</label>
+                                <div class="input-group flatpicker-calender">
+                                  <input class="form-control datetime-local_revision" id="datetime-local" name="task_start" type="date"  required>
+                                </div>
+                                  <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
+                              </div>
+                            </div>
+                            <div class="col-md-3">
                               <div class="form-group">
                                 <label>Estimation </label>
                                 <div class="row">
@@ -562,6 +586,18 @@
         <script>
 
           $(document).ready(function(e){
+            var employee_name = "<?php echo $this->session->userdata('employee_name')?>";
+            // alert(employee_name);
+            var listids =  $('.task-body');
+            listids.each(function(index, element){
+              var contentId = $(this).attr('id');
+              $('#pills-'+contentId).removeClass('show active');
+            });
+
+            $('#pills-'+employee_name+'-tab').addClass('active');
+            $('#pills-'+employee_name).addClass('active');
+            $('#pills-'+employee_name).addClass('show');
+
 
             $('.select2').each(function () {
                 $(this).select2({
@@ -580,12 +616,13 @@
                         type : 'POST'
                       },
             }); // End of DataTable
-            var listids =  $('.task-body');
-              listids.each(function(index, element){
-                var contentId = $(this).attr('id');
-                $('#pills-'+contentId).addClass('show active');
-              });
-              $('.task-body').addClass('mb-3');
+
+            // var listids =  $('.task-body');
+            //   listids.each(function(index, element){
+            //     var contentId = $(this).attr('id');
+            //     $('#pills-'+contentId).addClass('show active');
+            //   });
+            //   $('.task-body').addClass('mb-3');
 
       
             $('.employee-task-name').click(function(e) {
@@ -606,8 +643,14 @@
                 var contentId = $(this).attr('id');
                 $('#pills-'+contentId).addClass('show active');
               });
+
+              $('.employee-task-name').removeClass('active');
+
+              $('#pills-all-tab').addClass('active');
+              
               $('.task-body').addClass('mb-3');
             })
+
             $('#pills-my-tab').click(function(e) {
               var listids =  $('.task-body');
               listids.each(function(index, element){
@@ -729,6 +772,7 @@
                 $('#employee_id_revision').val(row.employee_id);
                 $('#tag_id_revision').val(row.tag_id);
                 $('#task_id_revision').val(row.task_id);
+                $('#task_name_revision').val(row.task_name);
                 $('#task_type_revision').val(row.task_type);
                 $('#order_id_revision').val(row.order_id);
                 $('#employee_id_before_revision').val(row.employee_id);
@@ -757,5 +801,34 @@
                 // $('#role').val(row.role);
                      
            }
-              
+           function confirmDelete(task_id){
+            var task_id = task_id;
+
+            swal({
+              title: "Are you sure to delete this data?",
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+            }).then((willDelete) => {
+              if (willDelete) {
+                $.ajax({
+                  type: "POST",
+                  url: "<?php echo site_url('Task/deleteAction');?>",
+                  data: "task_id="+task_id,
+                  success: function (response) {
+                    swal("Your data has been deleted!", {
+                      icon: "success",
+                    });
+                    setTimeout(function(){
+                      window.location.replace("<?php echo base_url(); ?>Task");
+                    }, 1000);
+
+
+                  }
+                });
+              } else {
+                swal("Your data is safe!");
+              }
+            });
+          }    
         </script>

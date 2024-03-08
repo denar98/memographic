@@ -36,12 +36,13 @@ class Task extends CI_Controller {
 
 	public function index()
 	{
-    $data['page'] = 'task';
+	    $data['page'] = 'task';
 		$data['module'] = 'order';
 		// $data['employees'] = $this->db->get("employees")->result();
 		$data['employees'] = $this->task_model->getEmployeeDesigner()->result();
 		$data['orders'] = $this->order_model->getDataOrdersAll()->result();
 		$data['tags'] = $this->db->get("tags")->result();
+		// $data['tabs'] = 'All';
 
 		$this->load->view('template/head.html',$data);
 		$this->load->view('task/index.html',$data);
@@ -169,10 +170,10 @@ class Task extends CI_Controller {
     
 
           // $date = str_replace( ':', '', $date);
-          if (!is_dir('assets/attachments/'.$detail_task->service_name.'/'.$detail_task->client_name.'/'.$detail_task->order_number.'/preview')) {
-              mkdir('./assets/attachments/'.$detail_task->service_name.'/'.$detail_task->client_name.'/'.$detail_task->order_number.'/preview', 0777, TRUE);
+          if (!is_dir('assets/attachments/'.$detail_task->service_name.'/'.$detail_task->order_number.'/preview')) {
+              mkdir('./assets/attachments/'.$detail_task->service_name.'/'.$detail_task->order_number.'/preview', 0777, TRUE);
           }
-		  $path = './assets/attachments/'.$detail_task->service_name.'/'.$detail_task->client_name.'/'.$detail_task->order_number.'/preview';
+		  $path = './assets/attachments/'.$detail_task->service_name.'/'.$detail_task->order_number.'/preview';
           $_FILES['file']['name'] = $_FILES['preview_files']['name'][$i];
           $_FILES['file']['type'] = $_FILES['preview_files']['type'][$i];
           $_FILES['file']['file_ext'] = $_FILES['preview_files']['file_ext'][$i];
@@ -222,10 +223,10 @@ class Task extends CI_Controller {
     
 
           // $date = str_replace( ':', '', $date);
-          if (!is_dir('assets/attachments/'.$detail_task->service_name.'/'.$detail_task->client_name.'/'.$detail_task->order_number.'/source')) {
-			mkdir('./assets/attachments/'.$detail_task->service_name.'/'.$detail_task->client_name.'/'.$detail_task->order_number.'/source', 0777, TRUE);
+          if (!is_dir('assets/attachments/'.$detail_task->service_name.'/'.$detail_task->order_number.'/source')) {
+			mkdir('./assets/attachments/'.$detail_task->service_name.'/'.$detail_task->order_number.'/source', 0777, TRUE);
   		  }
-		  $path = './assets/attachments/'.$detail_task->service_name.'/'.$detail_task->client_name.'/'.$detail_task->order_number.'/source';
+		  $path = './assets/attachments/'.$detail_task->service_name.'/'.$detail_task->order_number.'/source';
 		  $_FILES['file']['name'] = $_FILES['source_files']['name'][$i];
           $_FILES['file']['type'] = $_FILES['source_files']['type'][$i];
           $_FILES['file']['tmp_name'] = $_FILES['source_files']['tmp_name'][$i];
@@ -273,10 +274,10 @@ class Task extends CI_Controller {
     
 
           // $date = str_replace( ':', '', $date);
-          if (!is_dir('assets/attachments/'.$detail_task->service_name.'/'.$detail_task->client_name.'/'.$detail_task->order_number.'/proven')) {
-			mkdir('./assets/attachments/'.$detail_task->service_name.'/'.$detail_task->client_name.'/'.$detail_task->order_number.'/proven', 0777, TRUE);
+          if (!is_dir('assets/attachments/'.$detail_task->service_name.'/'.$detail_task->order_number.'/proven')) {
+			mkdir('./assets/attachments/'.$detail_task->service_name.'/'.$detail_task->order_number.'/proven', 0777, TRUE);
   		  }
-		  $path = './assets/attachments/'.$detail_task->service_name.'/'.$detail_task->client_name.'/'.$detail_task->order_number.'/proven';
+		  $path = './assets/attachments/'.$detail_task->service_name.'/'.$detail_task->order_number.'/proven';
 		  $_FILES['file']['name'] = $_FILES['proven_files']['name'][$i];
           $_FILES['file']['type'] = $_FILES['proven_files']['type'][$i];
           $_FILES['file']['tmp_name'] = $_FILES['proven_files']['tmp_name'][$i];
@@ -327,5 +328,15 @@ class Task extends CI_Controller {
 
 
     }
+    public function deleteAction()
+    {
+      $task_id = $this->input->post('task_id');
+      $where="task_id='".$task_id."'";
+      $delete = $this->crud_model->deleteData('tasks',$where);
+      if($delete){
+        $this->session->set_flashdata("success", "Your Data Has Been Deleted !");
+        redirect('Task');
 
+      }
+    }
 }

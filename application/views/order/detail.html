@@ -95,7 +95,7 @@
                   </div>
                   <div class="card-body">
                     <!-- <?php foreach($attachments as $attachment){ ?>
-                      <li class="list-group-item"><a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" download ><?=$attachment->order_attachment_name?></a></li>
+                      <li class="list-group-item"><a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" download ><?=$attachment->order_attachment_name?></a></li>
                     <?php } ?> -->
 
                     <?php 
@@ -109,8 +109,8 @@
 
                         <div class="gallery my-gallery" itemscope="" data-pswp-uid="1">
                           <figure class="" itemprop="associatedMedia" itemscope="">
-                            <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" itemprop="contentUrl" data-size="<?=$attachment->order_attachment_width?>x<?=$attachment->order_attachment_height?>">
-                              <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" itemprop="thumbnail" alt="Image description">
+                            <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" itemprop="contentUrl" data-size="<?=$attachment->order_attachment_width?>x<?=$attachment->order_attachment_height?>">
+                              <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" itemprop="thumbnail" alt="Image description">
                             </a>
                             <figcaption itemprop="caption description"><?=$attachment->order_attachment_name?></figcaption>
                           </figure>
@@ -119,7 +119,7 @@
                       </div>
                     <?php } else{ ?>
                     <div class="ml-3 text-center float-left">
-                      <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" download title="<?=$attachment->order_attachment_name?>">
+                      <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" download title="<?=$attachment->order_attachment_name?>">
                         <img src="<?=base_url()?>assets/images/Download-02.png" style="width: 50px;" alt="">
                       </a>
                       <p><?=substr($attachment->order_attachment_name,0,5)	?>..</p>  
@@ -132,11 +132,11 @@
                 <?php 
                   foreach($task as $task_delivery){
                     if($task_delivery->task_type == "New"){
-                      $task_delivery_type = "Preview ".$task_delivery->task_new_count;
+                      $task_delivery_type = "Preview ";
                       $task_delivery_type_color = 'primary';
                     }
                     else{
-                      $task_delivery_type = "Revision ".$task_delivery->task_revision_count;
+                      $task_delivery_type = "Revision ";
                       $task_delivery_type_color = 'danger';
                     }
                     if($task_delivery->task_status == 'Open' || $task_delivery->task_status == 'Done'){
@@ -157,7 +157,7 @@
                     <div class="card">
                       <div class="card-header bg-<?=$card_header_color?> pt-4 pb-3">
                           
-                          <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse<?=$task_delivery->task_id?>" aria-expanded="true" aria-controls="collapse<?=$task_delivery->task_id?>"><h6 class="text-<?=$task_delivery_type_color?> float-left mt-2"><?=$task_delivery_type?></h6></button>
+                          <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse<?=$task_delivery->task_id?>" aria-expanded="true" aria-controls="collapse<?=$task_delivery->task_id?>"><h6 class="text-<?=$task_delivery_type_color?> float-left mt-2"><?=$task_delivery_type?> - <?=$task_delivery->task_name?></h6></button>
 
                       </div>
                       <div class="collapse <?=$collaps_status?>" id="collapse<?=$task_delivery->task_id?>" aria-labelledby="heading<?=$task_delivery->task_id?>" data-parent="#accordion<?=$task_delivery->task_id?>">
@@ -166,7 +166,12 @@
                           <div class="activity-timeline" id="activity-timeline">
                             <div class="row">
                               <div class="col-md-6  align-middle">
+                                <?php 
+                                if ($this->session->userdata('role') == 'Project Manager' || $this->session->userdata('role') == 'Head Designer' ){
+                                ?>          
+
                                 <a  class="float-left mt-3 text-black" href="#" onclick="assignUpdate('<?=$task_delivery->task_id?>')"><h6><i class="mr-1 pt-2 text-black" data-feather="edit"></i></h6></a>
+                                  <?php } ?>
                                 <h6 class="float-left mt-3"> | <i data-feather="user" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->employee_name?></h6>
                                 <h6 class="ml-3 float-left mt-3"><i data-feather="clock" class="mr-1 pt-2 text-primary" ></i><?=date_format(date_create($task_delivery->task_delivery_date),"d M Y H:i")?></h6>
                                 <h6 class="ml-3 float-left mt-3"><i data-feather="flag" class="mr-1 pt-2 text-primary" ></i><?=$task_delivery->task_status?></h6>
@@ -206,15 +211,15 @@
                                   ?> 
                                  <div class="gallery my-gallery" itemscope="" data-pswp-uid="1">
                                   <figure class="" itemprop="associatedMedia" itemscope="">
-                                    <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="contentUrl" data-size="<?=$task_delivery_attachment->task_delivery_attachment_width?>x<?=$task_delivery_attachment->task_delivery_attachment_height?>">
-                                      <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="thumbnail" alt="Image description">
+                                    <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="contentUrl" data-size="<?=$task_delivery_attachment->task_delivery_attachment_width?>x<?=$task_delivery_attachment->task_delivery_attachment_height?>">
+                                      <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="thumbnail" alt="Image description">
                                     </a>
                                     <figcaption itemprop="caption description"><?=$task_delivery_attachment->task_delivery_attachment_name?></figcaption>
                                   </figure>
                                 </div>
                                 <p title="<?=$task_delivery_attachment->task_delivery_attachment_name?>"><?=$task_delivery_attachment->task_delivery_attachment_type	?></p>  
                                 <?php } else{ ?>
-                                 <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
+                                 <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
                                     <?php if($task_delivery_attachment->task_delivery_attachment_type =='Preview'){?>
                                     <img src="<?=base_url()?>assets/images/Download-01.png" style="width: 50px;" alt="" title="<?=$task_delivery_attachment->task_delivery_attachment_name?>">
                                     <?php } else { ?>
@@ -282,15 +287,15 @@
                                     ?> 
                                   <div class="gallery my-gallery" itemscope="" data-pswp-uid="1">
                                     <figure class="" itemprop="associatedMedia" itemscope="">
-                                      <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="contentUrl" data-size="<?=$task_delivery_attachment->task_delivery_attachment_width?>x<?=$task_delivery_attachment->task_delivery_attachment_height?>">
-                                        <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="thumbnail" alt="Image description">
+                                      <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="contentUrl" data-size="<?=$task_delivery_attachment->task_delivery_attachment_width?>x<?=$task_delivery_attachment->task_delivery_attachment_height?>">
+                                        <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="thumbnail" alt="Image description">
                                       </a>
                                       <figcaption itemprop="caption description"><?=$task_delivery_attachment->task_delivery_attachment_name?></figcaption>
                                     </figure>
                                   </div>
                                     <p title="<?=$task_delivery_attachment->task_delivery_attachment_name?>"><?=$task_delivery_attachment->task_delivery_attachment_type	?></p>  
                                     <?php } else{ ?>
-                                      <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
+                                      <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
                                       <?php if($task_delivery_attachment->task_delivery_attachment_type =='Preview'){?>
                                       <img src="<?=base_url()?>assets/images/Download-01.png" style="width: 50px;" alt="" title="<?=$task_delivery_attachment->task_delivery_attachment_name?>">
                                       <?php } else { ?>
@@ -351,15 +356,15 @@
                                   ?> 
                                  <div class="gallery my-gallery" itemscope="" data-pswp-uid="1">
                                   <figure class="" itemprop="associatedMedia" itemscope="">
-                                    <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="contentUrl" data-size="<?=$task_delivery_attachment->task_delivery_attachment_width?>x<?=$task_delivery_attachment->task_delivery_attachment_height?>">
-                                      <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="thumbnail" alt="Image description">
+                                    <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="contentUrl" data-size="<?=$task_delivery_attachment->task_delivery_attachment_width?>x<?=$task_delivery_attachment->task_delivery_attachment_height?>">
+                                      <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" itemprop="thumbnail" alt="Image description">
                                     </a>
                                     <figcaption itemprop="caption description"><?=$task_delivery_attachment->task_delivery_attachment_name?></figcaption>
                                   </figure>
                                  </div>
                                   <p title="<?=$task_delivery_attachment->task_delivery_attachment_name?>"><?=$task_delivery_attachment->task_delivery_attachment_type	?></p>  
                                   <?php } else{ ?>
-                                 <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
+                                 <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/<?=$task_delivery_attachment_type?>/<?=$task_delivery_attachment->task_delivery_attachment_name?>" download >
                                     <?php if($task_delivery_attachment->task_delivery_attachment_type =='Preview'){?>
                                     <img src="<?=base_url()?>assets/images/Download-01.png" style="width: 50px;" alt="" title="<?=$task_delivery_attachment->task_delivery_attachment_name?>">
                                     <?php } else { ?>
@@ -398,8 +403,8 @@
 
                                       <div class="gallery my-gallery" itemscope="" data-pswp-uid="1">
                                         <figure class="" itemprop="associatedMedia" itemscope="">
-                                          <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$task_attachment->task_attachment_name?>" itemprop="contentUrl" data-size="<?=$task_attachment->task_attachment_width?>x<?=$task_attachment->task_attachment_height?>">
-                                            <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$task_attachment->task_attachment_name?>" itemprop="thumbnail" alt="Image description">
+                                          <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/attachments/<?=$task_attachment->task_attachment_name?>" itemprop="contentUrl" data-size="<?=$task_attachment->task_attachment_width?>x<?=$task_attachment->task_attachment_height?>">
+                                            <img style="width:50px; height:50px;" class="img-thumbnail" src="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/attachments/<?=$task_attachment->task_attachment_name?>" itemprop="thumbnail" alt="Image description">
                                           </a>
                                           <figcaption itemprop="caption description"><?=$task_attachment->task_attachment_name?></figcaption>
                                         </figure>
@@ -408,7 +413,7 @@
                                     </div>
                                   <?php } else{ ?>
                                   <div class="ml-3 text-center float-left">
-                                    <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$task_attachment->task_attachment_name?>" download title="<?=$task_attachment->task_attachment_name?>">
+                                    <a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/attachments/<?=$task_attachment->task_attachment_name?>" download title="<?=$task_attachment->task_attachment_name?>">
                                       <img src="<?=base_url()?>assets/images/Download-02.png" style="width: 50px;" alt="">
                                     </a>
                                     <p><?=substr($task_attachment->task_attachment_name,0,5)	?>..</p>  
@@ -458,7 +463,7 @@
                       <div class="card-body p-4" style="border-radius:10px;">
                         <ul class="list-group list-group-flush">
                           <?php foreach($attachments as $attachment){ ?>
-                            <li class="list-group-item"><a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->client_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" download ><?=$attachment->order_attachment_name?></a></li>
+                            <li class="list-group-item"><a href="<?=base_url()?>assets/attachments/<?=$order->service_name?>/<?=$order->order_number?>/attachments/<?=$attachment->order_attachment_name?>" download ><?=$attachment->order_attachment_name?></a></li>
                           <?php } ?>
                         </ul>                                
                       </div>
@@ -718,15 +723,7 @@
                           </select>
                         </div>  
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label>Start Date</label>
-                          <div class="input-group flatpicker-calender">
-                            <input class="form-control datetime-local_revision task_start_revision" id="datetime-local" name="task_start" type="date"  required>
-                          </div>
-                            <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
-                        </div>
-                      </div>
+                     
                       <div class="col-md-6">
                         <div class="form-group">
                           <label>Tag Priority</label>
@@ -740,6 +737,22 @@
                         </div>  
                       </div>
                       <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Task Name</label>
+                          <input type="text" class="form-control" name="task_name" id="task_name_revision" required>
+                        </div>  
+                      </div>
+
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label>Start Date</label>
+                          <div class="input-group flatpicker-calender">
+                            <input class="form-control datetime-local_revision task_start_revision" id="datetime-local" name="task_start" type="date"  required>
+                          </div>
+                            <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
+                        </div>
+                      </div>
+                      <div class="col-md-3">
                         <div class="form-group">
                           <label>Estimation </label>
                           <div class="row">
@@ -831,15 +844,7 @@
                           </select>
                         </div>  
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          <label>Start Date</label>
-                          <div class="input-group flatpicker-calender">
-                            <input class="form-control datetime-local_revision" id="datetime-local" name="task_start" type="date"  required>
-                          </div>
-                            <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
-                        </div>
-                      </div>
+                      
                       <div class="col-md-6">
                         <div class="form-group">
                           <label>Tag Priority</label>
@@ -853,6 +858,21 @@
                         </div>  
                       </div>
                       <div class="col-md-6">
+                        <div class="form-group">
+                          <label>Task Name</label>
+                          <input type="text" class="form-control" name="task_name" required>
+                        </div>  
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label>Start Date</label>
+                          <div class="input-group flatpicker-calender">
+                            <input class="form-control datetime-local_revision" id="datetime-local" name="task_start" type="date"  required>
+                          </div>
+                            <!-- <input class="form-control" type="text"name="order_date" required autocomplete="off"> -->
+                        </div>
+                      </div>
+                      <div class="col-md-3">
                         <div class="form-group">
                           <label>Estimation </label>
                           <div class="row">
@@ -1033,6 +1053,7 @@
                 $('#employee_id_revision').val(row.employee_id);
                 $('#tag_id_revision').val(row.tag_id);
                 $('#task_id_revision').val(row.task_id);
+                $('#task_name_revision').val(row.task_name);
                 $('#task_type_revision').val(row.task_type);
                 $('#order_id_revision').val(row.order_id);
                 $('#employee_id_before_revision').val(row.employee_id);

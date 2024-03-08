@@ -302,10 +302,10 @@ class Order extends CI_Controller {
     
 
           // $date = str_replace( ':', '', $date);
-          if (!is_dir('assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_number.'/attachments')) {
-            mkdir('./assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_number.'/attachments', 0777, TRUE);
+          if (!is_dir('assets/attachments/'.$service_row->service_name.'/'.$order_number.'/attachments')) {
+            mkdir('./assets/attachments/'.$service_row->service_name.'/'.$order_number.'/attachments', 0777, TRUE);
           }
-          $path = './assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_number.'/attachments';
+          $path = './assets/attachments/'.$service_row->service_name.'/'.$order_number.'/attachments';
           $_FILES['file']['name'] = $_FILES['files']['name'][$i];
           $_FILES['file']['type'] = $_FILES['files']['type'][$i];
           $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
@@ -399,10 +399,10 @@ class Order extends CI_Controller {
             $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
             $_FILES['file']['error'] = $_FILES['files']['error'][$i];
             $_FILES['file']['size'] = $_FILES['files']['size'][$i];
-            if (!is_dir('assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_number.'/attachments')) {
-              mkdir('./assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_number.'/attachments', 0777, TRUE);
+            if (!is_dir('assets/attachments/'.$service_row->service_name.'/'.$order_number.'/attachments')) {
+              mkdir('./assets/attachments/'.$service_row->service_name.'/'.$order_number.'/attachments', 0777, TRUE);
             }
-            $path = './assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_number.'/attachments';
+            $path = './assets/attachments/'.$service_row->service_name.'/'.$order_number.'/attachments';
   
             $config['upload_path'] = $path; 
             $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
@@ -620,6 +620,7 @@ class Order extends CI_Controller {
       $order_row = $this->db->where('order_id',$order_id)->get('orders')->row();
 
       $assign_type = $this->input->post('assign_type');
+      $task_name = $this->input->post('task_name');
       $task_id = $this->input->post('task_id');
       $task_type = $this->input->post('task_type');
       $employee_id = $this->input->post('employee_id');
@@ -645,6 +646,7 @@ class Order extends CI_Controller {
 
       $data = array(
         'task_id' => $task_id,
+        'task_name' => $task_name,
         'order_id' => $order_id,
         'task_type' => $task_type,
         'employee_id' => $employee_id,
@@ -671,10 +673,10 @@ class Order extends CI_Controller {
     
 
           // $date = str_replace( ':', '', $date);
-          if (!is_dir('assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments')) {
-            mkdir('./assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments', 0777, TRUE);
+          if (!is_dir('assets/attachments/'.$service_row->service_name.'/'.$order_row->order_number.'/attachments')) {
+            mkdir('./assets/attachments/'.$service_row->service_name.'/'.$order_row->order_number.'/attachments', 0777, TRUE);
           }
-          $path = './assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments';
+          $path = './assets/attachments/'.$service_row->service_name.'/'.$order_row->order_number.'/attachments';
           $_FILES['file']['name'] = $_FILES['files']['name'][$i];
           $_FILES['file']['type'] = $_FILES['files']['type'][$i];
           $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
@@ -849,6 +851,7 @@ class Order extends CI_Controller {
       
       $order_id = $this->input->post('order_id');
       $task_type = $this->input->post('task_type');
+      $task_name = $this->input->post('task_name');
       $order_row = $this->db->where('order_id',$order_id)->get('orders')->row();
       $assign_type = $this->input->post('assign_type');
       $task_id = $this->uuid->v4();
@@ -894,6 +897,7 @@ class Order extends CI_Controller {
 
       $data = array(
         'task_id' => $task_id,
+        'task_name' => $task_name,
         'order_id' => $order_id,
         'task_type' => $task_type,
         'employee_id' => $employee_id,
@@ -923,10 +927,10 @@ class Order extends CI_Controller {
     
 
           // $date = str_replace( ':', '', $date);
-          if (!is_dir('assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments')) {
-            mkdir('./assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments', 0777, TRUE);
+          if (!is_dir('assets/attachments/'.$service_row->service_name.'/'.$order_row->order_number.'/attachments')) {
+            mkdir('./assets/attachments/'.$service_row->service_name.'/'.$order_row->order_number.'/attachments', 0777, TRUE);
           }
-          $path = './assets/attachments/'.$service_row->service_name.'/'.$client_exist_row->client_name.'/'.$order_row->order_number.'/attachments';
+          $path = './assets/attachments/'.$service_row->service_name.'/'.$order_row->order_number.'/attachments';
           $_FILES['file']['name'] = $_FILES['files']['name'][$i];
           $_FILES['file']['type'] = $_FILES['files']['type'][$i];
           $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
