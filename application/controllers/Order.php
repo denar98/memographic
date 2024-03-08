@@ -330,6 +330,9 @@ class Order extends CI_Controller {
               'order_attachment_id ' => $order_attachment_id ,
               'order_id' => $order_id,
               'order_attachment_name' => $filename,
+              'order_attachment_ext' =>$uploadData['file_ext'],
+              'order_attachment_width' => $uploadData['image_width'],
+              'order_attachment_height' => $uploadData['image_height'],
             );
             $add_attachments = $this->crud_model->createData('order_attachments',$data_attachments);
         
@@ -423,7 +426,10 @@ class Order extends CI_Controller {
                 'order_attachment_id ' => $order_attachment_id ,
                 'order_id' => $order_id,
                 'order_attachment_name' => $filename,
-              );
+                'order_attachment_ext' =>$uploadData['file_ext'],
+                'order_attachment_width' => $uploadData['image_width'],
+                'order_attachment_height' => $uploadData['image_height'],
+                );
                 $add_attachments = $this->crud_model->createData('order_attachments',$data_attachments);
           
             }

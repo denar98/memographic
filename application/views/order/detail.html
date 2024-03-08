@@ -103,7 +103,7 @@
                       ?>
 
                       <?php 
-                      if($attachment->attachment_ext=='.jpg' || $attachment->attachment_ext=='.png' || $attachment->attachment_ext=='.jpeg'){
+                      if($attachment->order_attachment_ext=='.jpg' || $attachment->order_attachment_ext=='.png' || $attachment->order_attachment_ext=='.jpeg'){
                       ?> 
                       <div class="ml-3 text-center float-left">
 
@@ -184,6 +184,28 @@
                                 <?php 
                                   $task_delivery_attachments = $this->task_model->getTaskDeliveryAttachment($task_delivery->task_delivery_id)->result();
                                   foreach($task_delivery_attachments as $task_delivery_attachment){
+                                    if($task_delivery_attachment->task_delivery_attachment_ext == ".pdf"){
+                                      $task_delivery_attachment_ext = "PDF";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".ai"){
+                                      $task_delivery_attachment_ext = "AI";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".psd"){
+                                      $task_delivery_attachment_ext = "PS";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".afdesign"){
+                                      $task_delivery_attachment_ext = "AF";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".jpg"){
+                                      $task_delivery_attachment_ext = "JPG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".jpeg"){
+                                      $task_delivery_attachment_ext = "JPEG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".png"){
+                                      $task_delivery_attachment_ext = "PNG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".zip"){
+                                      $task_delivery_attachment_ext = "ZIP";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".svg"){
+                                      $task_delivery_attachment_ext = "SVG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".eps"){
+                                      $task_delivery_attachment_ext = "EPS";
+                                    }
+                                    
                                     if($task_delivery_attachment->task_delivery_attachment_type == "Preview"){
                                       $task_delivery_attachment_type = 'preview';
                                     }
@@ -192,15 +214,7 @@
                                     }
                                     else if($task_delivery_attachment->task_delivery_attachment_type == "Source"){
                                       $task_delivery_attachment_type = 'source';
-                                      if($task_delivery_attachment->task_delivery_attachment_ext == ".pdf"){
-                                        $task_delivery_attachment_ext = "PDF";
-                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".ai"){
-                                        $task_delivery_attachment_ext = "AI";
-                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".psd"){
-                                        $task_delivery_attachment_ext = "PS";
-                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".afdesign"){
-                                        $task_delivery_attachment_ext = "AF";
-                                      }
+                                  
 
                                     }
                                   ?>
@@ -260,6 +274,29 @@
                                   <?php 
                                   $task_delivery_attachments = $this->task_model->getTaskDeliveryAttachment($task_delivery->task_delivery_id)->result();
                                   foreach($task_delivery_attachments as $task_delivery_attachment){
+
+                                    if($task_delivery_attachment->task_delivery_attachment_ext == ".pdf"){
+                                      $task_delivery_attachment_ext = "PDF";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".ai"){
+                                      $task_delivery_attachment_ext = "AI";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".psd"){
+                                      $task_delivery_attachment_ext = "PS";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".afdesign"){
+                                      $task_delivery_attachment_ext = "AF";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".jpg"){
+                                      $task_delivery_attachment_ext = "JPG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".jpeg"){
+                                      $task_delivery_attachment_ext = "JPEG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".png"){
+                                      $task_delivery_attachment_ext = "PNG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".zip"){
+                                      $task_delivery_attachment_ext = "ZIP";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".svg"){
+                                      $task_delivery_attachment_ext = "SVG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".eps"){
+                                      $task_delivery_attachment_ext = "EPS";
+                                    }
+
                                     if($task_delivery_attachment->task_delivery_attachment_type == "Preview"){
                                       $task_delivery_attachment_type = 'preview';
                                     }
@@ -268,15 +305,7 @@
                                     }
                                     else if($task_delivery_attachment->task_delivery_attachment_type == "Source"){
                                       $task_delivery_attachment_type = 'source';
-                                      if($task_delivery_attachment->task_delivery_attachment_ext == ".pdf"){
-                                        $task_delivery_attachment_ext = "PDF";
-                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".ai"){
-                                        $task_delivery_attachment_ext = "AI";
-                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".psd"){
-                                        $task_delivery_attachment_ext = "PS";
-                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".afdesign"){
-                                        $task_delivery_attachment_ext = "AF";
-                                      }
+                         
 
                                     }
                                   ?>
@@ -329,24 +358,41 @@
                                   <?php 
                                   $task_delivery_attachments = $this->task_model->getTaskDeliveryAttachment($task_delivery->task_delivery_id)->result();
                                   foreach($task_delivery_attachments as $task_delivery_attachment){
+
+                                    if($task_delivery_attachment->task_delivery_attachment_ext == ".pdf"){
+                                      $task_delivery_attachment_ext = "PDF";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".ai"){
+                                      $task_delivery_attachment_ext = "AI";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".psd"){
+                                      $task_delivery_attachment_ext = "PS";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".afdesign"){
+                                      $task_delivery_attachment_ext = "AF";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".jpg"){
+                                      $task_delivery_attachment_ext = "JPG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".jpeg"){
+                                      $task_delivery_attachment_ext = "JPEG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".png"){
+                                      $task_delivery_attachment_ext = "PNG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".zip"){
+                                      $task_delivery_attachment_ext = "ZIP";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".svg"){
+                                      $task_delivery_attachment_ext = "SVG";
+                                    }else if($task_delivery_attachment->task_delivery_attachment_ext == ".eps"){
+                                      $task_delivery_attachment_ext = "EPS";
+                                    }
+
                                     if($task_delivery_attachment->task_delivery_attachment_type == "Preview"){
                                       $task_delivery_attachment_type = 'preview';
                                     }
                                     else if($task_delivery_attachment->task_delivery_attachment_type == "Proven"){
                                       $task_delivery_attachment_type = 'proven';
+                                      
+                                  
+
                                     }
                                     else if($task_delivery_attachment->task_delivery_attachment_type == "Source"){
                                       $task_delivery_attachment_type = 'source';
-                                      if($task_delivery_attachment->task_delivery_attachment_ext == ".pdf"){
-                                        $task_delivery_attachment_ext = "PDF";
-                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".ai"){
-                                        $task_delivery_attachment_ext = "AI";
-                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".psd"){
-                                        $task_delivery_attachment_ext = "PS";
-                                      }else if($task_delivery_attachment->task_delivery_attachment_ext == ".afdesign"){
-                                        $task_delivery_attachment_ext = "AF";
-                                      }
-
+                                      
                                     }
                                   ?>
                                   <div class="mr-3 text-center float-right">
