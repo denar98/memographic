@@ -317,11 +317,15 @@ class Task extends CI_Controller {
       }
 
 	  
-      $add_task_delivery = $this->crud_model->createData('task_deliveries',$data_task_delivery);
-	  $update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
 	  $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
-	  $this->session->set_flashdata("success", "Your Task Has Been Delivered !");
-	  redirect('Task/');	
+	  if($update_order){
+		$update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
+		if($update_task){
+			$add_task_delivery = $this->crud_model->createData('task_deliveries',$data_task_delivery);
+			$this->session->set_flashdata("success", "Your Task Has Been Delivered !");
+			redirect('Task/');		  
+		}
+	  }
 	
 	
 	  

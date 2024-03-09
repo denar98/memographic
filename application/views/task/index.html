@@ -144,8 +144,9 @@
                                   <!-- <h5 class="mb-0 float-left ml-3 pt-1" style="color: #ced4da;">|</h5> -->
                                   <h7 class="mb-0 float-left ml-4"><i data-feather="clock" class="mr-1 pt-2  text-primary"></i>  <span>Estimation : <?=number_format((float)$total_estimation, 2, '.', '');?> Jam</span> </h7>
                                   <!-- <h5 class="mb-0 float-left ml-3 pt-1" style="color: #ced4da;">|</h5> -->
-                                  <h7 class="mb-0 float-left ml-4" ><i data-feather="watch" class="mr-1 pt-2  text-primary"></i>  <span>Lembur : <?=number_format((float)$lembur, 2, '.', '');?> Jam </span></h7>
-                                  </button>
+                                  <h7 class="mb-0 float-left ml-4" ><i data-feather="dollar-sign" class="mr-1 pt-2  text-primary"></i>  <span>Lembur : <?=number_format((float)$lembur, 2, '.', '');?> Jam </span></h7>
+                                  
+                                </button>
 
                                   <!-- <a href="#"><i class="me-2" data-feather="printer"></i>Print</a> -->
                                 </div>
@@ -211,7 +212,7 @@
                                               <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>"><h7 class="task_title_0"><button class="btn text-center btn-xs btn-<?=$tag_color?>"><?=$task->tag_name?></button></h7></a>
                                               <!-- <p class="project_name_0">Order Priority</p> -->
                                             </td>
-                    
+                                            
                                             <td style="width:10%; text-align:center;">
                                               <?php 
                                                 if($task->task_status == 'Open' ){
@@ -233,6 +234,10 @@
                                               <!-- <p class="project_name_0">Delivered</p> -->
                                               <?php } ?>
                                             </td>
+                                            <!-- <td style="width:5%; min-width:50px;">
+                                              <a  href="#" class="log_timer" id="log_timer" data-id="<?=$task->task_id?>"  data-client="<?=$task->client_name?>"><i data-feather="watch"></i></a>
+                                            </td> -->
+
                                             <!-- <td style="width:5%; text-align:center;" style="min-width:50px">
                                               <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>" title="View Task"><i class="mt-2" data-feather="eye"></i></a>
                                             </td> -->
@@ -281,6 +286,50 @@
                   </div>
                 </div>
               </div>
+              <div class="modal fade modal-bookmark" id="logModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Log Timer</h5>
+                      <!-- <button class="btn-close" type="button" data-dismiss="modal" aria-label="Close"></button> -->
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+    
+                    </div>
+                    <div class="modal-body">
+                      <div class="row" data-autostart="false">
+                        <div class="col-md-4">
+                          <i data-feather="user" class="text-primary float-left" style="margin-top:5px;"></i>
+                          <h6 id="client_name_log" class="float-left" style="margin-top:8px; margin-left:8px"></h6>
+                        </div>
+                        <div class="col-md-5">
+                          <i data-feather="watch" class="text-primary float-left" style="margin-top:5px;"></i>
+                          <span id="sw_h" style="font-size: 1rem; margin-top:8px; margin-left:8px">00</span>:
+                          <span id="sw_m"  style="font-size: 1rem; margin-top:8px; margin-left:8px">00</span>:
+                          <span id="sw_s"  style="font-size: 1rem; margin-top:8px; margin-left:8px">00</span>:
+                          <span id="sw_ms"  style="font-size: 1rem; margin-top:8px; margin-left:8px">00</span>
+                        </div>
+                        <div class="col-md-3 text-right">
+                          <!-- <i data-feather="watch" class="mr-1 pt-2  text-primary"></i>  -->
+                          <!-- <input type="button" value="Reset" id="sw_reset" /> -->
+                          <!-- <span> | </span> -->
+                          <a class="" href="#" id="sw_start"><i data-feather="play" style="margin-top:8px;"></i></a>
+                          <a class="text-warning" href="#" id="sw_pause"><i data-feather="pause" style="margin-top:8px;"></i></a>
+                          <!-- <a class="text-secondary" href="#"  id="sw_stop"><i data-feather="check-square" style="margin-top:8px;"></i></a> -->
+                          <!-- <input type="button" class="btn btn-primary" value="Start" id="sw_start" />
+                          <input type="button" class="btn btn-secondary" value="Pause" id="sw_pause" />
+                          <input type="button" class="btn btn-danger" value="Stop"  id="sw_stop" /> -->
+                        </div>
+                        <div class="col-md-12">
+                          <button class="btn btn-primary w-100 mt-3">Save Log Timer</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
               <div class="modal fade modal-bookmark" id="deliveryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
                   <div class="modal-content">
@@ -390,7 +439,7 @@
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label>Task Name</label>
-                                <input type="text" class="form-control" name="task_name" id="task_name_revision" required>
+                                <input type="text" class="form-control" name="task_name" id="task_name_revision" >
                               </div>  
                             </div>
                             <div class="col-md-3">
@@ -517,7 +566,7 @@
                               
                               <div class="form-group">
                                 <label>Task Name</label>
-                                <input type="text" class="form-control" name="task_name" required>
+                                <input type="text" class="form-control" name="task_name" >
                               </div>  
                             </div>
                             <div class="col-md-3">
@@ -586,6 +635,238 @@
         <script>
 
           $(document).ready(function(e){
+
+            (function($){
+              
+              $.extend({
+                  
+                  APP : {                
+                      
+                      formatTimer : function(a) {
+                          if (a < 10) {
+                              a = '0' + a;
+                          }                              
+                          return a;
+                      },    
+                      
+                      startTimer : function(dir) {
+                          
+                          var a;
+                          
+                          // save type
+                          $.APP.dir = dir;
+                          
+                          // get current date
+                          $.APP.d1 = new Date();
+                          
+                          switch($.APP.state) {
+                                  
+                              case 'pause' :
+                                  
+                                  // resume timer
+                                  // get current timestamp (for calculations) and
+                                  // substract time difference between pause and now
+                                  $.APP.t1 = $.APP.d1.getTime() - $.APP.td;                            
+                                  
+                              break;
+                                  
+                              default :
+                                  
+                                  // get current timestamp (for calculations)
+                                  $.APP.t1 = $.APP.d1.getTime(); 
+                                  
+                                  // if countdown add ms based on seconds in textfield
+                                  if ($.APP.dir === 'cd') {
+                                      $.APP.t1 += parseInt($('#cd_seconds').val())*1000;
+                                  }    
+                              
+                              break;
+                                  
+                          }                                   
+                          
+                          // reset state
+                          $.APP.state = 'alive';   
+                          $('#' + $.APP.dir + '_status').html('Running');
+                          
+                          // start loop
+                          $.APP.loopTimer();
+                          
+                      },
+                      
+                      pauseTimer : function() {
+                          
+                          // save timestamp of pause
+                          $.APP.dp = new Date();
+                          $.APP.tp = $.APP.dp.getTime();
+                          
+                          // save elapsed time (until pause)
+                          $.APP.td = $.APP.tp - $.APP.t1;
+                          
+                          // change button value
+                          $('#' + $.APP.dir + '_start').val('Resume');
+                          
+                          // set state
+                          $.APP.state = 'pause';
+                          $('#' + $.APP.dir + '_status').html('Paused');
+                          
+                      },
+                      
+                      stopTimer : function() {
+                          
+                          // change button value
+                          $('#' + $.APP.dir + '_start').val('Restart');                    
+                          
+                          // set state
+                          $.APP.state = 'stop';
+                          $('#' + $.APP.dir + '_status').html('Stopped');
+                          
+                      },
+                      
+                      resetTimer : function() {
+
+                          // reset display
+                          $('#' + $.APP.dir + '_ms,#' + $.APP.dir + '_s,#' + $.APP.dir + '_m,#' + $.APP.dir + '_h').html('00');                 
+                          
+                          // change button value
+                          $('#' + $.APP.dir + '_start').val('Start');                    
+                          
+                          // set state
+                          $.APP.state = 'reset';  
+                          $('#' + $.APP.dir + '_status').html('Reset & Idle again');
+                          
+                      },
+                      
+                      endTimer : function(callback) {
+                        
+                          // change button value
+                          $('#' + $.APP.dir + '_start').val('Restart');
+                          
+                          // set state
+                          $.APP.state = 'end';
+                          
+                          // invoke callback
+                          if (typeof callback === 'function') {
+                              callback();
+                          }    
+                          
+                      },    
+                      
+                      loopTimer : function() {
+                          
+                          var td;
+                          var d2,t2;
+                          
+                          var ms = 0;
+                          var s  = 0;
+                          var m  = 0;
+                          var h  = 0;
+                          
+                          if ($.APP.state === 'alive') {
+                                      
+                              // get current date and convert it into 
+                              // timestamp for calculations
+                              d2 = new Date();
+                              t2 = d2.getTime();   
+                              
+                              // calculate time difference between
+                              // initial and current timestamp
+                              if ($.APP.dir === 'sw') {
+                                  td = t2 - $.APP.t1;
+                              // reversed if countdown
+                              } else {
+                                  td = $.APP.t1 - t2;
+                                  if (td <= 0) {
+                                      // if time difference is 0 end countdown
+                                      $.APP.endTimer(function(){
+                                          $.APP.resetTimer();
+                                          $('#' + $.APP.dir + '_status').html('Ended & Reset');
+                                      });
+                                  }    
+                              }    
+                              
+                              // calculate milliseconds
+                              ms = td%1000;
+                              if (ms < 1) {
+                                  ms = 0;
+                              } else {    
+                                  // calculate seconds
+                                  s = (td-ms)/1000;
+                                  if (s < 1) {
+                                      s = 0;
+                                  } else {
+                                      // calculate minutes   
+                                      var m = (s-(s%60))/60;
+                                      if (m < 1) {
+                                          m = 0;
+                                      } else {
+                                          // calculate hours
+                                          var h = (m-(m%60))/60;
+                                          if (h < 1) {
+                                              h = 0;
+                                          }                             
+                                      }    
+                                  }
+                              }
+                            
+                              // substract elapsed minutes & hours
+                              ms = Math.round(ms/100);
+                              s  = s-(m*60);
+                              m  = m-(h*60);                                
+                              
+                              // update display
+                              $('#' + $.APP.dir + '_ms').html($.APP.formatTimer(ms));
+                              $('#' + $.APP.dir + '_s').html($.APP.formatTimer(s));
+                              $('#' + $.APP.dir + '_m').html($.APP.formatTimer(m));
+                              $('#' + $.APP.dir + '_h').html($.APP.formatTimer(h));
+                              
+                              // loop
+                              $.APP.t = setTimeout($.APP.loopTimer,1);
+                          
+                          } else {
+                          
+                              // kill loop
+                              clearTimeout($.APP.t);
+                              return true;
+                          
+                          }  
+                          
+                      }
+                          
+                  }    
+              
+              });
+                
+              $('.log_timer').on('click', function() {
+                var task_id = $(this).attr("data-id");
+                var client_name = $(this).attr("data-client");
+                // alert(task_id);
+                $('#client_name_log').html(client_name); 
+                $('#logModal').modal('show'); 
+
+                  // $.APP.startTimer('sw');
+              });    
+              $('#sw_start').on('click', function() {
+                  $.APP.startTimer('sw');
+              });    
+
+              $('#cd_start').on('click', function() {
+                  $.APP.startTimer('cd');
+              });           
+              
+              $('#sw_stop,#cd_stop').on('click', function() {
+                  $.APP.stopTimer();
+              });
+              
+              $('#sw_reset,#cd_reset').on('click', function() {
+                  $.APP.resetTimer();
+              });  
+              
+              $('#sw_pause,#cd_pause').on('click', function() {
+                  $.APP.pauseTimer();
+              });                
+                      
+          })(jQuery);
+
             var employee_name = "<?php echo $this->session->userdata('employee_name')?>";
             // alert(employee_name);
             var listids =  $('.task-body');
@@ -616,14 +897,14 @@
                         type : 'POST'
                       },
             }); // End of DataTable
-
-            // var listids =  $('.task-body');
-            //   listids.each(function(index, element){
-            //     var contentId = $(this).attr('id');
-            //     $('#pills-'+contentId).addClass('show active');
-            //   });
-            //   $('.task-body').addClass('mb-3');
-
+            <?php if ($this->session->userdata('role')=='Project Manager' || $this->session->userdata('role')=='Admin'){?>
+            var listids =  $('.task-body');
+            listids.each(function(index, element){
+            var contentId = $(this).attr('id');
+            $('#pills-'+contentId).addClass('show active');
+            });
+            $('.task-body').addClass('mb-3');
+            <?php } ?>
       
             $('.employee-task-name').click(function(e) {
               var currentId = $(this).attr('data-name');

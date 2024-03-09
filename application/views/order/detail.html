@@ -15,7 +15,7 @@
                   <div class="card-header">
                     <h5 class="float-left">Detail Project</h5>
                     <?php 
-                      if($this->session->userdata('role') == 'Admin' || $this->session->userdata('role') == 'Project Manager'){
+                      if($this->session->userdata('role') == 'Admin' || $this->session->userdata('role') == 'Project Manager' || $this->session->userdata('role') == 'Head Designer'){
                     ?>
                     <a href="<?=base_url()?>Order/edit/<?=$order->order_id?>"> <button type="button" class="btn btn-warning float-right mr-3" name="button" >Edit Project</button></a>
 
@@ -737,9 +737,9 @@
                           <label>Order</label>
                           <select class="form-control" name="order_id" id="order_id_revision" readonly required>
                             <?php
-                            foreach($orders as $order){
+                            foreach($orders as $order_row){
                             ?>
-                            <option value="<?=$order->order_id?>"><?=$order->client_name?> - <?=$order->order_number?>  </option>
+                            <option value="<?=$order_row->order_id?>"><?=$order_row->client_name?> - <?=$order_row->order_number?>  </option>
                             <?php } ?>
                           </select>
                         </div>  
@@ -785,7 +785,7 @@
                       <div class="col-md-6">
                         <div class="form-group">
                           <label>Task Name</label>
-                          <input type="text" class="form-control" name="task_name" id="task_name_revision" required>
+                          <input type="text" class="form-control" name="task_name" id="task_name_revision">
                         </div>  
                       </div>
 
@@ -906,7 +906,7 @@
                       <div class="col-md-6">
                         <div class="form-group">
                           <label>Task Name</label>
-                          <input type="text" class="form-control" name="task_name" required>
+                          <input type="text" class="form-control" name="task_name">
                         </div>  
                       </div>
                       <div class="col-md-3">
