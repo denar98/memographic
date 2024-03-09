@@ -234,8 +234,13 @@
                                               <!-- <p class="project_name_0">Delivered</p> -->
                                               <?php } ?>
                                             </td>
+
                                             <td style="width:5%; min-width:50px;">
-                                              <a  href="#" class="log_timer" id="log_timer" data-id="<?=$task->task_id?>"  data-client="<?=$task->client_name?>" data-estimation="<?=$task->task_estimation_hour?>h, <?=$task->task_estimation_minute?>m"><i data-feather="watch"></i></a>
+                                              <?php 
+                                              if ($task->task_log_timer == ''){
+                                              ?>          
+                                                <a  href="#" class="log_timer" id="log_timer" data-id="<?=$task->task_id?>"  data-client="<?=$task->client_name?>" data-estimation="<?=$task->task_estimation_hour?>h, <?=$task->task_estimation_minute?>m"><i data-feather="watch"></i></a>
+                                              <?php } ?>
                                             </td>
 
                                             <!-- <td style="width:5%; text-align:center;" style="min-width:50px">
