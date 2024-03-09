@@ -623,9 +623,16 @@
                     <span id="sw_m"  style="font-size: 1rem; font-weight: 500; margin-top:6px; margin-left:8px">00</span>:
                     <span id="sw_s"  style="font-size: 1rem; font-weight: 500; margin-top:6px; margin-left:8px">00</span>
                   </div>
+                  <div class="col-md-12">
+                    <div class="form-group mt-3">
+                      <!-- <label for="">Timer Notes</label> -->
+                      <input type="text" class="form-control" name="timer_notes" id="timer_notes" placeholder="Timer Notes">
+                    </div>
+                  </div>
                   <div class="col-md-12 text-right">
                     <hr>
                     <button class="btn btn-primary mt-3" id="sw_start">Start Timer</button>
+                    <!-- <button class="btn btn-warning mt-3" id="sw_pause">Pause Timer</button> -->
                     <button class="btn btn-info mt-3" id="sw_save">Save Timer</button>
                   </div>
                 </div>
@@ -716,7 +723,7 @@
                       },
                       
                       pauseTimer : function() {
-                          
+
                           // save timestamp of pause
                           $.APP.dp = new Date();
                           $.APP.tp = $.APP.dp.getTime();
@@ -888,13 +895,14 @@
               
                 var timer_log = $('#timer_input_log').val();
                 var task_id = $('#task_id_log').val();
+                var timer_notes = $('#timer_notes').val();
 
                 var url_unset ='<?=base_url()?>Task/unsetSessionTimer';
                 $.get(url_unset, function (result) {
                   console.log('unset');
                 })
 
-                var url ='<?=base_url()?>Task/saveTimerLog/'+task_id+'/'+timer_log;
+                var url ='<?=base_url()?>Task/saveTimerLog/'+task_id+'/'+timer_log+'/'+timer_notes;
                 $.get(url, function (result) {
                   $.APP.resetTimer();                
                   $('#sw_start').prop('disabled', false);

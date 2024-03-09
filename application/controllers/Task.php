@@ -359,12 +359,14 @@ class Task extends CI_Controller {
 		$this->session->unset_userdata('task_id_session');
 
     }
-    public function saveTimerLog($task_id,$log_timer)
+    public function saveTimerLog($task_id,$log_timer,$timer_notes)
     {
 		// $replaced = preg_replace('/\s+/', '', $log_timer);
+		// $notes = preg_replace('/\s+/', '', $$timer_notes);
+		$notes = str_replace(' ', '', $timer_notes);
 
 		$task_data = array(
-			'task_log_timer'   => $log_timer
+			'task_log_timer'   => $log_timer.' - '.$notes
 		);
 		$where_task = "task_id='".$task_id."'";
 		$update_task = $this->crud_model->updateData('tasks',$task_data,$where_task);
