@@ -234,9 +234,9 @@
                                               <!-- <p class="project_name_0">Delivered</p> -->
                                               <?php } ?>
                                             </td>
-                                            <!-- <td style="width:5%; min-width:50px;">
-                                              <a  href="#" class="log_timer" id="log_timer" data-id="<?=$task->task_id?>"  data-client="<?=$task->client_name?>"><i data-feather="watch"></i></a>
-                                            </td> -->
+                                            <td style="width:5%; min-width:50px;">
+                                              <a  href="#" class="log_timer" id="log_timer" data-id="<?=$task->task_id?>"  data-client="<?=$task->client_name?>" data-estimation="<?=$task->task_estimation_hour?>h, <?=$task->task_estimation_minute?>m"><i data-feather="watch"></i></a>
+                                            </td>
 
                                             <!-- <td style="width:5%; text-align:center;" style="min-width:50px">
                                               <a href="<?=base_url()?>Order/detail/<?=$task->order_id?>" title="View Task"><i class="mt-2" data-feather="eye"></i></a>
@@ -286,49 +286,7 @@
                   </div>
                 </div>
               </div>
-              <div class="modal fade modal-bookmark" id="logModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel">Log Timer</h5>
-                      <!-- <button class="btn-close" type="button" data-dismiss="modal" aria-label="Close"></button> -->
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-    
-                    </div>
-                    <div class="modal-body">
-                      <div class="row" data-autostart="false">
-                        <div class="col-md-4">
-                          <i data-feather="user" class="text-primary float-left" style="margin-top:5px;"></i>
-                          <h6 id="client_name_log" class="float-left" style="margin-top:8px; margin-left:8px"></h6>
-                        </div>
-                        <div class="col-md-5">
-                          <i data-feather="watch" class="text-primary float-left" style="margin-top:5px;"></i>
-                          <span id="sw_h" style="font-size: 1rem; margin-top:8px; margin-left:8px">00</span>:
-                          <span id="sw_m"  style="font-size: 1rem; margin-top:8px; margin-left:8px">00</span>:
-                          <span id="sw_s"  style="font-size: 1rem; margin-top:8px; margin-left:8px">00</span>:
-                          <span id="sw_ms"  style="font-size: 1rem; margin-top:8px; margin-left:8px">00</span>
-                        </div>
-                        <div class="col-md-3 text-right">
-                          <!-- <i data-feather="watch" class="mr-1 pt-2  text-primary"></i>  -->
-                          <!-- <input type="button" value="Reset" id="sw_reset" /> -->
-                          <!-- <span> | </span> -->
-                          <a class="" href="#" id="sw_start"><i data-feather="play" style="margin-top:8px;"></i></a>
-                          <a class="text-warning" href="#" id="sw_pause"><i data-feather="pause" style="margin-top:8px;"></i></a>
-                          <!-- <a class="text-secondary" href="#"  id="sw_stop"><i data-feather="check-square" style="margin-top:8px;"></i></a> -->
-                          <!-- <input type="button" class="btn btn-primary" value="Start" id="sw_start" />
-                          <input type="button" class="btn btn-secondary" value="Pause" id="sw_pause" />
-                          <input type="button" class="btn btn-danger" value="Stop"  id="sw_stop" /> -->
-                        </div>
-                        <div class="col-md-12">
-                          <button class="btn btn-primary w-100 mt-3">Save Log Timer</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
               
               <div class="modal fade modal-bookmark" id="deliveryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
@@ -629,15 +587,55 @@
             </div>
           </div>
         </div>
+        <div class="modal fade modal-bookmark" id="logModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Log Timer</h5>
+                <!-- <button class="btn-close" type="button" data-dismiss="modal" aria-label="Close"></button> -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+
+              </div>
+              <div class="modal-body">
+                <div class="row" data-autostart="false">
+                  <div class="col-md-4">
+                    <i data-feather="user" class="text-primary float-left" style="margin-top:5px;"></i>
+                    <h6 id="client_name_log" class="float-left" style="margin-top:8px; margin-left:8px"></h6>
+                    <input type="hidden" class="form-control" name="timer_input_log" id="timer_input_log">
+                    <input type="hidden" class="form-control" name="task_id_log" id="task_id_log">
+
+                  </div>
+                  <div class="col-md-4">
+                    <i data-feather="clock" class="text-primary float-left" style="margin-top:5px;"></i>
+                    <h6 id="task_estimation_log" class="float-left" style="margin-top:8px; margin-left:8px"></h6>
+                  </div>
+                  <div class="col-md-4">
+                    <i data-feather="watch" class="text-primary float-left" style="margin-top:5px;"></i>
+                    <!-- <span id="sw_h" style="font-size: 1rem; margin-top:8px; margin-left:8px">00</span>: -->
+                    <span id="sw_h"  style="font-size: 1rem; font-weight: 500; margin-top:6px; margin-left:8px">00</span>:
+                    <span id="sw_m"  style="font-size: 1rem; font-weight: 500; margin-top:6px; margin-left:8px">00</span>:
+                    <span id="sw_s"  style="font-size: 1rem; font-weight: 500; margin-top:6px; margin-left:8px">00</span>
+                  </div>
+                  <div class="col-md-12 text-right">
+                    <hr>
+                    <button class="btn btn-primary mt-3" id="sw_start">Start Timer</button>
+                    <button class="btn btn-info mt-3" id="sw_save">Save Timer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
           <!-- Container-fluid Ends-->
 
         
         <script>
 
           $(document).ready(function(e){
-
+        
             (function($){
-              
               $.extend({
                   
                   APP : {                
@@ -649,11 +647,12 @@
                           return a;
                       },    
                       
-                      startTimer : function(dir) {
+                      startTimer : function(dir,task_id) {
                           
                           var a;
                           
                           // save type
+                          $.APP.task_id = task_id;
                           $.APP.dir = dir;
                           
                           // get current date
@@ -674,7 +673,7 @@
                                   
                                   // get current timestamp (for calculations)
                                   $.APP.t1 = $.APP.d1.getTime(); 
-                                  
+
                                   // if countdown add ms based on seconds in textfield
                                   if ($.APP.dir === 'cd') {
                                       $.APP.t1 += parseInt($('#cd_seconds').val())*1000;
@@ -687,10 +686,28 @@
                           // reset state
                           $.APP.state = 'alive';   
                           $('#' + $.APP.dir + '_status').html('Running');
-                          
+                          var url ='<?=base_url()?>Task/setSessionTimer/'+$.APP.t1+'/'+task_id;
+                              $.get(url, function (result) {
+                                console.log(result);
+                              })
+                            
                           // start loop
                           $.APP.loopTimer();
+                          $('#sw_start').prop('disabled', true);
+                          var listids_1 =  $('.log_timer');
+                          listids_1.each(function(index, element){
+                            $(this).hide()
+                            if($(this).data("id") == task_id){
+                              $(this).show()                            
+                            }
+                          });
+
                           
+
+
+
+                          // $('')
+
                       },
                       
                       pauseTimer : function() {
@@ -752,15 +769,27 @@
                       },    
                       
                       loopTimer : function() {
-                          
+
                           var td;
                           var d2,t2;
-                          
                           var ms = 0;
                           var s  = 0;
                           var m  = 0;
                           var h  = 0;
-                          
+                          <?php if ($this->session->userdata('saved_t1')!=''){ ?>
+                          $.APP.state = 'alive';   
+                          $.APP.dir = 'sw';
+                          $('#sw_start').prop('disabled', true);
+                          var listids_2 =  $('.log_timer');
+                          listids_2.each(function(index, element){
+                            var task_id = "<?=$this->session->userdata('task_id_session')?>";
+                            // alert( $.APP.task_id);
+                            $(this).hide()
+                            if($(this).data("id") == task_id){
+                              $(this).show()                            
+                            }
+                          });
+                          <?php } ?>
                           if ($.APP.state === 'alive') {
                                       
                               // get current date and convert it into 
@@ -768,21 +797,12 @@
                               d2 = new Date();
                               t2 = d2.getTime();   
                               
-                              // calculate time difference between
-                              // initial and current timestamp
-                              if ($.APP.dir === 'sw') {
-                                  td = t2 - $.APP.t1;
-                              // reversed if countdown
-                              } else {
-                                  td = $.APP.t1 - t2;
-                                  if (td <= 0) {
-                                      // if time difference is 0 end countdown
-                                      $.APP.endTimer(function(){
-                                          $.APP.resetTimer();
-                                          $('#' + $.APP.dir + '_status').html('Ended & Reset');
-                                      });
-                                  }    
-                              }    
+                              <?php if ($this->session->userdata('saved_t1')!=''){?>
+                                td = t2 - <?php echo $this->session->userdata('saved_t1');?>;
+                              <?php } else{?>
+                                td = t2 - $.APP.t1;
+                              <?php } ?>
+                      
                               
                               // calculate milliseconds
                               ms = td%1000;
@@ -812,13 +832,18 @@
                               ms = Math.round(ms/100);
                               s  = s-(m*60);
                               m  = m-(h*60);                                
-                              
                               // update display
-                              $('#' + $.APP.dir + '_ms').html($.APP.formatTimer(ms));
+                              // $('#' + $.APP.dir + '_ms').html($.APP.formatTimer(ms));
                               $('#' + $.APP.dir + '_s').html($.APP.formatTimer(s));
                               $('#' + $.APP.dir + '_m').html($.APP.formatTimer(m));
                               $('#' + $.APP.dir + '_h').html($.APP.formatTimer(h));
-                              
+                              $('#timer_input_log').val($.APP.formatTimer(h)+':'+$.APP.formatTimer(m)+':'+$.APP.formatTimer(s));
+                              // var url ='Task/setSessionTimer/'+t2;
+                              // $.get(url, function (result) {
+                              //   console.log(result);
+                              // })
+                            
+
                               // loop
                               $.APP.t = setTimeout($.APP.loopTimer,1);
                           
@@ -835,24 +860,58 @@
                   }    
               
               });
+
                 
               $('.log_timer').on('click', function() {
                 var task_id = $(this).attr("data-id");
                 var client_name = $(this).attr("data-client");
+                var task_estimation = $(this).attr("data-estimation");
                 // alert(task_id);
+                $('#task_id_log').val(task_id); 
                 $('#client_name_log').html(client_name); 
+                $('#task_estimation_log').html(task_estimation); 
                 $('#logModal').modal('show'); 
-
                   // $.APP.startTimer('sw');
               });    
               $('#sw_start').on('click', function() {
-                  $.APP.startTimer('sw');
+                var task_id = $('#task_id_log').val();
+
+                  $.APP.startTimer('sw',task_id);
+              });    
+              $('#sw_save').on('click', function() {
+                // $.APP.state = 'end';
+              
+                var timer_log = $('#timer_input_log').val();
+                var task_id = $('#task_id_log').val();
+
+                var url_unset ='<?=base_url()?>Task/unsetSessionTimer';
+                $.get(url_unset, function (result) {
+                  console.log('unset');
+                })
+
+                var url ='<?=base_url()?>Task/saveTimerLog/'+task_id+'/'+timer_log;
+                $.get(url, function (result) {
+                  $.APP.resetTimer();                
+                  $('#sw_start').prop('disabled', false);
+                
+                  var listids_3 =  $('.log_timer');
+                  listids_3.each(function(index, element){
+                    $(this).show()
+                  });
+
+                  swal(
+                  "Yeayy!", "Your Timer Log Has Been Saved", "success"
+                  )
+                  window.location.replace("<?=base_url()?>Task/");
+
+                })
+
+             
+
+
               });    
 
-              $('#cd_start').on('click', function() {
-                  $.APP.startTimer('cd');
-              });           
-              
+          
               $('#sw_stop,#cd_stop').on('click', function() {
                   $.APP.stopTimer();
               });
@@ -865,6 +924,8 @@
                   $.APP.pauseTimer();
               });                
                       
+              $.APP.loopTimer();
+              // alert('test');
           })(jQuery);
 
             var employee_name = "<?php echo $this->session->userdata('employee_name')?>";

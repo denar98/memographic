@@ -343,4 +343,32 @@ class Task extends CI_Controller {
 
       }
     }
+    public function setSessionTimer($t1,$task_id)
+    {
+		$session_data = array(
+			'saved_t1'   => $t1,
+			'task_id_session'   => $task_id,
+		);
+		$this->session->set_userdata($session_data);
+		print_r($session_data); 
+
+    }
+    public function unsetSessionTimer()
+    {
+		$this->session->unset_userdata('saved_t1');
+		$this->session->unset_userdata('task_id_session');
+
+    }
+    public function saveTimerLog($task_id,$log_timer)
+    {
+		// $replaced = preg_replace('/\s+/', '', $log_timer);
+
+		$task_data = array(
+			'task_log_timer'   => $log_timer
+		);
+		$where_task = "task_id='".$task_id."'";
+		$update_task = $this->crud_model->updateData('tasks',$task_data,$where_task);
+
+
+    }
 }
