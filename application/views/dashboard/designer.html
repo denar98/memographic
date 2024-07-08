@@ -217,13 +217,13 @@
                                 </div>
                               </td>
                               <td>
-                                <p>Brief</p><span><?php if($employee_rating->avg_brief_reading != ''){ echo $employee_rating->avg_brief_reading;} else{ echo '0';} ?></span>
+                                <p>Brief</p><span><?php if($employee_rating->avg_brief_reading != ''){ echo substr($employee_rating->avg_brief_reading,0,3);} else{ echo '0';} ?></span>
                               </td>
                               <td>
-                                <p>Quality</p><span><?php if($employee_rating->avg_quality != ''){ echo $employee_rating->avg_quality;} else{ echo '0';} ?></span>
+                                <p>Quality</p><span><?php if($employee_rating->avg_quality != ''){ echo  substr($employee_rating->avg_quality,0,3);} else{ echo '0';} ?></span>
                               </td>
                               <td style="text-align:left;">
-                                <p>Speed</p><span><?php if($employee_rating->avg_speed != ''){ echo $employee_rating->avg_speed;} else{ echo '0';} ?></span>
+                                <p>Speed</p><span><?php if($employee_rating->avg_speed != ''){ echo  substr($employee_rating->avg_speed,0,3);} else{ echo '0';} ?></span>
                               </td>
                               <!-- <td> -->
                                 <!-- <button class="btn btn-primary pl-2 pr-2" style="width:45px; height:45px;"><h6 class="mb-0"><?=substr(($employee_rating->avg_brief_reading + $employee_rating->avg_quality + $employee_rating->avg_speed)/3,0,3)?></h6></button> -->

@@ -39,7 +39,12 @@ class Task extends CI_Controller {
 	    $data['page'] = 'task';
 		$data['module'] = 'order';
 		// $data['employees'] = $this->db->get("employees")->result();
-		$data['employees'] = $this->task_model->getEmployeeDesigner()->result();
+		if ($this->session->userdata('role') == 'Project Manager' || $this->session->userdata('role') == 'Head Designer' || $this->session->userdata('role') == 'Admin' ){
+			$data['employees'] = $this->task_model->getEmployeeDesigner()->result();
+		}else{
+			$data['employees'] = $this->task_model->getEmployeeDesignerWithoutSoon()->result();
+
+		}
 		$data['orders'] = $this->order_model->getDataOrdersAll()->result();
 		$data['tags'] = $this->db->get("tags")->result();
 		// $data['tabs'] = 'All';
@@ -184,7 +189,7 @@ class Task extends CI_Controller {
 		  $_FILES['file']['image_height'] = $_FILES['preview_files']['image_height'][$i];
 
           $config['upload_path'] = $path; 
-          $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
+          $config['allowed_types'] = '*';
 		  $config['overwrite'] = FALSE;
           $config['file_name'] = $_FILES['preview_files']['name'][$i];
           
@@ -234,7 +239,7 @@ class Task extends CI_Controller {
           $_FILES['file']['size'] = $_FILES['source_files']['size'][$i];
   
           $config['upload_path'] = $path; 
-          $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
+          $config['allowed_types'] = '*';
 		  $config['overwrite'] = FALSE;
           $config['file_name'] = $_FILES['source_files']['name'][$i];
           
@@ -285,7 +290,7 @@ class Task extends CI_Controller {
           $_FILES['file']['size'] = $_FILES['proven_files']['size'][$i];
   
           $config['upload_path'] = $path; 
-          $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
+          $config['allowed_types'] = '*';
 		  $config['overwrite'] = FALSE;
           $config['file_name'] = $_FILES['proven_files']['name'][$i];
           

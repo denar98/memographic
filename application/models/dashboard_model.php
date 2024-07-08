@@ -49,7 +49,7 @@ class Dashboard_model extends CI_Model
   {
     $this->db->select('sum(overtime_time) as overtime_hours');
     $this->db->from('overtimes');
-    $this->db->where("overtimes.employee_id = '".$employee_id."' and overtimes.overtime_type='".$overtime_type."'  and MONTH(overtimes.date) = MONTH(CURRENT_DATE())");
+    $this->db->where("overtimes.employee_id = '".$employee_id."' and overtimes.overtime_type='".$overtime_type."'  and overtimes.date >= '05-MONTH(CURRENT_DATE())-YEAR(CURRENT_DATE())'");
     $this->db->group_by('overtimes.employee_id');
     return $this->db->get();
   }

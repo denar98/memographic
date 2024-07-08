@@ -313,7 +313,7 @@ class Order extends CI_Controller {
           $_FILES['file']['size'] = $_FILES['files']['size'][$i];
   
           $config['upload_path'] = $path; 
-          $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
+          $config['allowed_types'] = '*';
           $config['overwrite'] = FALSE;
           $config['file_name'] = $_FILES['files']['name'][$i];
           
@@ -408,7 +408,7 @@ class Order extends CI_Controller {
             $path = './assets/attachments/'.$service_row->service_name.'/'.$order_number.'/attachments';
   
             $config['upload_path'] = $path; 
-            $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
+            $config['allowed_types'] = '*';
             $config['overwrite'] = FALSE;
             $config['file_name'] = $_FILES['files']['name'][$i];
             
@@ -493,23 +493,7 @@ class Order extends CI_Controller {
       $task_brief = $order_row->brief;
       $tag_id = $this->input->post('tag_id');
       $employee_row = $this->db->where('employee_id',$employee_id)->get('employees')->row();
-      $data = array(
-        'task_id' => $task_id,
-        'order_id' => $order_id,
-        'task_type' => $task_type,
-        'employee_id' => $employee_id,
-        'task_name' => $task_date,
-        'task_date' => $task_date,
-        'task_estimation_hour' => $task_estimation_hour,
-        'task_estimation_minute' => $task_estimation_minute,
-        'task_start' => $task_start,
-        'task_brief' => 'As described on the initial requirement',
-        'tag_id' => $tag_id,
-        'task_status' => 'Open',
-        'task_new_count' => $task_new_count,
-        'task_revision_count' => $task_revision_count,
-      );
-      
+     
       // if($order_row->assign_to != '' || $order_row->assign_to != null){
       //   $assign_to = $order_row->assign_to.', '.$employee_row->employee_name;
       // }
@@ -558,7 +542,22 @@ class Order extends CI_Controller {
           }else{
             $this->crud_model->createData('overtimes',$data_overtime);
           }
-
+          $data = array(
+            'task_id' => $task_id,
+            'order_id' => $order_id,
+            'task_type' => $task_type,
+            'employee_id' => $employee_id,
+            'task_name' => $task_date,
+            'task_date' => $task_date,
+            'task_estimation_hour' => $task_estimation_hour,
+            'task_estimation_minute' => $task_estimation_minute,
+            'task_start' => $task_start,
+            'task_brief' => 'As described on the initial requirement',
+            'tag_id' => $tag_id,
+            'task_new_count' => $task_new_count,
+            'task_revision_count' => $task_revision_count,
+          );
+          
         $where = "task_id='".$task_id."'";
         $add = $this->crud_model->updateData('tasks',$data,$where);
         }      
@@ -603,6 +602,23 @@ class Order extends CI_Controller {
           }
 
         }
+        $data = array(
+          'task_id' => $task_id,
+          'order_id' => $order_id,
+          'task_type' => $task_type,
+          'employee_id' => $employee_id,
+          'task_name' => $task_date,
+          'task_date' => $task_date,
+          'task_estimation_hour' => $task_estimation_hour,
+          'task_estimation_minute' => $task_estimation_minute,
+          'task_start' => $task_start,
+          'task_brief' => 'As described on the initial requirement',
+          'tag_id' => $tag_id,
+          'task_status' => 'Open',
+          'task_new_count' => $task_new_count,
+          'task_revision_count' => $task_revision_count,
+        );
+        
         $add = $this->crud_model->createData('tasks',$data);
       }
       
@@ -662,7 +678,6 @@ class Order extends CI_Controller {
         'task_start' => $task_start,
         'task_brief' => $task_brief,
         'tag_id' => $tag_id,
-        'task_status' => 'Open',
       );
       $data_order = array(
         'assign_to' => $employee_row->employee_name,
@@ -691,7 +706,7 @@ class Order extends CI_Controller {
           $_FILES['file']['file_ext'] = $_FILES['files']['file_ext'][$i];
     
           $config['upload_path'] = $path; 
-          $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
+          $config['allowed_types'] = '*';
           $config['overwrite'] = FALSE;
           $config['file_name'] = $_FILES['files']['name'][$i];
           
@@ -945,7 +960,7 @@ class Order extends CI_Controller {
           $_FILES['file']['file_ext'] = $_FILES['files']['file_ext'][$i];
     
           $config['upload_path'] = $path; 
-          $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx|doc|xlsx|ai|psd|zip|rar';
+          $config['allowed_types'] = '*';
           $config['overwrite'] = FALSE;
           $config['file_name'] = $_FILES['files']['name'][$i];
           
@@ -1075,14 +1090,10 @@ class Order extends CI_Controller {
       $where_task = "task_id='".$task_id."'";
       $where_order = "order_id='".$order_id."'";
       $update_task = $this->crud_model->updateData('tasks',$data_task,$where_task);
-      if($update_task){
-        $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
-        if($update_order){
-          $this->session->set_flashdata("success", "Your Data Has Been Delivered !");
-          redirect('Order/detail/'.$order_id);  
-        }
+      $update_order = $this->crud_model->updateData('orders',$data_order,$where_order);
+      $this->session->set_flashdata("success", "Your Data Has Been Delivered !");
+      redirect('Order/detail/'.$order_id);  
   
-      }
 
     }
     public function rejectTaskAction($task_id,$order_id)

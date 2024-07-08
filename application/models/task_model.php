@@ -70,6 +70,16 @@ class Task_model extends CI_Model
     $this->db->order_by('employees.employee_name');
     return $this->db->get();
   }
+  public function getEmployeeDesignerWithoutSoon()
+  {
+    $this->db->select('employees.*,users.*');
+    $this->db->from('employees');
+    $this->db->join('users', 'employees.employee_id = users.employee_id');
+    $this->db->where('users.role != "Project Manager"');
+    $this->db->where('employee_name != "Aa_Soon"');
+    $this->db->order_by('employees.employee_name');
+    return $this->db->get();
+  }
   public function getTaskDeliveryByOrderId($order_id)
   {
     $this->db->select('task_deliveries.*,tasks.*,orders.*,employees.*,services.*,service_packages.*,clients.*,tags.*');
